@@ -629,6 +629,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add a special route to serve the production HTML app
+  app.get('/production', (req, res) => {
+    res.sendFile(path.join(process.cwd(), "client", "public", "index.html"));
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

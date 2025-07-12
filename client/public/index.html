@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof of a Miracle - Faith Community</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/cross.png">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .loading { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="app">
+        <div class="min-h-screen bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+                <img src="/cross.png" alt="Cross" class="w-20 h-20 mx-auto mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">Proof of a Miracle</h1>
+                <p class="text-gray-600 mb-8">Faith Community App</p>
+                
+                <div id="auth-section">
+                    <div class="mb-6">
+                        <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full loading mx-auto mb-4"></div>
+                        <p class="text-gray-500">Checking authentication...</p>
+                    </div>
+                    
+                    <div id="login-section" class="hidden">
+                        <p class="text-gray-600 mb-4">Join our faith community to share testimonies and connect with believers</p>
+                        <button onclick="login()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                            Sign In with Replit
+                        </button>
+                    </div>
+                    
+                    <div id="user-section" class="hidden">
+                        <p class="text-gray-600 mb-4">Welcome back! <span id="user-name" class="font-semibold"></span></p>
+                        <button onclick="loadMainApp()" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors mb-3">
+                            Enter Faith Community
+                        </button>
+                        <button onclick="logout()" class="w-full bg-gray-500 text-white py-3 rounded-lg font-medium hover:bg-gray-600 transition-colors">
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="main-app" class="hidden">
+                    <div class="text-left">
+                        <div class="border-b pb-4 mb-4">
+                            <h2 class="text-xl font-bold text-gray-800 mb-2">Community Feed</h2>
+                            <button onclick="showCreatePost()" class="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                Share Your Testimony
+                            </button>
+                        </div>
+                        
+                        <div id="posts-container">
+                            <div class="text-center py-8">
+                                <div class="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full loading mx-auto mb-4"></div>
+                                <p class="text-gray-500">Loading posts...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        
+        // Check authentication status
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/user', { credentials: 'include' });
+                if (response.ok) {
+                    currentUser = await response.json();
+                    document.getElementById('user-name').textContent = currentUser.firstName + ' ' + currentUser.lastName;
+                    document.getElementById('login-section').classList.add('hidden');
+                    document.getElementById('user-section').classList.remove('hidden');
+                } else {
+                    document.getElementById('login-section').classList.remove('hidden');
+                    document.getElementById('user-section').classList.add('hidden');
+                }
+            } catch (error) {
+                console.log('Auth check failed:', error);
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('user-section').classList.add('hidden');
+            }
+        }
+        
+        function login() {
+            window.location.href = '/api/auth/login';
+        }
+        
+        function logout() {
+            window.location.href = '/api/auth/logout';
+        }
+        
+        function loadMainApp() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            loadPosts();
+        }
+        
+        async function loadPosts() {
+            try {
+                const response = await fetch('/api/posts', { credentials: 'include' });
+                if (response.ok) {
+                    const posts = await response.json();
+                    displayPosts(posts);
+                } else {
+                    document.getElementById('posts-container').innerHTML = '<p class="text-center text-gray-500">Unable to load posts</p>';
+                }
+            } catch (error) {
+                console.log('Error loading posts:', error);
+                document.getElementById('posts-container').innerHTML = '<p class="text-center text-gray-500">Error loading posts</p>';
+            }
+        }
+        
+        function displayPosts(posts) {
+            const container = document.getElementById('posts-container');
+            if (posts.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500">No posts yet. Be the first to share your testimony!</p>';
+                return;
+            }
+            
+            container.innerHTML = posts.map(post => `
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                            ${post.user.firstName[0]}${post.user.lastName[0]}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-medium text-gray-800">${post.user.firstName} ${post.user.lastName}</span>
+                                <span class="text-sm text-gray-500">${new Date(post.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <p class="text-gray-700 mb-2">${post.content}</p>
+                            ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image" class="w-full rounded-lg mb-2">` : ''}
+                            ${post.location ? `<p class="text-sm text-gray-500 mb-2">📍 ${post.location}</p>` : ''}
+                            <div class="flex space-x-4 text-sm text-gray-500">
+                                <button onclick="togglePrayer(${post.id})" class="flex items-center space-x-1 hover:text-blue-600">
+                                    <span>🙏</span>
+                                    <span>${post.prayerCount || 0}</span>
+                                </button>
+                                <button onclick="toggleLove(${post.id})" class="flex items-center space-x-1 hover:text-red-600">
+                                    <span>❤️</span>
+                                    <span>${post.loveCount || 0}</span>
+                                </button>
+                                <button onclick="showComments(${post.id})" class="flex items-center space-x-1 hover:text-green-600">
+                                    <span>💬</span>
+                                    <span>${post.commentCount || 0}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showCreatePost() {
+            const content = prompt('Share your testimony or miracle story:');
+            if (content) {
+                createPost(content);
+            }
+        }
+        
+        async function createPost(content) {
+            try {
+                const response = await fetch('/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ content })
+                });
+                
+                if (response.ok) {
+                    loadPosts(); // Refresh posts
+                } else {
+                    alert('Failed to create post');
+                }
+            } catch (error) {
+                console.log('Error creating post:', error);
+                alert('Failed to create post');
+            }
+        }
+        
+        async function togglePrayer(postId) {
+            try {
+                const response = await fetch(`/api/posts/${postId}/prayer`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    loadPosts(); // Refresh posts
+                }
+            } catch (error) {
+                console.log('Error toggling prayer:', error);
+            }
+        }
+        
+        async function toggleLove(postId) {
+            try {
+                const response = await fetch(`/api/posts/${postId}/love`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    loadPosts(); // Refresh posts
+                }
+            } catch (error) {
+                console.log('Error toggling love:', error);
+            }
+        }
+        
+        function showComments(postId) {
+            alert('Comments feature will be implemented in the full React app');
+        }
+        
+        // Initialize the app
+        checkAuth();
+        
+        console.log('Production app loaded successfully - no runtime error plugin!');
+    </script>
+</body>
+</html>
