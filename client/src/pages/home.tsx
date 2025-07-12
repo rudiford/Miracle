@@ -59,6 +59,10 @@ export default function Home() {
                 src="/cross.png" 
                 alt="Cross" 
                 className="w-12 h-auto"
+                onError={(e) => {
+                  console.error('Cross image failed to load');
+                  e.currentTarget.style.display = 'none';
+                }}
               />
               <h1 className="text-xl font-bold text-faith-text">Proof of a Miracle</h1>
             </div>
@@ -76,33 +80,18 @@ export default function Home() {
                 </Button>
               )}
               
-              {/* User Menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="p-2">
-                    <MoreVertical className="w-5 h-5 text-gray-600" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={handleProfile}>
-                    <Settings className="w-4 h-4 mr-2" />
-                    Profile Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={handleDeleteAccount}
-                    className="text-red-600 focus:text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Account
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {/* Temporary simple menu */}
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="sm" onClick={handleProfile}>
+                  <Settings className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleDeleteAccount} className="text-red-600">
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
           
