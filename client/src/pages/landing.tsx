@@ -20,7 +20,11 @@ export default function Landing() {
           <img 
             src="/cross.png" 
             alt="Cross" 
-            className="mx-auto w-72 h-auto filter brightness-0 invert"
+            className="mx-auto w-72 h-auto"
+            style={{
+              filter: 'invert(1) brightness(1)',
+              display: 'block'
+            }}
           />
         </div>
         
