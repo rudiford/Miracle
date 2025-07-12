@@ -3,7 +3,7 @@ interface ChristianCrossProps {
   size?: number;
 }
 
-export default function ChristianCross({ className = "", size = 32 }: ChristianCrossProps) {
+export default function ChristianCross({ className = "", size = 40 }: ChristianCrossProps) {
   return (
     <svg
       width={size}
@@ -11,26 +11,13 @@ export default function ChristianCross({ className = "", size = 32 }: ChristianC
       viewBox="0 0 24 32"
       className={className}
     >
-      {/* Traditional Christian cross shape - vertical beam longer than horizontal */}
-      <rect
-        x="10"
-        y="2"
-        width="4"
-        height="28"
-        rx="1"
+      {/* Traditional Christian cross shape as one continuous path */}
+      <path
+        d="M 10 2 L 14 2 L 14 8 L 20 8 L 20 12 L 14 12 L 14 30 L 10 30 L 10 12 L 4 12 L 4 8 L 10 8 Z"
         fill="white"
         stroke="black"
         strokeWidth="2"
-      />
-      <rect
-        x="4"
-        y="8"
-        width="16"
-        height="4"
-        rx="1"
-        fill="white"
-        stroke="black"
-        strokeWidth="2"
+        strokeLinejoin="round"
       />
     </svg>
   );
