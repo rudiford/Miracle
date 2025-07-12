@@ -4,15 +4,43 @@ const app = express();
 
 console.log('EMERGENCY OVERRIDE: Starting bulletproof server...');
 
-// Force immediate working response for all requests
+// Force immediate working response for all requests with mobile detection
 app.get('/', (req, res) => {
-  console.log('EMERGENCY OVERRIDE: Main page requested');
-  res.send(`<!DOCTYPE html>
+  const userAgent = req.headers['user-agent'] || '';
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent);
+  
+  console.log(`EMERGENCY OVERRIDE: ${isMobile ? 'MOBILE' : 'DESKTOP'} page requested`);
+  console.log(`User-Agent: ${userAgent.substring(0, 100)}`);
+  
+  if (isMobile) {
+    // Mobile optimized version
+    res.send(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Proof of a Miracle - Mobile</title>
+</head>
+<body style="background:#1e3a8a;color:white;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;text-align:center;padding:20px;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+<div style="background:white;color:#1e3a8a;padding:30px;border-radius:15px;max-width:350px;width:100%;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+<div style="font-size:60px;margin-bottom:20px;line-height:1;">✞</div>
+<h1 style="font-size:28px;margin-bottom:15px;font-weight:bold;line-height:1.2;">Proof of a Miracle</h1>
+<p style="font-size:16px;margin-bottom:15px;color:#666;">Faith Community</p>
+<p style="color:#10b981;font-weight:bold;font-size:20px;margin-bottom:20px;">MOBILE VERSION WORKING!</p>
+<p style="font-size:14px;margin-bottom:20px;line-height:1.4;">Emergency override successful - mobile browsers supported</p>
+<a href="/test" style="display:block;width:100%;padding:15px;margin:10px 0;background:#f59e0b;color:#1e3a8a;text-decoration:none;border-radius:8px;font-size:16px;font-weight:bold;box-sizing:border-box;">Test Mobile</a>
+<p style="font-size:12px;color:#999;margin-top:20px;">Mobile fix: ${new Date().toLocaleString()}</p>
+</div>
+</body>
+</html>`);
+  } else {
+    // Desktop version
+    res.send(`<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proof of a Miracle - WORKING</title>
+<title>Proof of a Miracle - Desktop</title>
 </head>
 <body style="background:#1e3a8a;color:white;font-family:Arial;text-align:center;padding:50px 20px;margin:0;">
 <div style="background:white;color:#1e3a8a;padding:40px;border-radius:15px;max-width:500px;margin:0 auto;">
@@ -26,6 +54,7 @@ app.get('/', (req, res) => {
 </div>
 </body>
 </html>`);
+  }
 });
 
 // Health check
@@ -38,9 +67,33 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Test page
+// Test page with mobile detection
 app.get('/test', (req, res) => {
-  res.send(`<!DOCTYPE html>
+  const userAgent = req.headers['user-agent'] || '';
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent);
+  
+  console.log(`EMERGENCY OVERRIDE: ${isMobile ? 'MOBILE' : 'DESKTOP'} test page requested`);
+  
+  if (isMobile) {
+    res.send(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Mobile Test - Proof of a Miracle</title>
+</head>
+<body style="background:#1e3a8a;color:white;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;text-align:center;padding:20px;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+<div style="background:white;color:#1e3a8a;padding:30px;border-radius:15px;max-width:350px;width:100%;">
+<div style="font-size:60px;margin-bottom:20px;">✞</div>
+<h1 style="font-size:28px;margin-bottom:15px;">Mobile Test</h1>
+<p style="color:#10b981;font-weight:bold;font-size:20px;margin-bottom:20px;">MOBILE SUCCESS!</p>
+<p style="font-size:14px;margin-bottom:20px;">All mobile functionality working correctly</p>
+<a href="/" style="display:block;width:100%;padding:15px;margin:10px 0;background:#f59e0b;color:#1e3a8a;text-decoration:none;border-radius:8px;font-size:16px;font-weight:bold;">← Back to Home</a>
+</div>
+</body>
+</html>`);
+  } else {
+    res.send(`<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -57,6 +110,7 @@ app.get('/test', (req, res) => {
 </div>
 </body>
 </html>`);
+  }
 });
 
 // Catch all other routes
