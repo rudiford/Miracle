@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { insertPostSchema } from "@shared/schema";
 import { z } from "zod";
+import LocationPermissionGuide from "@/components/location-permission-guide";
 
 const createPostSchema = insertPostSchema.extend({
   image: z.any().optional(),
@@ -272,9 +273,10 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
                 {isCapturingLocation ? "Capturing..." : "Use Current"}
               </Button>
             </div>
-            <p className="text-xs text-gray-600 mt-1">
-              If location capture fails, please enable location permissions in your browser settings or enter your location manually.
-            </p>
+            <div className="text-xs text-gray-600 mt-1 flex items-center justify-between">
+              <span>If location capture fails, enable permissions or enter manually.</span>
+              <LocationPermissionGuide />
+            </div>
           </div>
 
           {/* Submit Button */}
