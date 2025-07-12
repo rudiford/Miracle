@@ -185,6 +185,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/posts/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const postId = parseInt(req.params.id);
+      
+      // Get the post to check ownership
+      const posts = await storage.getAllPosts();
+      const post = posts.find(p => p.id === postId);
+      
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      
+      // Only post owner can edit
+      if (post.user.id !== userId) {
+        return res.status(403).json({ message: "You can only edit your own posts" });
+      }
+      
+      const validatedData = insertPostSchema.partial().parse(req.body);
+      const updatedPost = await storage.updatePost(postId, validatedData);
+      
+      if (!updatedPost) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      
+      res.json(updatedPost);
+    } catch (error) {
+      console.error("Error updating post:", error);
+      res.status(500).json({ message: "Failed to update post" });
+    }
+  });
+
   app.delete('/api/posts/:id', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;

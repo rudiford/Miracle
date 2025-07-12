@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Camera, MapPin, Heart, User, Cross } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import PostCard from "./post-card";
+import EditPostModal from "./edit-post-modal";
 import { useAuth } from "@/hooks/useAuth";
 
 interface Post {
@@ -27,10 +29,24 @@ interface FeedViewProps {
 
 export default function FeedView({ onCreatePost }: FeedViewProps) {
   const { user } = useAuth();
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
   const { data: posts = [], isLoading } = useQuery<Post[]>({
     queryKey: ["/api/posts"],
   });
+
+  const handleEditPost = (post: Post) => {
+    setEditingPost(post);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditModalClose = (open: boolean) => {
+    setIsEditModalOpen(open);
+    if (!open) {
+      setEditingPost(null);
+    }
+  };
 
   const handleCapturePhoto = () => {
     // TODO: Implement camera capture
@@ -130,10 +146,17 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
           </div>
         ) : (
           posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post={post} onEditPost={handleEditPost} />
           ))
         )}
       </div>
+
+      {/* Edit Post Modal */}
+      <EditPostModal
+        open={isEditModalOpen}
+        onOpenChange={handleEditModalClose}
+        post={editingPost}
+      />
     </div>
   );
 }

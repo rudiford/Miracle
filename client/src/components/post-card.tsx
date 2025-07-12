@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Heart, MessageCircle, Share, MoreHorizontal, User, MapPin } from "lucide-react";
+import { Heart, MessageCircle, Share, MoreHorizontal, User, MapPin, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Post {
   id: number;
@@ -24,11 +31,16 @@ interface Post {
 
 interface PostCardProps {
   post: Post;
+  onEditPost?: (post: Post) => void;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, onEditPost }: PostCardProps) {
   const [hasPrayed, setHasPrayed] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  
+  // Check if current user owns this post
+  const isOwnPost = user?.id === post.user.id;
 
   const prayerMutation = useMutation({
     mutationFn: async () => {
@@ -131,9 +143,23 @@ export default function PostCard({ post }: PostCardProps) {
             </div>
           </div>
         </div>
-        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-          <MoreHorizontal className="w-4 h-4" />
-        </Button>
+        {isOwnPost ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onEditPost?.(post)}>
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Post
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="w-8 h-8" /> // Empty space to maintain layout
+        )}
       </div>
       
       {/* Post Content */}

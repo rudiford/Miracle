@@ -30,6 +30,7 @@ export interface IStorage {
   createPost(userId: string, post: InsertPost): Promise<Post>;
   getAllPosts(): Promise<(Post & { user: User })[]>;
   getPostsByUser(userId: string): Promise<Post[]>;
+  updatePost(id: number, data: Partial<InsertPost>): Promise<Post | undefined>;
   deletePost(id: number): Promise<boolean>;
   incrementPrayerCount(postId: number): Promise<void>;
   decrementPrayerCount(postId: number): Promise<void>;
@@ -144,6 +145,21 @@ export class MemStorage implements IStorage {
 
   async getPostsByUser(userId: string): Promise<Post[]> {
     return Array.from(this.posts.values()).filter(post => post.userId === userId);
+  }
+
+  async updatePost(id: number, data: Partial<InsertPost>): Promise<Post | undefined> {
+    const existingPost = this.posts.get(id);
+    if (!existingPost) {
+      return undefined;
+    }
+
+    const updatedPost: Post = {
+      ...existingPost,
+      ...data,
+    };
+
+    this.posts.set(id, updatedPost);
+    return updatedPost;
   }
 
   async deletePost(id: number): Promise<boolean> {
