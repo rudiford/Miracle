@@ -285,10 +285,11 @@ export default function Register() {
               </Label>
               <Select onValueChange={(value) => form.setValue("country", value)} defaultValue={form.watch("country")}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select country" />
+                  <SelectValue placeholder="🇺🇸 Select country (United States first)" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="United States">🇺🇸 United States</SelectItem>
+                  <SelectItem value="---" disabled>────────────────</SelectItem>
                   <SelectItem value="Canada">🇨🇦 Canada</SelectItem>
                   <SelectItem value="United Kingdom">🇬🇧 United Kingdom</SelectItem>
                   <SelectItem value="Australia">🇦🇺 Australia</SelectItem>
