@@ -25,15 +25,15 @@ export default function DeleteAccount() {
   const [, setLocation] = useLocation();
   const { user, isLoading } = useAuth();
   // const { toast } = useToast();
-  const [reason, setReason] = useState(");
-  const [feedback, setFeedback] = useState(");
+  const [reason, setReason] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   const deleteAccountMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest("DELETE", "/api/users/delete-account", {
         reason,
         feedback,
-);
+      });
       return response.json();
     },
     onSuccess: () => {

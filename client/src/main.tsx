@@ -11,12 +11,12 @@ if ('serviceWorker' in navigator && !navigator.userAgent.includes('Brave')) {
       })
       .catch((registrationError) => {
         console.log('SW registration failed: ', registrationError);
-);
+      });
   });
 }
 
 try {
-  const root = document.getElementById("root);
+  const root = document.getElementById("root");
   if (!root) {
     throw new Error("Root element not found");
   }

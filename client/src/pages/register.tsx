@@ -70,13 +70,13 @@ export default function Register() {
       // Invalidate user data to refetch from server
       import("@/lib/queryClient").then(({ queryClient }) => {
         queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-);
+      });
       console.log("Profile updated successfully!");
       console.log("Profile updated successfully:", data);
     },
     onError: (error) => {
       console.error("Profile update error:", error);
-      console.error("Failed to update profile. Please try again.);
+      console.error("Failed to update profile. Please try again.");
     },
   });
 

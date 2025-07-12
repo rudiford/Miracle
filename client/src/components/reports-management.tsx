@@ -42,7 +42,7 @@ interface Report {
 
 export default function ReportsManagement() {
   // const { toast } = useToast();
-  const [filter, setFilter] = useState("pending);
+  const [filter, setFilter] = useState("pending");
 
   const { data: reports, isLoading } = useQuery({
     queryKey: ['/api/admin/reports'],
@@ -52,7 +52,7 @@ export default function ReportsManagement() {
     mutationFn: async ({ reportId, status }: { reportId: number; status: string }) => {
       const response = await apiRequest("PATCH", `/api/admin/reports/${reportId}`, {
         status,
-);
+      });
       return response.json();
     },
     onSuccess: () => {

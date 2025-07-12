@@ -69,7 +69,7 @@ export default function ReportPostModal({ open, onOpenChange, postId }: ReportPo
       const response = await apiRequest("POST", "/api/reports", {
         postId,
         reason: data.reason,
-);
+      });
       return response.json();
     },
     onSuccess: () => {
