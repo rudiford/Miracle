@@ -8,6 +8,14 @@ This is a full-stack Christian faith community application built with modern web
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**Cross Image Integration (July 12, 2025)**
+- Integrated user's custom black cross image across the application
+- Landing page: Large cross (288px) as main focal point, black color for contrast
+- Navigation header: Custom cross (48px) replaces SVG cross next to "Proof of a Miracle" title
+- Maintains visual consistency while using authentic user-provided imagery
+
 ## System Architecture
 
 The application follows a modern full-stack architecture with clear separation between frontend, backend, and data layers:
