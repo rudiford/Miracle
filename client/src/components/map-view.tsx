@@ -106,24 +106,34 @@ export default function MapView() {
     queryKey: ["/api/posts"],
   });
 
+  // Debug logging
+  console.log('All posts:', posts);
+  
   // Filter posts that have location data and add coordinates
   const postsWithLocation = posts.filter(post => 
     (post.latitude && post.longitude) || post.location
   ).map(post => {
     let lat, lng;
     
+    console.log('Processing post:', post.id, 'location:', post.location, 'lat:', post.latitude, 'lng:', post.longitude);
+    
     if (post.latitude && post.longitude) {
       lat = parseFloat(post.latitude);
       lng = parseFloat(post.longitude);
     } else if (post.location) {
       const coords = getCityCoordinates(post.location);
+      console.log('Coordinates for', post.location, ':', coords);
       if (coords) {
         [lat, lng] = coords;
       }
     }
     
-    return { ...post, mappedLat: lat, mappedLng: lng };
+    const result = { ...post, mappedLat: lat, mappedLng: lng };
+    console.log('Mapped result:', result);
+    return result;
   }).filter(post => post.mappedLat && post.mappedLng);
+  
+  console.log('Posts with location:', postsWithLocation);
 
   return (
     <div className="h-screen relative bg-blue-50">
