@@ -16,35 +16,15 @@ export default function Landing() {
     <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 text-white flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
-        {/* Wooden cross with purple cloth */}
-        <div className="mb-8">
-          <WoodenCross className="mb-4 mx-auto" size={300} />
-        </div>
-        
         <h1 className="text-4xl md:text-5xl font-bold mb-4 font-georgia">
           Proof of a Miracle
         </h1>
         
-        <p className="text-xl mb-8 max-w-md opacity-90">
+        <p className="text-xl mb-6 max-w-md opacity-90">
           Discovering miracles and faith experiences around the world
         </p>
         
-        {/* Faith community gathering placeholder */}
-        <div className="w-full max-w-sm mb-8">
-          <Card className="bg-white/10 border-white/20">
-            <CardContent className="p-6">
-              <div className="w-full h-48 bg-white/20 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-sm font-medium opacity-90 leading-relaxed">
-                    Share your faith experiences and God's miracles with others from around the world
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="space-y-4 w-full max-w-sm">
+        <div className="space-y-4 w-full max-w-sm mb-6">
           <Button 
             onClick={handleSignIn}
             className="w-full bg-faith-gold hover:bg-yellow-500 text-faith-blue font-semibold py-4 px-6 h-auto shadow-lg"
@@ -59,10 +39,28 @@ export default function Landing() {
           >
             Create Account
           </Button>
-          
-          <div className="pt-4">
-            <PWAInstallGuide />
-          </div>
+        </div>
+        
+        {/* Wooden cross with purple cloth */}
+        <div className="my-6">
+          <WoodenCross className="mx-auto" size={300} />
+        </div>
+        
+        {/* Faith community message */}
+        <div className="w-full max-w-md mb-6">
+          <Card className="bg-white/10 border-white/20">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <p className="text-sm font-medium opacity-90 leading-relaxed">
+                  Share your faith experiences and God's miracles with others from around the world
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="pt-2">
+          <PWAInstallGuide />
         </div>
       </div>
       
