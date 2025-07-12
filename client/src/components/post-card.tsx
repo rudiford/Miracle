@@ -47,14 +47,20 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       return await apiRequest("POST", `/api/posts/${post.id}/prayer`);
     },
     onSuccess: (response: any) => {
+      console.log("Prayer response:", response);
       setHasPrayed(response.action === "added");
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
       
+      const title = response.action === "added" ? "Prayer Added" : "Prayer Removed";
+      const description = response.action === "added" 
+        ? "Your prayer has been added to this miracle." 
+        : "Your prayer has been removed.";
+      
+      console.log("Toast message:", { title, description });
+      
       toast({
-        title: response.action === "added" ? "Prayer Added" : "Prayer Removed",
-        description: response.action === "added" 
-          ? "Your prayer has been added to this miracle." 
-          : "Your prayer has been removed.",
+        title,
+        description,
       });
     },
     onError: (error) => {
