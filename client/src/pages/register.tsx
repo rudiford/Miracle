@@ -92,6 +92,7 @@ export default function Register() {
       ...data,
       profileImageUrl,
     };
+    console.log("Submitting profile data:", formData);
     updateProfileMutation.mutate(formData);
   };
 

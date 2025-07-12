@@ -131,10 +131,17 @@ export class MemStorage implements IStorage {
 
   async updateUserProfile(id: string, data: Partial<User>): Promise<User | undefined> {
     const user = this.users.get(id);
-    if (!user) return undefined;
+    console.log("updateUserProfile - existing user:", user);
+    console.log("updateUserProfile - update data:", data);
+    
+    if (!user) {
+      console.log("User not found for ID:", id);
+      return undefined;
+    }
     
     const updatedUser = { ...user, ...data, updatedAt: new Date() };
     this.users.set(id, updatedUser);
+    console.log("updateUserProfile - final updated user:", updatedUser);
     return updatedUser;
   }
 
