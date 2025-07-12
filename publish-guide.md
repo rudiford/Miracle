@@ -71,9 +71,56 @@ Your app now includes:
 - **Cross platform** - works on Android, iPhone, desktop
 - **Auto-updates** - updates when you update the website
 
-## Next Steps
-1. Test the browser installation on your phone
-2. If you want Google Play Store distribution, I can help set up the Bubblewrap process
-3. Consider creating app store screenshots and description
+## Google Play Store Publishing Steps (After $25 Developer Account)
 
-Your faith community app is ready to reach believers worldwide! 🙏
+### Step 1: Install Bubblewrap
+Open terminal/command prompt and run:
+```bash
+npm install -g @bubblewrap/cli
+```
+
+### Step 2: Get Your App URL
+Your Replit app URL is something like: `https://miracle-verifier-rudyccc.replit.app`
+(Replace with your actual Replit URL)
+
+### Step 3: Create Android Project
+```bash
+mkdir proof-of-miracle-android
+cd proof-of-miracle-android
+bubblewrap init --manifest=https://YOUR-REPLIT-URL.replit.app/manifest.json
+```
+
+Follow the prompts:
+- **App name**: Proof of a Miracle
+- **Package name**: com.proofofmiracle.app (or similar)
+- **Display mode**: standalone
+- **Start URL**: /
+
+### Step 4: Build the App
+```bash
+bubblewrap build
+```
+This creates an `.aab` file (Android App Bundle)
+
+### Step 5: Upload to Google Play Console
+1. Go to https://play.google.com/console
+2. Create new app
+3. Upload the `.aab` file from the build
+4. Add screenshots (take from your phone)
+5. Write description about faith community app
+6. Submit for review (1-3 days)
+
+### Step 6: Testing
+Before submitting, test with:
+```bash
+bubblewrap install
+```
+(Installs on connected Android device)
+
+### Key Benefits:
+- Real Google Play Store listing
+- Automatic updates when you update website
+- Professional app distribution
+- Reaches millions of Android users
+
+Your $25 investment opens the door to the entire Google Play ecosystem! 📱
