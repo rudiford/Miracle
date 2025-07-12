@@ -18,7 +18,7 @@ export default function Landing() {
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
         {/* Wooden cross with purple cloth */}
         <div className="mb-8">
-          <WoodenCross className="mb-4 mx-auto" size={120} />
+          <WoodenCross className="mb-4 mx-auto" size={300} />
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold mb-4 font-georgia">
