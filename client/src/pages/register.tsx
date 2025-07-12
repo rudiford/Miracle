@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ import ProfileUpload from "@/components/profile-upload";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import HelpModal from "@/components/help-modal";
+import { useAuth } from "@/hooks/useAuth";
 
 const registerSchema = insertUserSchema.extend({
   profilePicture: z.any().optional(),
@@ -24,6 +25,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
   const form = useForm<RegisterForm>({
@@ -39,6 +41,23 @@ export default function Register() {
       country: "",
     },
   });
+
+  // Load existing user data when component mounts or user data changes
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        age: user.age || undefined,
+        gender: user.gender || "",
+        city: user.city || "",
+        state: user.state || "",
+        country: user.country || "",
+      });
+      setProfileImageUrl(user.profileImageUrl || null);
+    }
+  }, [user, form]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: RegisterForm) => {
