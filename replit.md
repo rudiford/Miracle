@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**User Blocking System Implementation (July 12, 2025)**
+- Added comprehensive user blocking functionality for community safety
+- Users can now block other users via post dropdown menu to prevent seeing their content
+- Blocked users are automatically filtered out from post feeds
+- Block/unblock API endpoints: POST/DELETE /api/users/:id/block
+- Blocking a user automatically removes any existing connection/friendship
+- Added blocked users management interface with unblock functionality
+- Backend storage includes blocks table with proper data relationships
+- Frontend shows "Block User" option in post dropdown for non-own posts
+- Toast notifications confirm successful blocking/unblocking actions
+
 **App Simplification - Feed-Only View (July 12, 2025)**
 - Completely removed map view functionality from the entire application
 - Simplified navigation to show only feed view with top navigation

@@ -90,6 +90,14 @@ export const loves = pgTable("loves", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// User blocks for blocking other users
+export const blocks = pgTable("blocks", {
+  id: serial("id").primaryKey(),
+  blockerId: varchar("blocker_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  blockedId: varchar("blocked_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Schema definitions
 export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
@@ -125,6 +133,10 @@ export const insertCommentSchema = createInsertSchema(comments).pick({
   content: true,
 });
 
+export const insertBlockSchema = createInsertSchema(blocks).pick({
+  blockedId: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -138,3 +150,5 @@ export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type Comment = typeof comments.$inferSelect;
 export type InsertComment = z.infer<typeof insertCommentSchema>;
 export type Prayer = typeof prayers.$inferSelect;
+export type Block = typeof blocks.$inferSelect;
+export type InsertBlock = z.infer<typeof insertBlockSchema>;

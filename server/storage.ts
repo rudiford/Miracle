@@ -6,6 +6,7 @@ import {
   comments,
   prayers,
   loves,
+  blocks,
   type User,
   type UpsertUser,
   type Post,
@@ -17,6 +18,7 @@ import {
   type Comment,
   type InsertComment,
   type Prayer,
+  type Block,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -63,6 +65,12 @@ export interface IStorage {
   addPrayer(userId: string, postId: number): Promise<Prayer>;
   removePrayer(userId: string, postId: number): Promise<boolean>;
   hasUserPrayed(userId: string, postId: number): Promise<boolean>;
+  
+  // Block operations
+  blockUser(blockerId: string, blockedId: string): Promise<any>;
+  unblockUser(blockerId: string, blockedId: string): Promise<boolean>;
+  isUserBlocked(blockerId: string, blockedId: string): Promise<boolean>;
+  getBlockedUsers(userId: string): Promise<User[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -73,6 +81,7 @@ export class MemStorage implements IStorage {
   private comments: Map<number, Comment> = new Map();
   private prayers: Map<number, Prayer> = new Map();
   private loves: Map<number, any> = new Map();
+  private blocks: Map<number, Block> = new Map();
   
   private currentPostId = 1;
   private currentConnectionId = 1;
@@ -80,6 +89,7 @@ export class MemStorage implements IStorage {
   private currentCommentId = 1;
   private currentPrayerId = 1;
   private currentLoveId = 1;
+  private currentBlockId = 1;
 
   // User operations
   async getUser(id: string): Promise<User | undefined> {
@@ -143,12 +153,21 @@ export class MemStorage implements IStorage {
     return post;
   }
 
-  async getAllPosts(): Promise<(Post & { user: User })[]> {
+  async getAllPosts(currentUserId?: string): Promise<(Post & { user: User })[]> {
     const postsArray = Array.from(this.posts.values());
-    const postsWithUsers = postsArray.map(post => {
+    let postsWithUsers = postsArray.map(post => {
       const user = this.users.get(post.userId);
       return { ...post, user: user! };
     }).filter(post => post.user);
+    
+    // Filter out posts from blocked users if currentUserId is provided
+    if (currentUserId) {
+      const blockedUserIds = Array.from(this.blocks.values())
+        .filter(b => b.blockerId === currentUserId)
+        .map(b => b.blockedId);
+      
+      postsWithUsers = postsWithUsers.filter(post => !blockedUserIds.includes(post.user.id));
+    }
     
     // Sort by creation date, newest first
     return postsWithUsers.sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
@@ -414,6 +433,64 @@ export class MemStorage implements IStorage {
       post.loveCount = post.loveCount - 1;
       this.posts.set(postId, post);
     }
+  }
+
+  // Block operations
+  async blockUser(blockerId: string, blockedId: string): Promise<any> {
+    // Check if already blocked
+    const existingBlock = Array.from(this.blocks.values())
+      .find(b => b.blockerId === blockerId && b.blockedId === blockedId);
+    
+    if (existingBlock) {
+      return existingBlock;
+    }
+
+    const block: Block = {
+      id: this.currentBlockId++,
+      blockerId,
+      blockedId,
+      createdAt: new Date(),
+    };
+    this.blocks.set(block.id, block);
+
+    // Remove any existing connection/friendship
+    const connections = Array.from(this.connections.values())
+      .filter(c => 
+        (c.requesterId === blockerId && c.addresseeId === blockedId) ||
+        (c.requesterId === blockedId && c.addresseeId === blockerId)
+      );
+    
+    connections.forEach(conn => {
+      this.connections.delete(conn.id);
+    });
+
+    return block;
+  }
+
+  async unblockUser(blockerId: string, blockedId: string): Promise<boolean> {
+    const block = Array.from(this.blocks.values())
+      .find(b => b.blockerId === blockerId && b.blockedId === blockedId);
+    
+    if (block) {
+      this.blocks.delete(block.id);
+      return true;
+    }
+    return false;
+  }
+
+  async isUserBlocked(blockerId: string, blockedId: string): Promise<boolean> {
+    return Array.from(this.blocks.values())
+      .some(b => b.blockerId === blockerId && b.blockedId === blockedId);
+  }
+
+  async getBlockedUsers(userId: string): Promise<User[]> {
+    const blockedUserIds = Array.from(this.blocks.values())
+      .filter(b => b.blockerId === userId)
+      .map(b => b.blockedId);
+    
+    return blockedUserIds
+      .map(id => this.users.get(id))
+      .filter(user => user !== undefined) as User[];
   }
 }
 

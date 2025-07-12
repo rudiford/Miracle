@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit } from "lucide-react";
+import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -142,6 +142,31 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
     setShowComments(true);
   };
 
+  const blockUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiRequest("POST", `/api/users/${userId}/block`);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "User Blocked",
+        description: "You have successfully blocked this user. You will no longer see their posts.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to block user",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleBlockUser = (userId: string) => {
+    blockUserMutation.mutate(userId);
+  };
+
 
 
   return (
@@ -191,7 +216,22 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <div className="w-8 h-8" /> // Empty space to maintain layout
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem 
+                onClick={() => handleBlockUser(post.user.id)}
+                className="text-red-600 focus:text-red-600"
+              >
+                <UserX className="w-4 h-4 mr-2" />
+                Block User
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
       
