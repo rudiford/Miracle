@@ -71,13 +71,22 @@ export default function Privacy() {
           <li>Limited access to personal information by staff</li>
         </ul>
 
-        <h2>Your Rights</h2>
+        <h2>Your Rights & Account Deletion</h2>
         <ul>
           <li><strong>Access:</strong> View your personal information</li>
           <li><strong>Correction:</strong> Update incorrect information</li>
           <li><strong>Deletion:</strong> Delete your account and associated data</li>
           <li><strong>Portability:</strong> Export your data in a readable format</li>
         </ul>
+        
+        <h3>Account Deletion Process</h3>
+        <p>You can request complete deletion of your account and all associated data through:</p>
+        <ul>
+          <li><strong>In-App:</strong> Settings menu → "Delete Account"</li>
+          <li><strong>Direct Link:</strong> <a href="/delete-account" className="text-faith-blue underline">proofofamiracle.com/delete-account</a></li>
+          <li><strong>Email:</strong> Contact support@proofofamiracle.com</li>
+        </ul>
+        <p><strong>Important:</strong> Account deletion is permanent and cannot be undone. All your posts, messages, and personal data will be completely removed within 30 days.</p>
 
         <h2>Contact Information</h2>
         <p><strong>Privacy Officer:</strong> Rudy Ced</p>

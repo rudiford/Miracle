@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home as HomeIcon, Search, Plus, MessageCircle, User } from "lucide-react";
+import { Home as HomeIcon, Search, Plus, MessageCircle, User, Settings, LogOut, MoreVertical, Trash2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import FeedView from "@/components/feed-view";
 import CreatePostModal from "@/components/create-post-modal";
 import HelpModal from "@/components/help-modal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Home() {
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -37,6 +44,10 @@ export default function Home() {
     setLocation("/register");
   };
 
+  const handleDeleteAccount = () => {
+    setLocation("/delete-account");
+  };
+
   return (
     <div className="min-h-screen bg-faith-light">
       {/* Top Navigation */}
@@ -52,7 +63,7 @@ export default function Home() {
               <h1 className="text-xl font-bold text-faith-text">Proof of a Miracle</h1>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               {/* Admin Button (if admin user) */}
               {user?.isAdmin && (
                 <Button
@@ -64,6 +75,34 @@ export default function Home() {
                   Admin
                 </Button>
               )}
+              
+              {/* User Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-2">
+                    <MoreVertical className="w-5 h-5 text-gray-600" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={handleProfile}>
+                    <Settings className="w-4 h-4 mr-2" />
+                    Profile Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleDeleteAccount}
+                    className="text-red-600 focus:text-red-600"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Account
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
           

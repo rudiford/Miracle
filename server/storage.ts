@@ -31,6 +31,7 @@ export interface IStorage {
   updateUserProfile(id: string, data: Partial<User>): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
   deleteUser(id: string): Promise<boolean>;
+  deleteUserCompletely(id: string): Promise<boolean>;
   
   // Post operations
   createPost(userId: string, post: InsertPost): Promise<Post>;
@@ -143,6 +144,96 @@ export class MemStorage implements IStorage {
 
   async deleteUser(id: string): Promise<boolean> {
     return this.users.delete(id);
+  }
+
+  async deleteUserCompletely(id: string): Promise<boolean> {
+    try {
+      // Delete user's posts
+      const userPosts = Array.from(this.posts.values()).filter(post => post.userId === id);
+      for (const post of userPosts) {
+        this.posts.delete(post.id);
+        
+        // Delete comments on user's posts
+        const postComments = Array.from(this.comments.values()).filter(comment => comment.postId === post.id);
+        for (const comment of postComments) {
+          this.comments.delete(comment.id);
+        }
+        
+        // Delete prayers on user's posts
+        const postPrayers = Array.from(this.prayers.values()).filter(prayer => prayer.postId === post.id);
+        for (const prayer of postPrayers) {
+          this.prayers.delete(prayer.id);
+        }
+        
+        // Delete loves on user's posts
+        const postLoves = Array.from(this.loves.values()).filter(love => love.postId === post.id);
+        for (const love of postLoves) {
+          this.loves.delete(love.id);
+        }
+        
+        // Delete reports on user's posts
+        const postReports = Array.from(this.reports.values()).filter(report => report.postId === post.id);
+        for (const report of postReports) {
+          this.reports.delete(report.id);
+        }
+      }
+      
+      // Delete user's comments on other posts
+      const userComments = Array.from(this.comments.values()).filter(comment => comment.userId === id);
+      for (const comment of userComments) {
+        this.comments.delete(comment.id);
+      }
+      
+      // Delete user's prayers
+      const userPrayers = Array.from(this.prayers.values()).filter(prayer => prayer.userId === id);
+      for (const prayer of userPrayers) {
+        this.prayers.delete(prayer.id);
+      }
+      
+      // Delete user's loves
+      const userLoves = Array.from(this.loves.values()).filter(love => love.userId === id);
+      for (const love of userLoves) {
+        this.loves.delete(love.id);
+      }
+      
+      // Delete user's connections (both as requester and addressee)
+      const userConnections = Array.from(this.connections.values()).filter(
+        connection => connection.requesterId === id || connection.addresseeId === id
+      );
+      for (const connection of userConnections) {
+        this.connections.delete(connection.id);
+      }
+      
+      // Delete user's messages (both sent and received)
+      const userMessages = Array.from(this.messages.values()).filter(
+        message => message.senderId === id || message.receiverId === id
+      );
+      for (const message of userMessages) {
+        this.messages.delete(message.id);
+      }
+      
+      // Delete user's blocks (both as blocker and blocked)
+      const userBlocks = Array.from(this.blocks.values()).filter(
+        block => block.blockerId === id || block.blockedId === id
+      );
+      for (const block of userBlocks) {
+        this.blocks.delete(block.id);
+      }
+      
+      // Delete user's reports
+      const userReports = Array.from(this.reports.values()).filter(report => report.reporterId === id);
+      for (const report of userReports) {
+        this.reports.delete(report.id);
+      }
+      
+      // Finally, delete the user account
+      const deleted = this.users.delete(id);
+      
+      return deleted;
+    } catch (error) {
+      console.error('Error in deleteUserCompletely:', error);
+      return false;
+    }
   }
 
   // Post operations

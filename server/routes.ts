@@ -42,6 +42,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account deletion endpoint (GDPR compliance)
+  app.delete('/api/users/delete-account', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { reason, feedback } = req.body;
+
+      // Log deletion request for compliance
+      console.log(`Account deletion requested by user ${userId}`, {
+        reason,
+        feedback,
+        timestamp: new Date().toISOString()
+      });
+
+      // Delete all user data
+      const deleted = await storage.deleteUserCompletely(userId);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Destroy the session
+      req.logout(() => {
+        req.session.destroy(() => {
+          res.json({ 
+            message: "Account and all associated data have been permanently deleted",
+            deletedAt: new Date().toISOString()
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Error deleting user account:", error);
+      res.status(500).json({ message: "Failed to delete account" });
+    }
+  });
+
   // User profile routes
   app.put('/api/users/profile', isAuthenticated, async (req: any, res) => {
     try {

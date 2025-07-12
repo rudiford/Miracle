@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**Account Deletion System Implementation (July 12, 2025)**
+- Added GDPR-compliant account deletion functionality for Google Play Store compliance
+- Users can delete their account via Settings menu → "Delete Account" option
+- Complete deletion of all user data: posts, comments, messages, connections, prayers, blocks, reports
+- Account deletion page with warning messages and optional feedback collection
+- Backend API endpoint: DELETE /api/users/delete-account with session destruction
+- Privacy policy updated with account deletion process and user rights information
+- Direct link available at /delete-account for external access and Google Play requirements
+- Permanent deletion within 30 days as stated in privacy policy
+
 **Content Reporting System Implementation (July 12, 2025)**
 - Added comprehensive post reporting functionality for community moderation
 - Users can report inappropriate posts via "Report Post" button in post dropdown menu
