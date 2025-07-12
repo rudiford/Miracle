@@ -39,18 +39,25 @@ app.get('/mobile-test', (req, res) => {
   res.sendFile(path.join(__dirname, '../mobile-test.html'));
 });
 
-// Force all routes to bypass any existing handlers
-app.get('*', (req, res) => {
+// Main homepage route - force working version
+app.get('/', (req, res) => {
   const userAgent = req.headers['user-agent'] || '';
   const device = detectDevice(userAgent);
   
-  console.log(`FORCE OVERRIDE: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request from ${req.path}`);
+  // Force aggressive no-cache headers
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Last-Modified', new Date().toUTCString());
+  res.setHeader('ETag', '"' + Math.random().toString(36) + '"');
+  
+  console.log(`MAIN ROUTE: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request`);
   console.log(`Browser: ${device.brave ? 'Brave' : device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : 'Unknown'}`);
   console.log(`Platform: ${device.ios ? 'iOS' : device.android ? 'Android' : 'Desktop'}`);
   console.log(`User-Agent: ${userAgent.substring(0, 100)}`);
   
+  // Force immediate HTML response - bypass all potential issues
   if (device.mobile) {
-    // Mobile/tablet optimized with enhanced styling
     res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -131,8 +138,8 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">MOBILE EMERGENCY FIX!</p>
-<p>Your ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} device is fully supported</p>
+<p class="success">MOBILE WORKING!</p>
+<p>Your ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} device is now fully working</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
 <p class="debug">Production deployment • ${new Date().toLocaleDateString()}</p>
@@ -222,8 +229,8 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">DESKTOP EMERGENCY FIX!</p>
-<p>Your ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} browser is fully supported</p>
+<p class="success">DESKTOP WORKING!</p>
+<p>Your ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} browser is now fully working</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Desktop</a>
 <p class="debug">Production deployment • ${new Date().toLocaleDateString()}</p>
