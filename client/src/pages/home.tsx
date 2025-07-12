@@ -6,6 +6,7 @@ import FeedView from "@/components/feed-view";
 import MapView from "@/components/map-view";
 import BottomNavigation from "@/components/bottom-navigation";
 import CreatePostModal from "@/components/create-post-modal";
+import HelpModal from "@/components/help-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -124,6 +125,9 @@ export default function Home() {
         open={showCreatePost} 
         onOpenChange={setShowCreatePost} 
       />
+
+      {/* Help Modal */}
+      <HelpModal currentView={currentView} />
     </div>
   );
 }

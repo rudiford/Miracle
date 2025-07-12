@@ -13,6 +13,7 @@ import { insertUserSchema } from "@shared/schema";
 import ProfileUpload from "@/components/profile-upload";
 import { useLocation } from "wouter";
 import { z } from "zod";
+import HelpModal from "@/components/help-modal";
 
 const registerSchema = insertUserSchema.extend({
   profilePicture: z.any().optional(),
@@ -221,6 +222,9 @@ export default function Register() {
           </Button>
         </form>
       </div>
+      
+      {/* Help Modal */}
+      <HelpModal currentView="register" />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
+import HelpModal from "@/components/help-modal";
 
 interface Conversation {
   user: {
@@ -121,6 +122,9 @@ export default function Messages() {
           ))
         )}
       </div>
+      
+      {/* Help Modal */}
+      <HelpModal currentView="messages" />
     </div>
   );
 }
