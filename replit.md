@@ -37,7 +37,11 @@ Preferred communication style: Simple, everyday language.
 - Added comprehensive error boundaries and fallback UI
 - Improved authentication error handling to prevent unnecessary error displays
 - Added window error event suppression for runtime error overlay
-- Status: Preview window should now work across all browsers including Brave desktop
+- Created multiple alternative access methods for preview window compatibility:
+  * /test.html - Basic functionality test page
+  * /clean.html - Full HTML/JavaScript version with all features
+  * /minimal.html - Minimal test page with API connectivity testing
+- Status: Working on resolving persistent preview window issues with Vite development server
 
 **Account Deletion System Implementation (July 12, 2025)**
 - Added GDPR-compliant account deletion functionality for Google Play Store compliance

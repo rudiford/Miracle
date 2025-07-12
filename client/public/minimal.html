@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Proof of a Miracle</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: Arial, sans-serif; 
+            background: #1e40af;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            color: #333;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        button {
+            background: #1e40af;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover { background: #1e3a8a; }
+        .status { margin: 20px 0; padding: 10px; background: #f0f0f0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✝️ Proof of a Miracle</h1>
+        <p>Faith Community App</p>
+        
+        <div class="status" id="status">
+            Loading...
+        </div>
+        
+        <button onclick="testAPI()">Test API Connection</button>
+        <button onclick="testAuth()">Test Authentication</button>
+        <button onclick="goToApp()">Go to Main App</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+        
+        function addResult(message) {
+            const div = document.createElement('div');
+            div.style.margin = '10px 0';
+            div.style.padding = '10px';
+            div.style.background = '#e8f4f8';
+            div.style.borderRadius = '5px';
+            div.textContent = message;
+            document.getElementById('results').appendChild(div);
+        }
+        
+        async function testAPI() {
+            updateStatus('Testing API...');
+            try {
+                const response = await fetch('/api/auth/user');
+                if (response.status === 401) {
+                    addResult('✅ API Working: Server responding (401 - not logged in)');
+                } else if (response.ok) {
+                    const user = await response.json();
+                    addResult('✅ API Working: User authenticated - ' + user.firstName);
+                } else {
+                    addResult('⚠️ API Response: ' + response.status);
+                }
+                updateStatus('API test complete');
+            } catch (error) {
+                addResult('❌ API Error: ' + error.message);
+                updateStatus('API test failed');
+            }
+        }
+        
+        async function testAuth() {
+            updateStatus('Testing authentication...');
+            try {
+                const response = await fetch('/api/auth/user');
+                if (response.status === 401) {
+                    addResult('Not logged in - redirecting to login...');
+                    setTimeout(() => {
+                        window.location.href = '/api/auth/login';
+                    }, 2000);
+                } else if (response.ok) {
+                    const user = await response.json();
+                    addResult('✅ Already logged in as: ' + user.firstName + ' ' + user.lastName);
+                    updateStatus('Authentication successful');
+                } else {
+                    addResult('❌ Auth error: ' + response.status);
+                    updateStatus('Authentication failed');
+                }
+            } catch (error) {
+                addResult('❌ Auth test failed: ' + error.message);
+                updateStatus('Authentication test failed');
+            }
+        }
+        
+        function goToApp() {
+            addResult('Redirecting to main app...');
+            window.location.href = '/';
+        }
+        
+        // Auto-test on load
+        setTimeout(() => {
+            updateStatus('Ready for testing');
+            testAPI();
+        }, 1000);
+        
+        console.log('Minimal test page loaded successfully');
+        console.log('Browser:', navigator.userAgent);
+        console.log('Location:', window.location.href);
+    </script>
+</body>
+</html>
