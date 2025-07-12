@@ -42,6 +42,7 @@ export const posts = pgTable("posts", {
   location: varchar("location"), // Human readable location
   prayerCount: integer("prayer_count").default(0),
   commentCount: integer("comment_count").default(0),
+  loveCount: integer("love_count").default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -75,6 +76,14 @@ export const comments = pgTable("comments", {
 
 // Prayers on posts
 export const prayers = pgTable("prayers", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Loves on posts
+export const loves = pgTable("loves", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),

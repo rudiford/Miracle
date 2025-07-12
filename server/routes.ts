@@ -261,6 +261,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Love routes
+  app.post('/api/posts/:id/love', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const postId = parseInt(req.params.id);
+      
+      const hasLoved = await storage.hasUserLoved(userId, postId);
+      if (hasLoved) {
+        await storage.removeLove(userId, postId);
+        res.json({ action: 'removed' });
+      } else {
+        await storage.addLove(userId, postId);
+        res.json({ action: 'added' });
+      }
+    } catch (error) {
+      console.error("Error toggling love:", error);
+      res.status(500).json({ message: "Failed to toggle love" });
+    }
+  });
+
   // Comment routes
   app.get('/api/posts/:id/comments', isAuthenticated, async (req: any, res) => {
     try {

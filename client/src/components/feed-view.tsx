@@ -14,6 +14,7 @@ interface Post {
   location?: string;
   prayerCount: number;
   commentCount: number;
+  loveCount: number;
   createdAt: string;
   user: {
     id: string;

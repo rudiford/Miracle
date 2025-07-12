@@ -20,6 +20,7 @@ interface Post {
   location?: string;
   prayerCount: number;
   commentCount: number;
+  loveCount: number;
   createdAt: string;
   user: {
     id: string;
@@ -36,6 +37,7 @@ interface PostCardProps {
 
 export default function PostCard({ post, onEditPost }: PostCardProps) {
   const [hasPrayed, setHasPrayed] = useState(false);
+  const [hasLoved, setHasLoved] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -76,6 +78,40 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
     },
   });
 
+  const loveMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", `/api/posts/${post.id}/love`);
+      const data = await response.json();
+      console.log("Love API response:", data);
+      return data;
+    },
+    onSuccess: (response: any) => {
+      console.log("Love response:", response);
+      setHasLoved(response.action === "added");
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      
+      const title = response.action === "added" ? "Love Added" : "Love Removed";
+      const description = response.action === "added" 
+        ? "Your love has been added to this post." 
+        : "Your love has been removed.";
+      
+      console.log("Love toast message:", { title, description });
+      
+      toast({
+        title,
+        description,
+      });
+    },
+    onError: (error) => {
+      console.error("Love toggle error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update love. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -94,6 +130,10 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
 
   const handlePrayer = () => {
     prayerMutation.mutate();
+  };
+
+  const handleLove = () => {
+    loveMutation.mutate();
   };
 
   const handleComment = () => {
@@ -190,19 +230,23 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       )}
       
       {/* Post Actions */}
-      <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
+      <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-around">
         <Button 
           variant="ghost" 
           size="sm"
           onClick={handlePrayer}
           disabled={prayerMutation.isPending}
-          className={`flex items-center space-x-2 transition-colors ${
+          className={`flex items-center space-x-1 transition-colors ${
             hasPrayed 
               ? "text-faith-blue bg-blue-50" 
               : "text-gray-600 hover:text-faith-blue"
           }`}
         >
-          <Heart className={`w-4 h-4 ${hasPrayed ? "fill-current" : ""}`} />
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-4 h-auto"
+          />
           <span className="text-sm">Pray</span>
           <span className="text-sm">{post.prayerCount}</span>
         </Button>
@@ -210,8 +254,24 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
         <Button 
           variant="ghost" 
           size="sm"
+          onClick={handleLove}
+          disabled={loveMutation.isPending}
+          className={`flex items-center space-x-1 transition-colors ${
+            hasLoved 
+              ? "text-red-500 bg-red-50" 
+              : "text-gray-600 hover:text-red-500"
+          }`}
+        >
+          <Heart className={`w-4 h-4 ${hasLoved ? "fill-current text-red-500" : ""}`} />
+          <span className="text-sm">Love</span>
+          <span className="text-sm">{post.loveCount}</span>
+        </Button>
+        
+        <Button 
+          variant="ghost" 
+          size="sm"
           onClick={handleComment}
-          className="flex items-center space-x-2 text-gray-600 hover:text-faith-blue transition-colors"
+          className="flex items-center space-x-1 text-gray-600 hover:text-faith-blue transition-colors"
         >
           <MessageCircle className="w-4 h-4" />
           <span className="text-sm">Comment</span>
@@ -222,7 +282,7 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
           variant="ghost" 
           size="sm"
           onClick={handleShare}
-          className="flex items-center space-x-2 text-gray-600 hover:text-faith-blue transition-colors"
+          className="flex items-center space-x-1 text-gray-600 hover:text-faith-blue transition-colors"
         >
           <Share className="w-4 h-4" />
           <span className="text-sm">Share</span>

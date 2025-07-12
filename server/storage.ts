@@ -5,6 +5,7 @@ import {
   messages,
   comments,
   prayers,
+  loves,
   type User,
   type UpsertUser,
   type Post,
@@ -35,6 +36,13 @@ export interface IStorage {
   incrementPrayerCount(postId: number): Promise<void>;
   decrementPrayerCount(postId: number): Promise<void>;
   
+  // Love operations
+  addLove(userId: string, postId: number): Promise<any>;
+  removeLove(userId: string, postId: number): Promise<boolean>;
+  hasUserLoved(userId: string, postId: number): Promise<boolean>;
+  incrementLoveCount(postId: number): Promise<void>;
+  decrementLoveCount(postId: number): Promise<void>;
+  
   // Connection operations
   createConnection(requesterId: string, connection: InsertConnection): Promise<Connection>;
   getConnectionsByUser(userId: string): Promise<(Connection & { requester: User; addressee: User })[]>;
@@ -64,12 +72,14 @@ export class MemStorage implements IStorage {
   private messages: Map<number, Message> = new Map();
   private comments: Map<number, Comment> = new Map();
   private prayers: Map<number, Prayer> = new Map();
+  private loves: Map<number, any> = new Map();
   
   private currentPostId = 1;
   private currentConnectionId = 1;
   private currentMessageId = 1;
   private currentCommentId = 1;
   private currentPrayerId = 1;
+  private currentLoveId = 1;
 
   // User operations
   async getUser(id: string): Promise<User | undefined> {
@@ -126,6 +136,7 @@ export class MemStorage implements IStorage {
       location: postData.location ?? null,
       prayerCount: 0,
       commentCount: 0,
+      loveCount: 0,
       createdAt: new Date(),
     };
     this.posts.set(post.id, post);
@@ -357,6 +368,52 @@ export class MemStorage implements IStorage {
   async hasUserPrayed(userId: string, postId: number): Promise<boolean> {
     return Array.from(this.prayers.values())
       .some(p => p.userId === userId && p.postId === postId);
+  }
+
+  // Love operations
+  async addLove(userId: string, postId: number): Promise<any> {
+    const love = {
+      id: this.currentLoveId++,
+      userId,
+      postId,
+      createdAt: new Date(),
+    };
+    this.loves.set(love.id, love);
+    await this.incrementLoveCount(postId);
+    return love;
+  }
+
+  async removeLove(userId: string, postId: number): Promise<boolean> {
+    const love = Array.from(this.loves.values())
+      .find(l => l.userId === userId && l.postId === postId);
+    
+    if (love) {
+      this.loves.delete(love.id);
+      await this.decrementLoveCount(postId);
+      return true;
+    }
+    return false;
+  }
+
+  async hasUserLoved(userId: string, postId: number): Promise<boolean> {
+    return Array.from(this.loves.values())
+      .some(l => l.userId === userId && l.postId === postId);
+  }
+
+  async incrementLoveCount(postId: number): Promise<void> {
+    const post = this.posts.get(postId);
+    if (post) {
+      post.loveCount = (post.loveCount || 0) + 1;
+      this.posts.set(postId, post);
+    }
+  }
+
+  async decrementLoveCount(postId: number): Promise<void> {
+    const post = this.posts.get(postId);
+    if (post && post.loveCount && post.loveCount > 0) {
+      post.loveCount = post.loveCount - 1;
+      this.posts.set(postId, post);
+    }
   }
 }
 
