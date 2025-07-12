@@ -35,8 +35,9 @@ export default function Landing() {
             <CardContent className="p-6">
               <div className="w-full h-48 bg-white/20 rounded-lg flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-lg font-semibold opacity-90">Faith Community</p>
-                  <p className="text-sm opacity-75 mt-2">Gathering in His name</p>
+                  <p className="text-sm font-medium opacity-90 leading-relaxed">
+                    Share your faith experiences and God's miracles with others from around the world
+                  </p>
                 </div>
               </div>
             </CardContent>
