@@ -34,8 +34,9 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // Set to false for development
+      secure: process.env.NODE_ENV === 'production',
       maxAge: sessionTtl,
+      sameSite: 'lax',
     },
   });
 }
@@ -82,12 +83,14 @@ export async function setupAuth(app: Express) {
 
   for (const domain of process.env
     .REPLIT_DOMAINS!.split(",")) {
+    const trimmedDomain = domain.trim();
+    console.log(`Setting up auth strategy for domain: ${trimmedDomain}`);
     const strategy = new Strategy(
       {
-        name: `replitauth:${domain}`,
+        name: `replitauth:${trimmedDomain}`,
         config,
         scope: "openid email profile offline_access",
-        callbackURL: `https://${domain}/api/callback`,
+        callbackURL: `https://${trimmedDomain}/api/callback`,
       },
       verify,
     );
@@ -98,13 +101,33 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
-      prompt: "login consent",
-      scope: ["openid", "email", "profile", "offline_access"],
-    })(req, res, next);
+    const hostname = req.hostname;
+    console.log(`Login attempt for hostname: ${hostname}`);
+    console.log(`Headers host: ${req.headers.host}`);
+    
+    // Check if the strategy exists
+    const strategyName = `replitauth:${hostname}`;
+    try {
+      if (!passport._strategy(strategyName)) {
+        console.error(`Authentication strategy not found for: ${strategyName}`);
+        return res.status(500).json({ 
+          message: `Authentication not configured for domain: ${hostname}`,
+          availableDomains: process.env.REPLIT_DOMAINS?.split(',') || []
+        });
+      }
+      
+      passport.authenticate(strategyName, {
+        prompt: "login consent",
+        scope: ["openid", "email", "profile", "offline_access"],
+      })(req, res, next);
+    } catch (error) {
+      console.error(`Login error for ${hostname}:`, error);
+      res.status(500).json({ message: "Authentication error" });
+    }
   });
 
   app.get("/api/callback", (req, res, next) => {
+    console.log(`Callback for hostname: ${req.hostname}`);
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
