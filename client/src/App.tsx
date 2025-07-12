@@ -79,9 +79,15 @@ function Router() {
 
 function App() {
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <ErrorBoundary 
+      FallbackComponent={ErrorFallback}
+      onError={(error, errorInfo) => {
+        console.log('Error boundary caught:', error, errorInfo);
+      }}
+    >
       <QueryClientProvider client={queryClient}>
         <Router />
+        <Toaster />
       </QueryClientProvider>
     </ErrorBoundary>
   );

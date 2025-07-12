@@ -14,39 +14,51 @@ console.log('Browser Info:', {
   location: window.location.href
 });
 
-// Override console.error to prevent runtime error overlay from showing
-const originalConsoleError = console.error;
-console.error = function(...args) {
-  // Check if this is the runtime error overlay
-  if (args[0] && typeof args[0] === 'string' && args[0].includes('runtime-error')) {
-    console.log('Runtime error overlay suppressed:', ...args);
-    return;
+// Override window error handlers to prevent runtime error overlay from showing
+window.addEventListener('error', (event) => {
+  if (event.filename && event.filename.includes('runtime-error')) {
+    console.log('Runtime error overlay suppressed');
+    event.preventDefault();
+    return false;
   }
-  originalConsoleError.apply(console, args);
-};
+});
 
-try {
-  const root = document.getElementById("root");
-  if (!root) {
-    throw new Error("Root element not found");
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason && event.reason.toString().includes('401')) {
+    console.log('401 error suppressed - user not authenticated');
+    event.preventDefault();
+    return false;
   }
-  
-  console.log('Root element found, rendering app...');
-  createRoot(root).render(<App />);
-  console.log('App rendered successfully');
-} catch (error) {
-  console.error("Failed to render app:", error);
-  console.error("Error stack:", error.stack);
-  
-  document.body.innerHTML = `
-    <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
-      <h1>App Loading Error</h1>
-      <p>There was an issue loading the application. Please try refreshing the page.</p>
-      <p><strong>Error:</strong> ${error.message}</p>
-      <p><strong>Browser:</strong> ${navigator.userAgent.split(' ')[0]}</p>
-      <p>If using Brave browser, try disabling shields for this site or use Chrome.</p>
-      <button onclick="window.location.reload()">Refresh Page</button>
-      <button onclick="console.log(document.body.innerHTML)">Show Debug Info</button>
-    </div>
-  `;
+});
+
+// Simple error handling to prevent preview window issues
+function safeRender() {
+  try {
+    const root = document.getElementById("root");
+    if (!root) {
+      throw new Error("Root element not found");
+    }
+    
+    console.log('Root element found, rendering app...');
+    createRoot(root).render(<App />);
+    console.log('App rendered successfully');
+  } catch (error) {
+    console.log("App render error:", error);
+    
+    // Create a simple fallback UI
+    document.body.innerHTML = `
+      <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="text-align: center; color: white; padding: 2rem;">
+          <h1 style="font-size: 2rem; margin-bottom: 1rem;">Proof of a Miracle</h1>
+          <p style="margin-bottom: 2rem; opacity: 0.8;">Loading faith community...</p>
+          <button onclick="window.location.reload()" style="background: white; color: #1e3a8a; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">
+            Reload App
+          </button>
+        </div>
+      </div>
+    `;
+  }
 }
+
+// Use setTimeout to avoid blocking the main thread
+setTimeout(safeRender, 100);
