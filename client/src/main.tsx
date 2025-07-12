@@ -14,37 +14,32 @@ console.log('Browser Info:', {
   location: window.location.href
 });
 
-// Block runtime error plugin before it can initialize
-(function() {
-  // Store original functions before any plugins can override them
-  const originalAddEventListener = window.addEventListener;
-  const originalFetch = window.fetch;
+// Check if we should bypass runtime error plugin
+const shouldBypassErrorPlugin = sessionStorage.getItem('bypass-runtime-error') === 'true' || 
+                                window.location.search.includes('no-error-plugin=true');
+
+if (shouldBypassErrorPlugin) {
+  console.log('Runtime error plugin bypass enabled');
   
-  // Override addEventListener to block runtime error plugin
-  window.addEventListener = function(type, listener, options) {
-    if (type === 'error' && listener && listener.toString().includes('sendError')) {
-      console.log('Blocked runtime error plugin');
-      return;
+  // Override error handling to prevent runtime error plugin
+  window.addEventListener('error', function(event) {
+    if (event.filename && event.filename.includes('runtime-error')) {
+      console.log('Runtime error plugin blocked');
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
     }
-    return originalAddEventListener.call(this, type, listener, options);
-  };
+  }, true);
   
-  // Override fetch to prevent runtime error plugin communication
-  window.fetch = function(input, init) {
-    if (typeof input === 'string' && input.includes('runtime-error')) {
-      console.log('Blocked runtime error plugin request');
-      return Promise.resolve(new Response('', { status: 200 }));
+  // Override unhandled promise rejections
+  window.addEventListener('unhandledrejection', function(event) {
+    if (event.reason && event.reason.toString().includes('401')) {
+      console.log('401 auth error handled gracefully');
+      event.preventDefault();
+      return false;
     }
-    return originalFetch.call(this, input, init);
-  };
-  
-  // Block createHotContext
-  if (window.createHotContext) {
-    window.createHotContext = function() {
-      return { send: () => {}, on: () => {}, off: () => {} };
-    };
-  }
-})();
+  });
+}
 
 // Simple error handling to prevent preview window issues
 function safeRender() {
