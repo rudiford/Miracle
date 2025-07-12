@@ -192,8 +192,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(post);
     } catch (error) {
       console.error("Error creating post:", error);
-      console.error("Error stack:", error.stack);
-      res.status(500).json({ message: "Failed to create post", error: error.message });
+      console.error("Error stack:", (error as Error).stack);
+      res.status(500).json({ message: "Failed to create post", error: (error as Error).message });
     }
   });
 
@@ -436,6 +436,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error searching users:", error);
       res.status(500).json({ message: "Failed to search users" });
+    }
+  });
+
+  // Comment routes
+  app.get('/api/posts/:id/comments', isAuthenticated, async (req: any, res) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const comments = await storage.getCommentsByPost(postId);
+      res.json(comments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      res.status(500).json({ message: "Failed to fetch comments" });
+    }
+  });
+
+  app.post('/api/posts/:id/comments', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const postId = parseInt(req.params.id);
+      
+      const commentData = {
+        ...req.body,
+        postId,
+      };
+      
+      const validatedData = insertCommentSchema.parse(commentData);
+      const comment = await storage.createComment(userId, validatedData);
+      
+      res.json(comment);
+    } catch (error) {
+      console.error("Error creating comment:", error);
+      res.status(500).json({ message: "Failed to create comment", error: (error as Error).message });
     }
   });
 

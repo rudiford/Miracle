@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
+import CommentsModal from "./comments-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +39,7 @@ interface PostCardProps {
 export default function PostCard({ post, onEditPost }: PostCardProps) {
   const [hasPrayed, setHasPrayed] = useState(false);
   const [hasLoved, setHasLoved] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -137,11 +139,7 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
   };
 
   const handleComment = () => {
-    // TODO: Implement comment functionality
-    toast({
-      title: "Coming Soon",
-      description: "Comment functionality will be available soon.",
-    });
+    setShowComments(true);
   };
 
   const handleShare = () => {
@@ -288,6 +286,13 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
           <span className="text-sm">Share</span>
         </Button>
       </div>
+      
+      {/* Comments Modal */}
+      <CommentsModal 
+        open={showComments}
+        onOpenChange={setShowComments}
+        postId={post.id}
+      />
     </Card>
   );
 }
