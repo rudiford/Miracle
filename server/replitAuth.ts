@@ -90,7 +90,7 @@ export async function setupAuth(app: Express) {
         name: `replitauth:${trimmedDomain}`,
         config,
         scope: "openid email profile offline_access",
-        callbackURL: `https://${trimmedDomain}/api/callback`,
+        callbackURL: `https://${trimmedDomain}/api/auth/callback`,
       },
       verify,
     );
@@ -100,7 +100,7 @@ export async function setupAuth(app: Express) {
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
-  app.get("/api/login", (req, res, next) => {
+  app.get("/api/auth/login", (req, res, next) => {
     const hostname = req.hostname;
     console.log(`Login attempt for hostname: ${hostname}`);
     console.log(`Headers host: ${req.headers.host}`);
@@ -126,15 +126,16 @@ export async function setupAuth(app: Express) {
     }
   });
 
-  app.get("/api/callback", (req, res, next) => {
+  app.get("/api/auth/callback", (req, res, next) => {
     console.log(`Callback for hostname: ${req.hostname}`);
+    console.log(`Callback query params:`, req.query);
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/",
-      failureRedirect: "/api/login",
+      failureRedirect: "/api/auth/login",
     })(req, res, next);
   });
 
-  app.get("/api/logout", (req, res) => {
+  app.get("/api/auth/logout", (req, res) => {
     req.logout(() => {
       res.redirect(
         client.buildEndSessionUrl(config, {
