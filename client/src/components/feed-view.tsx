@@ -107,7 +107,6 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
       <div className="space-y-4 p-4">
         {posts.length === 0 ? (
           <div className="text-center py-12">
-            <Cross className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-faith-text mb-2">Share Your First Miracle</h3>
             <p className="text-gray-600 mb-4">
               Be the first to share a faith experience with the community
