@@ -44,8 +44,9 @@ export default function Register() {
 
   // Load existing user data when component mounts or user data changes
   useEffect(() => {
+    console.log("User data in register component:", user);
     if (user) {
-      form.reset({
+      const userData = {
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         email: user.email || "",
@@ -54,7 +55,9 @@ export default function Register() {
         city: user.city || "",
         state: user.state || "",
         country: user.country || "",
-      });
+      };
+      console.log("Setting form data:", userData);
+      form.reset(userData);
       setProfileImageUrl(user.profileImageUrl || null);
     }
   }, [user, form]);
@@ -63,12 +66,16 @@ export default function Register() {
     mutationFn: async (data: RegisterForm) => {
       return await apiRequest("PUT", "/api/users/profile", data);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate user data to refetch from server
+      import("@/lib/queryClient").then(({ queryClient }) => {
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      });
       toast({
         title: "Profile Updated",
         description: "Your profile has been saved successfully!",
       });
-      // Don't redirect, stay on profile page
+      console.log("Profile updated successfully:", data);
     },
     onError: (error) => {
       console.error("Profile update error:", error);
