@@ -44,7 +44,10 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
 
   const prayerMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("POST", `/api/posts/${post.id}/prayer`);
+      const response = await apiRequest("POST", `/api/posts/${post.id}/prayer`);
+      const data = await response.json();
+      console.log("Parsed API response:", data);
+      return data;
     },
     onSuccess: (response: any) => {
       console.log("Prayer response:", response);
