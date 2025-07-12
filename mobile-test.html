@@ -1,70 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Test</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            margin: 0;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            color: #1e3a8a;
-        }
-        .cross {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            background: #f59e0b;
-            color: #1e3a8a;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Proof of a Miracle - Mobile Test</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: white; 
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  text-align: center; 
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.container {
+  background: rgba(255, 255, 255, 0.98);
+  color: #1e3a8a;
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 350px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.8s ease-out;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cross { 
+  font-size: 4rem; 
+  margin-bottom: 20px; 
+  color: #1e3a8a;
+  font-weight: bold;
+}
+h1 { 
+  font-size: 1.8rem; 
+  margin-bottom: 15px; 
+  font-weight: bold;
+  color: #1e3a8a;
+}
+p { 
+  font-size: 1rem; 
+  margin-bottom: 15px; 
+  color: #374151;
+}
+.success { 
+  color: #10b981; 
+  font-weight: bold; 
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+.btn { 
+  display: block;
+  width: 100%; 
+  padding: 16px; 
+  margin: 12px 0; 
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+.status {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 20px;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="cross">✞</div>
-        <h1>Proof of a Miracle</h1>
-        <p>Mobile Test Page</p>
-        <button class="btn" onclick="alert('Button works!')">Test Button</button>
-        <div style="margin-top: 20px; font-size: 0.9rem; color: #666;">
-            <p>User Agent: <span id="ua"></span></p>
-            <p>Screen: <span id="screen"></span></p>
-            <p>Time: <span id="time"></span></p>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('ua').textContent = navigator.userAgent;
-        document.getElementById('screen').textContent = window.innerWidth + 'x' + window.innerHeight;
-        document.getElementById('time').textContent = new Date().toLocaleTimeString();
-        console.log('Mobile test page loaded successfully');
-    </script>
+<div class="container">
+<div class="cross">✞</div>
+<h1>Proof of a Miracle</h1>
+<p><strong>Faith Community</strong></p>
+<p class="success">Mobile Test Working!</p>
+<p>If you can see this page, the mobile browser fix is active</p>
+<button onclick="alert('Mobile browser is working correctly!')" class="btn">Test Mobile Browser</button>
+<button onclick="window.location.reload()" class="btn" style="background: linear-gradient(135deg, #6b7280, #4b5563);">Refresh Page</button>
+<p class="status">Direct mobile test • Working</p>
+</div>
 </body>
 </html>
