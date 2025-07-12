@@ -20,24 +20,24 @@ export default function Landing() {
           <img 
             src="/cross.png" 
             alt="Cross" 
-            className="mx-auto w-80 h-auto"
+            className="mx-auto w-60 h-auto"
           />
         </div>
         
-        <h1 className="text-5xl md:text-6xl font-bold mb-2 font-georgia">
+        <h1 className="text-4xl md:text-5xl font-bold mb-2 font-georgia">
           Proof of a Miracle
         </h1>
         
-        <p className="text-2xl mb-3 max-w-lg opacity-90">
+        <p className="text-xl mb-3 max-w-lg opacity-90">
           Discovering miracles and faith experiences around the world
         </p>
         
         {/* Faith community message */}
         <div className="w-full max-w-lg mb-3">
           <Card className="bg-white/10 border-white/20">
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="text-center">
-                <p className="text-lg font-medium opacity-90 leading-relaxed">
+                <p className="text-base font-medium opacity-90 leading-relaxed">
                   Share your faith experiences and God's miracles with others from around the world
                 </p>
               </div>
@@ -48,7 +48,7 @@ export default function Landing() {
         <div className="space-y-3 w-full max-w-md">
           <Button 
             onClick={handleSignIn}
-            className="w-full bg-faith-gold hover:bg-yellow-500 text-faith-blue text-lg font-semibold py-5 px-8 h-auto shadow-lg"
+            className="w-full bg-faith-gold hover:bg-yellow-500 text-faith-blue text-base font-semibold py-4 px-6 h-auto shadow-lg"
           >
             Sign In
           </Button>
@@ -56,7 +56,7 @@ export default function Landing() {
           <Button 
             onClick={handleRegister}
             variant="outline"
-            className="w-full border-2 border-white text-white hover:bg-white hover:text-faith-blue text-lg font-semibold py-5 px-8 h-auto"
+            className="w-full border-2 border-white text-white hover:bg-white hover:text-faith-blue text-base font-semibold py-4 px-6 h-auto"
           >
             Create Account
           </Button>
