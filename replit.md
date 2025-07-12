@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**Content Reporting System Implementation (July 12, 2025)**
+- Added comprehensive post reporting functionality for community moderation
+- Users can report inappropriate posts via "Report Post" button in post dropdown menu
+- Report modal with predefined reasons: inappropriate content, spam, harassment, false info, hate speech, violence, other
+- Admin dashboard now includes reports management interface with filtering by status
+- Admins can review, mark as reviewed, or resolve reports with detailed post context
+- Report API endpoints: POST /api/reports, GET /api/admin/reports, PATCH /api/admin/reports/:id
+- Backend storage includes reports table with status tracking and reviewer information
+- Admin stats dashboard shows pending report count for immediate attention
+- Toast notifications confirm successful report submissions and status updates
+
 **User Blocking System Implementation (July 12, 2025)**
 - Added comprehensive user blocking functionality for community safety
 - Users can now block other users via post dropdown menu to prevent seeing their content

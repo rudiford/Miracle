@@ -3,7 +3,7 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertUserSchema, insertPostSchema, insertConnectionSchema, insertMessageSchema, insertCommentSchema } from "@shared/schema";
+import { insertUserSchema, insertPostSchema, insertConnectionSchema, insertMessageSchema, insertCommentSchema, insertReportSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -134,11 +134,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const users = await storage.getAllUsers();
       const posts = await storage.getAllPosts();
+      const reports = await storage.getAllReports();
+      const pendingReports = reports.filter(r => r.status === 'pending');
       
       res.json({
         totalUsers: users.length,
         totalPosts: posts.length,
-        reportedContent: 0, // Placeholder for future implementation
+        reportedContent: pendingReports.length,
         activeMiracles: posts.length,
       });
     } catch (error) {
@@ -528,6 +530,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching blocked users:", error);
       res.status(500).json({ message: "Failed to fetch blocked users" });
+    }
+  });
+
+  // Report routes
+  app.post('/api/reports', isAuthenticated, async (req: any, res) => {
+    try {
+      const reporterId = req.user.claims.sub;
+      const validatedData = insertReportSchema.parse(req.body);
+      const report = await storage.createReport(reporterId, validatedData);
+      res.json(report);
+    } catch (error) {
+      console.error("Error creating report:", error);
+      res.status(500).json({ message: "Failed to create report" });
+    }
+  });
+
+  app.get('/api/admin/reports', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const reports = await storage.getAllReports();
+      res.json(reports);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+      res.status(500).json({ message: "Failed to fetch reports" });
+    }
+  });
+
+  app.patch('/api/admin/reports/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      const reportId = parseInt(req.params.id);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const { status } = req.body;
+      const updatedReport = await storage.updateReportStatus(reportId, status, userId);
+      
+      if (!updatedReport) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+      
+      res.json(updatedReport);
+    } catch (error) {
+      console.error("Error updating report:", error);
+      res.status(500).json({ message: "Failed to update report" });
     }
   });
 

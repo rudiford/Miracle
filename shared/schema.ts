@@ -98,6 +98,19 @@ export const blocks = pgTable("blocks", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Reports for inappropriate content
+export const reports = pgTable("reports", {
+  id: serial("id").primaryKey(),
+  reporterId: varchar("reporter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  reason: varchar("reason").notNull(),
+  description: text("description"),
+  status: varchar("status").default("pending"), // pending, reviewed, resolved
+  createdAt: timestamp("created_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewedBy: varchar("reviewed_by"),
+});
+
 // Schema definitions
 export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
@@ -137,6 +150,12 @@ export const insertBlockSchema = createInsertSchema(blocks).pick({
   blockedId: true,
 });
 
+export const insertReportSchema = createInsertSchema(reports).pick({
+  postId: true,
+  reason: true,
+  description: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -152,3 +171,5 @@ export type InsertComment = z.infer<typeof insertCommentSchema>;
 export type Prayer = typeof prayers.$inferSelect;
 export type Block = typeof blocks.$inferSelect;
 export type InsertBlock = z.infer<typeof insertBlockSchema>;
+export type Report = typeof reports.$inferSelect;
+export type InsertReport = z.infer<typeof insertReportSchema>;

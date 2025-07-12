@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import ReportsManagement from "@/components/reports-management";
 
 interface AdminStats {
   totalUsers: number;
@@ -259,6 +260,9 @@ export default function Admin() {
             )}
           </CardContent>
         </Card>
+
+        {/* Reports Management */}
+        <ReportsManagement />
       </div>
     </div>
   );

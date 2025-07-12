@@ -7,6 +7,7 @@ import {
   prayers,
   loves,
   blocks,
+  reports,
   type User,
   type UpsertUser,
   type Post,
@@ -19,6 +20,8 @@ import {
   type InsertComment,
   type Prayer,
   type Block,
+  type Report,
+  type InsertReport,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -71,6 +74,12 @@ export interface IStorage {
   unblockUser(blockerId: string, blockedId: string): Promise<boolean>;
   isUserBlocked(blockerId: string, blockedId: string): Promise<boolean>;
   getBlockedUsers(userId: string): Promise<User[]>;
+  
+  // Report operations
+  createReport(reporterId: string, report: InsertReport): Promise<Report>;
+  getAllReports(): Promise<(Report & { reporter: User; post: Post & { user: User } })[]>;
+  updateReportStatus(reportId: number, status: string, reviewedBy?: string): Promise<Report | undefined>;
+  getReportsByStatus(status: string): Promise<(Report & { reporter: User; post: Post & { user: User } })[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -82,6 +91,7 @@ export class MemStorage implements IStorage {
   private prayers: Map<number, Prayer> = new Map();
   private loves: Map<number, any> = new Map();
   private blocks: Map<number, Block> = new Map();
+  private reports: Map<number, Report> = new Map();
   
   private currentPostId = 1;
   private currentConnectionId = 1;
@@ -90,6 +100,7 @@ export class MemStorage implements IStorage {
   private currentPrayerId = 1;
   private currentLoveId = 1;
   private currentBlockId = 1;
+  private currentReportId = 1;
 
   // User operations
   async getUser(id: string): Promise<User | undefined> {
@@ -491,6 +502,55 @@ export class MemStorage implements IStorage {
     return blockedUserIds
       .map(id => this.users.get(id))
       .filter(user => user !== undefined) as User[];
+  }
+
+  // Report operations
+  async createReport(reporterId: string, reportData: InsertReport): Promise<Report> {
+    const report: Report = {
+      id: this.currentReportId++,
+      reporterId,
+      ...reportData,
+      status: "pending",
+      createdAt: new Date(),
+      reviewedAt: null,
+      reviewedBy: null,
+    };
+    this.reports.set(report.id, report);
+    return report;
+  }
+
+  async getAllReports(): Promise<(Report & { reporter: User; post: Post & { user: User } })[]> {
+    const reportsArray = Array.from(this.reports.values());
+    return reportsArray.map(report => {
+      const reporter = this.users.get(report.reporterId);
+      const post = this.posts.get(report.postId);
+      const postUser = post ? this.users.get(post.userId) : null;
+      return {
+        ...report,
+        reporter: reporter!,
+        post: { ...post!, user: postUser! }
+      };
+    }).filter(report => report.reporter && report.post && report.post.user)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async updateReportStatus(reportId: number, status: string, reviewedBy?: string): Promise<Report | undefined> {
+    const report = this.reports.get(reportId);
+    if (!report) return undefined;
+    
+    report.status = status;
+    report.reviewedAt = new Date();
+    if (reviewedBy) {
+      report.reviewedBy = reviewedBy;
+    }
+    
+    this.reports.set(reportId, report);
+    return report;
+  }
+
+  async getReportsByStatus(status: string): Promise<(Report & { reporter: User; post: Post & { user: User } })[]> {
+    const allReports = await this.getAllReports();
+    return allReports.filter(report => report.status === status);
   }
 }
 

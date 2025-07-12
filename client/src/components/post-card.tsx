@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit, UserX } from "lucide-react";
+import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit, UserX, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import CommentsModal from "./comments-modal";
+import ReportPostModal from "./report-post-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 interface Post {
@@ -40,6 +42,7 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
   const [hasPrayed, setHasPrayed] = useState(false);
   const [hasLoved, setHasLoved] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -224,6 +227,14 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem 
+                onClick={() => setShowReportModal(true)}
+                className="text-red-600 focus:text-red-600"
+              >
+                <Flag className="w-4 h-4 mr-2" />
+                Report Post
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
                 onClick={() => handleBlockUser(post.user.id)}
                 className="text-red-600 focus:text-red-600"
               >
@@ -317,6 +328,13 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       <CommentsModal 
         open={showComments}
         onOpenChange={setShowComments}
+        postId={post.id}
+      />
+      
+      {/* Report Modal */}
+      <ReportPostModal
+        open={showReportModal}
+        onOpenChange={setShowReportModal}
         postId={post.id}
       />
     </Card>
