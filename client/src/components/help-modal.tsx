@@ -43,7 +43,7 @@ export default function HelpModal({ currentView = "feed" }: HelpModalProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="fixed top-4 right-4 z-50">
+        <Button variant="outline" size="sm" className="fixed bottom-24 right-4 z-50 shadow-lg">
           <HelpCircle className="h-4 w-4" />
         </Button>
       </DialogTrigger>

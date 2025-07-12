@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Cross } from "lucide-react";
+import PWAInstallGuide from "@/components/pwa-install-guide";
 
 export default function Landing() {
   const handleSignIn = () => {
@@ -59,6 +60,10 @@ export default function Landing() {
             <Cross className="w-4 h-4 mr-2" />
             Create Account
           </Button>
+          
+          <div className="pt-4">
+            <PWAInstallGuide />
+          </div>
         </div>
       </div>
       

@@ -103,6 +103,13 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
     setIsCapturingLocation(true);
     
     if ("geolocation" in navigator) {
+      // Enhanced options for better mobile support
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 15000, // 15 seconds
+        maximumAge: 300000, // 5 minutes
+      };
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -121,12 +128,31 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
         (error) => {
           console.error("Geolocation error:", error);
           setIsCapturingLocation(false);
+          
+          let errorMessage = "Could not capture your location.";
+          
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = "Location access denied. Please enable location permissions in your browser settings.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = "Location information unavailable. Please check your GPS settings.";
+              break;
+            case error.TIMEOUT:
+              errorMessage = "Location request timed out. Please try again.";
+              break;
+            default:
+              errorMessage = "An unknown error occurred while getting location.";
+              break;
+          }
+          
           toast({
             title: "Location Error",
-            description: "Could not capture your location. Please try again.",
+            description: errorMessage,
             variant: "destructive",
           });
-        }
+        },
+        options
       );
     } else {
       setIsCapturingLocation(false);
@@ -246,6 +272,9 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
                 {isCapturingLocation ? "Capturing..." : "Use Current"}
               </Button>
             </div>
+            <p className="text-xs text-gray-600 mt-1">
+              If location capture fails, please enable location permissions in your browser settings or enter your location manually.
+            </p>
           </div>
 
           {/* Submit Button */}
