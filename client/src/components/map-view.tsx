@@ -20,7 +20,7 @@ interface Post {
   };
 }
 
-// Simple geocoding function for major cities
+// Simple geocoding function for major cities and zip codes
 const getCityCoordinates = (location: string) => {
   const cityMap: { [key: string]: [number, number] } = {
     'dallas, texas': [32.7767, -96.7970],
@@ -59,8 +59,44 @@ const getCityCoordinates = (location: string) => {
     'cape town': [-33.9249, 18.4241],
     'jerusalem': [31.7683, 35.2137]
   };
+
+  // Common zip codes (Dallas area)
+  const zipCodeMap: { [key: string]: [number, number] } = {
+    '75214': [32.8153, -96.7614], // White Rock, Dallas
+    '75201': [32.7767, -96.7970], // Downtown Dallas
+    '75202': [32.7767, -96.7970], // Downtown Dallas
+    '75203': [32.7400, -96.7600], // South Dallas
+    '75204': [32.8000, -96.7800], // Uptown Dallas
+    '75205': [32.8400, -96.7700], // Highland Park
+    '75206': [32.8200, -96.7500], // East Dallas
+    '75207': [32.7600, -96.8200], // Oak Cliff
+    '75208': [32.7300, -96.8500], // Oak Cliff
+    '75209': [32.8500, -96.8000], // Turtle Creek
+    '75210': [32.7000, -96.7800], // South Dallas
+    '75211': [32.7200, -96.8800], // West Dallas
+    '75212': [32.7800, -96.8500], // Love Field
+    '75218': [32.8600, -96.7200], // Lake Highlands
+    '75219': [32.7900, -96.8000], // Deep Ellum
+    '75220': [32.8700, -96.7600], // North Dallas
+    '75225': [32.8200, -96.7800], // University Park
+    '75230': [32.9200, -96.7700], // North Dallas
+    '75231': [32.8800, -96.7300], // Lake Highlands
+    '75240': [32.9500, -96.7500], // Addison
+    '75243': [32.9000, -96.7000], // Richardson border
+    '75244': [32.9200, -96.7200], // North Dallas
+    '75248': [32.9300, -96.8200], // Addison
+    '75252': [32.9600, -96.8200], // North Dallas
+    '75254': [32.9400, -96.7800], // North Dallas
+  };
   
   const key = location.toLowerCase().trim();
+  
+  // Check if it's a zip code first
+  if (zipCodeMap[key]) {
+    return zipCodeMap[key];
+  }
+  
+  // Then check city names
   return cityMap[key] || null;
 };
 
