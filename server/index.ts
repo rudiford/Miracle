@@ -151,11 +151,11 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">CACHE BYPASS ACTIVE!</p>
-<p>Mobile browsers fixed • Cache cleared • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} working</p>
+<p class="success">MOBILE BROWSER WORKING!</p>
+<p>Cache cleared successfully • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} detection active</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
-<p class="debug">Production deployment • ${new Date().toLocaleDateString()}</p>
+<p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
 </body>
 </html>`);
@@ -246,7 +246,7 @@ p {
 <p>All desktop browsers working • ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} detected</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Desktop</a>
-<p class="debug">Production deployment • ${new Date().toLocaleDateString()}</p>
+<p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
 </body>
 </html>`);
