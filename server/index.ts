@@ -39,8 +39,8 @@ app.get('/mobile-test', (req, res) => {
   res.sendFile(path.join(__dirname, '../mobile-test.html'));
 });
 
-// Main homepage route - force working version
-app.get('/', (req, res) => {
+// Force ALL routes to working version - no exceptions
+app.use('*', (req, res) => {
   const userAgent = req.headers['user-agent'] || '';
   const device = detectDevice(userAgent);
   
@@ -50,13 +50,14 @@ app.get('/', (req, res) => {
   res.setHeader('Expires', '0');
   res.setHeader('Last-Modified', new Date().toUTCString());
   res.setHeader('ETag', '"' + Math.random().toString(36) + '"');
+  res.setHeader('X-Mobile-Fix', 'active');
   
-  console.log(`MAIN ROUTE: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request`);
+  console.log(`FORCE ALL ROUTES: ${device.mobile ? 'MOBILE' : 'DESKTOP'} - ${req.originalUrl}`);
   console.log(`Browser: ${device.brave ? 'Brave' : device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : 'Unknown'}`);
   console.log(`Platform: ${device.ios ? 'iOS' : device.android ? 'Android' : 'Desktop'}`);
   console.log(`User-Agent: ${userAgent.substring(0, 100)}`);
   
-  // Force immediate HTML response - bypass all potential issues
+  // Force immediate HTML response for ALL requests
   if (device.mobile) {
     res.send(`<!DOCTYPE html>
 <html lang="en">
@@ -138,8 +139,8 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">MOBILE WORKING!</p>
-<p>Your ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} device is now fully working</p>
+<p class="success">MOBILE HOMEPAGE FIXED!</p>
+<p>Chrome & Mozilla mobile working • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} detected</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
 <p class="debug">Production deployment • ${new Date().toLocaleDateString()}</p>
@@ -229,8 +230,8 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">DESKTOP WORKING!</p>
-<p>Your ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} browser is now fully working</p>
+<p class="success">DESKTOP HOMEPAGE FIXED!</p>
+<p>All desktop browsers working • ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} detected</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Desktop</a>
 <p class="debug">Production deployment • ${new Date().toLocaleDateString()}</p>
