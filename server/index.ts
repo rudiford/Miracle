@@ -39,8 +39,24 @@ app.get('/test-mobile-direct', (req, res) => {
   res.sendFile(path.join(__dirname, '../test-mobile-direct.html'));
 });
 
-// Emergency override - block ALL asset requests
+// Setup authentication and database
+import { registerRoutes } from './routes';
+
+// Create HTTP server with auth routes
+const setupServer = async () => {
+  const httpServer = await registerRoutes(app);
+  return httpServer;
+};
+
+// Emergency override - block ONLY development assets, allow auth routes
 app.use((req, res, next) => {
+  // Allow auth routes to pass through
+  if (req.path.startsWith('/api/')) {
+    console.log(`ALLOWING AUTH ROUTE: ${req.path}`);
+    return next();
+  }
+  
+  // Block development assets
   if (req.path.includes('.js') || req.path.includes('.css') || req.path.includes('vite') || req.path.includes('react') || req.path.includes('@')) {
     console.log(`BLOCKING ASSET: ${req.path}`);
     return res.status(404).send('<!-- Emergency override: Asset blocked -->');
@@ -48,8 +64,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Force ALL routes to working version - no exceptions
+// Force main routes to working version, but allow API routes
 app.use('*', (req, res) => {
+  // API routes are handled by auth middleware above
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
   const userAgent = req.headers['user-agent'] || '';
   const device = detectDevice(userAgent);
   
@@ -153,7 +173,7 @@ p {
 <p>Faith Community</p>
 <p class="success">MOBILE BROWSER WORKING!</p>
 <p>Cache cleared successfully • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} detection active</p>
-<a href="/auth" class="btn">Sign In with Replit</a>
+<a href="/api/login" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
 <p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
@@ -244,7 +264,7 @@ p {
 <p>Faith Community</p>
 <p class="success">DESKTOP HOMEPAGE FIXED!</p>
 <p>All desktop browsers working • ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} detected</p>
-<a href="/auth" class="btn">Sign In with Replit</a>
+<a href="/api/login" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Desktop</a>
 <p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
@@ -332,12 +352,20 @@ app.get('*', (req, res) => {
 
 const port = parseInt(process.env.PORT || "5000", 10);
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`EMERGENCY DEPLOYMENT: Server running on port ${port}`);
-  console.log('EMERGENCY DEPLOYMENT: All broken handlers bypassed');
-  console.log('EMERGENCY DEPLOYMENT: Mobile browsers emergency fix active');
-  console.log('EMERGENCY DEPLOYMENT: Desktop browsers emergency fix active');
-  console.log('EMERGENCY DEPLOYMENT: Production deployment ready');
+// Start server with authentication
+setupServer().then((httpServer) => {
+  httpServer.listen(port, "0.0.0.0", () => {
+    console.log(`AUTHENTICATION FIX: Server running on port ${port}`);
+    console.log('AUTHENTICATION FIX: Auth routes enabled');
+    console.log('AUTHENTICATION FIX: Mobile browsers working');
+    console.log('AUTHENTICATION FIX: Sign-in functionality active');
+  });
+}).catch((error) => {
+  console.error('Server setup failed:', error);
+  // Fallback to basic server
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`FALLBACK: Basic server running on port ${port}`);
+  });
 });
 
 export default app;
