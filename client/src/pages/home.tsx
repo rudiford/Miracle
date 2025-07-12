@@ -68,48 +68,48 @@ export default function Home() {
           </div>
           
           {/* Navigation Menu */}
-          <div className="flex justify-around items-center pt-4 border-t border-gray-100 mt-3">
+          <div className="flex justify-around items-center pt-2 border-t border-gray-100 mt-3 px-2">
             <Button 
               variant="ghost" 
               onClick={handleHome}
-              className="flex flex-col items-center space-y-2 py-3 px-4 text-faith-blue flex-1"
+              className="flex flex-col items-center space-y-1 py-2 px-3 text-faith-blue flex-1"
             >
-              <HomeIcon className="w-7 h-7" />
-              <span className="text-sm font-medium">Feed</span>
+              <HomeIcon className="w-6 h-6" />
+              <span className="text-xs font-medium">Feed</span>
             </Button>
             
             <Button 
               variant="ghost"
               onClick={handleDiscover}
-              className="flex flex-col items-center space-y-2 py-3 px-4 text-gray-400 hover:text-faith-blue transition-colors flex-1"
+              className="flex flex-col items-center space-y-1 py-2 px-3 text-gray-400 hover:text-faith-blue transition-colors flex-1"
             >
-              <Search className="w-7 h-7" />
-              <span className="text-sm font-medium">Discover</span>
+              <Search className="w-6 h-6" />
+              <span className="text-xs font-medium">Discover</span>
             </Button>
             
             <Button 
               onClick={() => setShowCreatePost(true)}
-              className="bg-faith-blue hover:bg-blue-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow mx-2"
+              className="bg-faith-blue hover:bg-blue-800 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow mx-1"
             >
-              <Plus className="w-7 h-7" />
+              <Plus className="w-6 h-6" />
             </Button>
             
             <Button 
               variant="ghost"
               onClick={handleMessages}
-              className="flex flex-col items-center space-y-2 py-3 px-4 text-gray-400 hover:text-faith-blue transition-colors flex-1"
+              className="flex flex-col items-center space-y-1 py-2 px-3 text-gray-400 hover:text-faith-blue transition-colors flex-1"
             >
-              <MessageCircle className="w-7 h-7" />
-              <span className="text-sm font-medium">Messages</span>
+              <MessageCircle className="w-6 h-6" />
+              <span className="text-xs font-medium">Messages</span>
             </Button>
             
             <Button 
               variant="ghost"
               onClick={handleProfile}
-              className="flex flex-col items-center space-y-2 py-3 px-4 text-gray-400 hover:text-faith-blue transition-colors flex-1"
+              className="flex flex-col items-center space-y-1 py-2 px-3 text-gray-400 hover:text-faith-blue transition-colors flex-1"
             >
-              <User className="w-7 h-7" />
-              <span className="text-sm font-medium">Profile</span>
+              <User className="w-6 h-6" />
+              <span className="text-xs font-medium">Profile</span>
             </Button>
           </div>
         </div>
