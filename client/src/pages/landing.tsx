@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import PWAInstallGuide from "@/components/pwa-install-guide";
-import WoodenCross from "@/components/wooden-cross";
+import crossImage from "@assets/Cross_1752286483357.png";
 
 export default function Landing() {
   const handleSignIn = () => {
@@ -16,9 +16,13 @@ export default function Landing() {
     <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 text-white flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
-        {/* Wooden cross with purple cloth */}
+        {/* Cross image */}
         <div className="mb-8">
-          <WoodenCross className="mx-auto" size={300} />
+          <img 
+            src={crossImage} 
+            alt="Cross" 
+            className="mx-auto w-72 h-auto filter brightness-0 invert"
+          />
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold mb-4 font-georgia">
