@@ -18,9 +18,9 @@ export default function ChristianCross({ className = "", size = 24 }: ChristianC
         width="4"
         height="28"
         rx="1"
-        fill="#D4AF37"
-        stroke="#3B82F6"
-        strokeWidth="1"
+        fill="white"
+        stroke="black"
+        strokeWidth="2"
       />
       <rect
         x="4"
@@ -28,9 +28,9 @@ export default function ChristianCross({ className = "", size = 24 }: ChristianC
         width="16"
         height="4"
         rx="1"
-        fill="#D4AF37"
-        stroke="#3B82F6"
-        strokeWidth="1"
+        fill="white"
+        stroke="black"
+        strokeWidth="2"
       />
     </svg>
   );
