@@ -80,14 +80,13 @@ npm install -g @bubblewrap/cli
 ```
 
 ### Step 2: Get Your App URL
-Your Replit app URL is something like: `https://miracle-verifier-rudyccc.replit.app`
-(Replace with your actual Replit URL)
+Your custom domain: `https://proofofamiracle.com/`
 
 ### Step 3: Create Android Project
 ```bash
 mkdir proof-of-miracle-android
 cd proof-of-miracle-android
-bubblewrap init --manifest=https://YOUR-REPLIT-URL.replit.app/manifest.json
+bubblewrap init --manifest=https://proofofamiracle.com/manifest.json
 ```
 
 Follow the prompts:

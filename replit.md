@@ -31,6 +31,8 @@ Preferred communication style: Simple, everyday language.
 - App now installable directly from browser on all platforms
 - Ready for Google Play Store distribution via Trusted Web Activity (TWA)
 - Published guide for app store submission process using Bubblewrap CLI
+- Custom domain configured: https://proofofamiracle.com/
+- User purchased Google Play Developer account ($25) - ready for Android app publishing
 
 **Cross Image Integration (July 12, 2025)**
 - Integrated user's custom black cross image across the entire application for complete consistency
