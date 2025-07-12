@@ -11,69 +11,65 @@ app.use((req, res, next) => {
   
   // Immediately serve mobile version for mobile browsers requesting root (unless desktop is requested)
   if (req.method === 'GET' && req.path === '/' && isMobile && !req.query.desktop) {
-    console.log('MOBILE DETECTED - Serving mobile version:', userAgent.substring(0, 60));
-    console.log('Request details:', { method: req.method, path: req.path, query: req.query });
+    console.log('MOBILE DETECTED - Serving mobile content:', userAgent.substring(0, 60));
     
     const mobileHtml = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Proof of a Miracle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof of a Miracle - Mobile</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
-  font-family: Arial, sans-serif; 
-  background: #1e3a8a;
+  background: #1e3a8a; 
   color: white; 
-  padding: 20px;
-  min-height: 100vh;
-}
-.container { 
-  background: white; 
-  border-radius: 15px; 
-  padding: 30px; 
-  max-width: 400px; 
-  margin: 50px auto;
+  font-size: 1.2rem; 
+  padding: 20px; 
   text-align: center; 
-  color: #1e3a8a; 
+  font-family: Arial, sans-serif;
+  margin: 0;
 }
-.cross { font-size: 4rem; margin-bottom: 20px; color: #1e3a8a; }
-h1 { font-size: 2rem; margin-bottom: 10px; color: #1e3a8a; }
-p { margin-bottom: 20px; color: #374151; }
+.container {
+  background: white;
+  color: #1e3a8a;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 400px;
+  margin: 50px auto;
+}
+.cross { font-size: 4rem; margin-bottom: 20px; }
+h1 { font-size: 2rem; margin-bottom: 10px; }
+p { margin-bottom: 20px; }
 .btn { 
   display: block;
   width: 100%; 
   padding: 15px; 
   margin: 10px 0; 
-  border: none; 
-  border-radius: 8px; 
-  font-size: 1.1rem; 
-  font-weight: bold; 
-  text-decoration: none;
-  text-align: center;
   background: #f59e0b; 
   color: #1e3a8a; 
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
 }
-.debug { font-size: 0.8rem; color: #6b7280; margin-top: 20px; }
+.debug { font-size: 0.9rem; color: #6b7280; margin-top: 20px; }
 </style>
 </head>
 <body>
 <div class="container">
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
-<p>Faith Community</p>
-<p>Mobile Version Working!</p>
+<p>Faith Community - Mobile</p>
+<p><strong>Mobile browsers should see this working version!</strong></p>
 <a href="/api/auth/login" class="btn">Sign In with Replit</a>
-<div class="debug">
-<p>If you see this, the mobile version is working!</p>
-</div>
+<p class="debug">Mobile detection working. Desktop users can access the full app.</p>
 </div>
 </body>
 </html>`;
     
     return res.send(mobileHtml);
   }
+
   
   next();
 });

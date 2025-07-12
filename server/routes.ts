@@ -43,6 +43,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve uploaded files
   app.use('/uploads', express.static('uploads'));
+  
+  // Serve mobile files with highest priority
+  app.use('/mobile', express.static('.'));
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
@@ -663,6 +666,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/mobile-test.html", (req, res) => {
     res.sendFile(path.join(process.cwd(), "mobile-test.html"));
+  });
+
+  app.get("/test-mobile-direct.html", (req, res) => {
+    res.sendFile(path.join(process.cwd(), "test-mobile-direct.html"));
   });
 
   // Mobile API endpoint for basic functionality
