@@ -38,6 +38,8 @@ function ErrorFallback({error}: {error: Error}) {
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
+  console.log('Router state:', { isAuthenticated, isLoading, user: user?.firstName });
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 flex items-center justify-center">
@@ -72,7 +74,7 @@ function Router() {
           {user?.isAdmin && <Route path="/admin" component={Admin} />}
         </>
       )}
-      <Route component={NotFound} />
+      <Route path="/:rest*" component={NotFound} />
     </Switch>
   );
 }
