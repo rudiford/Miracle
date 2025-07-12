@@ -634,6 +634,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(path.join(process.cwd(), "client", "public", "index.html"));
   });
 
+  // Mobile detection and routing
+  app.get("/mobile.html", (req, res) => {
+    res.sendFile(path.join(process.cwd(), "client/public/mobile.html"));
+  });
+
+  // Mobile API endpoint for basic functionality
+  app.get("/api/mobile/check", (req, res) => {
+    const userAgent = req.headers['user-agent'] || '';
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    res.json({ 
+      isMobile, 
+      userAgent: userAgent.substring(0, 100),
+      timestamp: new Date().toISOString()
+    });
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

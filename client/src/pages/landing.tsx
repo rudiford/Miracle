@@ -5,6 +5,14 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function Landing() {
   console.log('Landing page rendering...');
   
+  // Enhanced mobile compatibility check
+  console.log('Browser info:', {
+    userAgent: navigator.userAgent,
+    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+    isFirefox: navigator.userAgent.includes('Firefox'),
+    viewport: { width: window.innerWidth, height: window.innerHeight }
+  });
+  
   const handleSignIn = () => {
     window.location.href = "/api/auth/login";
   };
