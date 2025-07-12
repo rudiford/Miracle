@@ -116,11 +116,6 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
               Be the first to share a faith experience with the community
             </p>
             <Button onClick={onCreatePost} className="bg-faith-blue hover:bg-blue-800">
-              <img 
-                src="/cross.png" 
-                alt="Cross" 
-                className="w-4 h-auto mr-2"
-              />
               Create Post
             </Button>
           </div>

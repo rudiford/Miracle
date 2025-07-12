@@ -11,10 +11,13 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 **Cross Image Integration (July 12, 2025)**
-- Integrated user's custom black cross image across the application
+- Integrated user's custom black cross image across the entire application for complete consistency
 - Landing page: Large cross (288px) as main focal point, black color for contrast
 - Navigation header: Custom cross (48px) replaces SVG cross next to "Proof of a Miracle" title
-- Maintains visual consistency while using authentic user-provided imagery
+- Replaced ALL cross icons (15+ locations): map markers, loading states, buttons, modals, empty states
+- Added zip code support (75214) to map view for location-based posts
+- Removed cross icon from "Create Post" button per user preference
+- Cross sizes range from 16px (small buttons) to 288px (landing page) with proper styling
 
 ## System Architecture
 
