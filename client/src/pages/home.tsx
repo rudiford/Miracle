@@ -1,18 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home as HomeIcon, Search, Plus, MessageCircle, User, Settings, LogOut, MoreVertical, Trash2 } from "lucide-react";
+import { Home as HomeIcon, Search, Plus, MessageCircle, User, Settings, LogOut, Trash2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import FeedView from "@/components/feed-view";
 import CreatePostModal from "@/components/create-post-modal";
 import HelpModal from "@/components/help-modal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export default function Home() {
   const [showCreatePost, setShowCreatePost] = useState(false);

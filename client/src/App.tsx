@@ -12,7 +12,7 @@ import Messages from "@/pages/messages";
 import Admin from "@/pages/admin";
 import Privacy from "@/pages/privacy";
 import DeleteAccount from "@/pages/delete-account";
-import Debug from "@/pages/debug";
+
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -40,7 +40,6 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/privacy" component={Privacy} />
           <Route path="/delete-account" component={DeleteAccount} />
-          <Route path="/debug" component={Debug} />
         </>
       ) : (
         <>
@@ -49,7 +48,6 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/privacy" component={Privacy} />
           <Route path="/delete-account" component={DeleteAccount} />
-          <Route path="/debug" component={Debug} />
           {user?.isAdmin && <Route path="/admin" component={Admin} />}
         </>
       )}
