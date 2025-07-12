@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Heart, MessageCircle, Share, MoreHorizontal, User, MapPin, Edit } from "lucide-react";
+import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -142,21 +142,7 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
     setShowComments(true);
   };
 
-  const handleShare = () => {
-    // TODO: Implement share functionality
-    if (navigator.share) {
-      navigator.share({
-        title: `${post.user.firstName}'s Faith Experience`,
-        text: post.content,
-        url: window.location.href,
-      });
-    } else {
-      toast({
-        title: "Shared",
-        description: "Post URL copied to clipboard.",
-      });
-    }
-  };
+
 
   return (
     <Card className="shadow-sm border border-gray-200 overflow-hidden">
@@ -276,15 +262,7 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
           <span className="text-xs">{post.commentCount}</span>
         </Button>
         
-        <Button 
-          variant="ghost" 
-          size="sm"
-          onClick={handleShare}
-          className="flex items-center space-x-1 text-gray-600 hover:text-faith-blue transition-colors px-2"
-        >
-          <Share className="w-3 h-3" />
-          <span className="text-xs">Share</span>
-        </Button>
+
       </div>
       
       {/* Comments Modal */}

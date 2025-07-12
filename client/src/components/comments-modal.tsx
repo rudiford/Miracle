@@ -55,6 +55,7 @@ export default function CommentsModal({ open, onOpenChange, postId }: CommentsMo
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts", postId, "comments"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
       form.reset();
       toast({
         title: "Comment Added",
