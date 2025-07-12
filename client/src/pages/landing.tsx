@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import PWAInstallGuide from "@/components/pwa-install-guide";
-import ChristianCross from "@/components/christian-cross";
+import WoodenCross from "@/components/wooden-cross";
 
 export default function Landing() {
   const handleSignIn = () => {
@@ -16,9 +16,9 @@ export default function Landing() {
     <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 text-white flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
-        {/* Christian cross symbols */}
+        {/* Wooden cross with purple cloth */}
         <div className="mb-8">
-          <ChristianCross className="text-faith-gold mb-4 mx-auto" size={64} />
+          <WoodenCross className="mb-4 mx-auto" size={120} />
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold mb-4 font-georgia">
@@ -35,8 +35,8 @@ export default function Landing() {
             <CardContent className="p-6">
               <div className="w-full h-48 bg-white/20 rounded-lg flex items-center justify-center">
                 <div className="text-center">
-                  <ChristianCross className="text-faith-gold mb-2 mx-auto" size={48} />
-                  <p className="text-sm opacity-75">Faith Community</p>
+                  <p className="text-lg font-semibold opacity-90">Faith Community</p>
+                  <p className="text-sm opacity-75 mt-2">Gathering in His name</p>
                 </div>
               </div>
             </CardContent>
@@ -48,7 +48,6 @@ export default function Landing() {
             onClick={handleSignIn}
             className="w-full bg-faith-gold hover:bg-yellow-500 text-faith-blue font-semibold py-4 px-6 h-auto shadow-lg"
           >
-            <ChristianCross className="mr-2" size={16} />
             Sign In
           </Button>
           
@@ -57,7 +56,6 @@ export default function Landing() {
             variant="outline"
             className="w-full border-2 border-white text-white hover:bg-white hover:text-faith-blue font-semibold py-4 px-6 h-auto"
           >
-            <ChristianCross className="mr-2" size={16} />
             Create Account
           </Button>
           
