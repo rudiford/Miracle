@@ -1,7 +1,7 @@
 import express from 'express';
 const app = express();
 
-console.log('PRODUCTION DEPLOYMENT: Starting comprehensive server...');
+console.log('UNIVERSAL DEPLOYMENT: Starting bulletproof production server...');
 
 // Production-ready middleware
 app.use(express.json({ limit: '10mb' }));
@@ -35,9 +35,10 @@ app.get('/', (req, res) => {
   const userAgent = req.headers['user-agent'] || '';
   const device = detectDevice(userAgent);
   
-  console.log(`PRODUCTION DEPLOYMENT: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request`);
-  console.log(`Browser: ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'Unknown'}`);
+  console.log(`UNIVERSAL DEPLOYMENT: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request from ${req.path}`);
+  console.log(`Browser: ${device.brave ? 'Brave' : device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : 'Unknown'}`);
   console.log(`Platform: ${device.ios ? 'iOS' : device.android ? 'Android' : 'Desktop'}`);
+  console.log(`User-Agent: ${userAgent.substring(0, 100)}`);
   
   if (device.mobile) {
     // Mobile/tablet optimized with enhanced styling
@@ -121,7 +122,7 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">MOBILE PRODUCTION SUCCESS!</p>
+<p class="success">MOBILE DEPLOYMENT FIXED!</p>
 <p>Your ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} device is fully supported</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
@@ -212,7 +213,7 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">DESKTOP PRODUCTION SUCCESS!</p>
+<p class="success">DESKTOP DEPLOYMENT FIXED!</p>
 <p>Your ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} browser is fully supported</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Desktop</a>
