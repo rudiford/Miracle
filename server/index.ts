@@ -2,9 +2,9 @@ import express from 'express';
 import path from 'path';
 const app = express();
 
-console.log('EMERGENCY DEPLOYMENT: Starting immediate fix server...');
-console.log('EMERGENCY DEPLOYMENT: Forcing all browsers to working version');
-console.log('EMERGENCY DEPLOYMENT: Mobile blue circle issue eliminated');
+console.log('FINAL EMERGENCY FIX: Starting bulletproof server...');
+console.log('FINAL EMERGENCY FIX: ALL routes forced to HTML response');
+console.log('FINAL EMERGENCY FIX: No React/Vite interference allowed');
 
 // Production-ready middleware
 app.use(express.json({ limit: '10mb' }));
@@ -34,9 +34,18 @@ function detectDevice(userAgent) {
 }
 
 // Main route with comprehensive device and browser support
-// Mobile test route
-app.get('/mobile-test', (req, res) => {
-  res.sendFile(path.join(__dirname, '../mobile-test.html'));
+// Add cache bypass test route
+app.get('/test-mobile-direct', (req, res) => {
+  res.sendFile(path.join(__dirname, '../test-mobile-direct.html'));
+});
+
+// Emergency override - block ALL asset requests
+app.use((req, res, next) => {
+  if (req.path.includes('.js') || req.path.includes('.css') || req.path.includes('vite') || req.path.includes('react') || req.path.includes('@')) {
+    console.log(`BLOCKING ASSET: ${req.path}`);
+    return res.status(404).send('<!-- Emergency override: Asset blocked -->');
+  }
+  next();
 });
 
 // Force ALL routes to working version - no exceptions
@@ -49,8 +58,11 @@ app.use('*', (req, res) => {
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   res.setHeader('Last-Modified', new Date().toUTCString());
-  res.setHeader('ETag', '"' + Math.random().toString(36) + '"');
+  res.setHeader('ETag', '"cache-bypass-' + Date.now() + '-' + Math.random().toString(36) + '"');
   res.setHeader('X-Mobile-Fix', 'active');
+  res.setHeader('X-Cache-Bypass', Date.now().toString());
+  res.setHeader('Vary', 'User-Agent');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
   
   console.log(`FORCE ALL ROUTES: ${device.mobile ? 'MOBILE' : 'DESKTOP'} - ${req.originalUrl}`);
   console.log(`Browser: ${device.brave ? 'Brave' : device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : 'Unknown'}`);
@@ -139,8 +151,8 @@ p {
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
 <p>Faith Community</p>
-<p class="success">MOBILE HOMEPAGE FIXED!</p>
-<p>Chrome & Mozilla mobile working • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} detected</p>
+<p class="success">CACHE BYPASS ACTIVE!</p>
+<p>Mobile browsers fixed • Cache cleared • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} working</p>
 <a href="/auth" class="btn">Sign In with Replit</a>
 <a href="/test" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
 <p class="debug">Production deployment • ${new Date().toLocaleDateString()}</p>

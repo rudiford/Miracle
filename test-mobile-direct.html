@@ -1,41 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proof of a Miracle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Proof of a Miracle - Cache Test</title>
 <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
-  background: #1e3a8a; 
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
   color: white; 
-  font-size: 1.2rem; 
-  padding: 20px; 
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   text-align: center; 
-  font-family: Arial, sans-serif;
-  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 .container {
-  background: white;
-  color: #1e3a8a;
+  background: rgba(255, 255, 255, 0.98);
+  color: #dc2626;
   padding: 30px;
-  border-radius: 15px;
-  max-width: 400px;
-  margin: 50px auto;
+  border-radius: 20px;
+  max-width: 350px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.8s ease-out;
 }
-.cross { font-size: 4rem; margin-bottom: 20px; }
-h1 { font-size: 2rem; margin-bottom: 10px; }
-p { margin-bottom: 20px; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cross { 
+  font-size: 4rem; 
+  margin-bottom: 20px; 
+  color: #dc2626;
+  font-weight: bold;
+}
+h1 { 
+  font-size: 1.8rem; 
+  margin-bottom: 15px; 
+  font-weight: bold;
+  color: #dc2626;
+}
+.success { 
+  color: #059669; 
+  font-weight: bold; 
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
+  border: 2px solid #10b981;
+}
 .btn { 
   display: block;
   width: 100%; 
-  padding: 15px; 
-  margin: 10px 0; 
-  background: #f59e0b; 
-  color: #1e3a8a; 
+  padding: 16px; 
+  margin: 12px 0; 
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
   text-decoration: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
+  border-radius: 12px;
+  font-size: 1rem;
   font-weight: bold;
+}
+.cache-info {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 20px;
+  padding: 10px;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 8px;
 }
 </style>
 </head>
@@ -43,10 +83,17 @@ p { margin-bottom: 20px; }
 <div class="container">
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
-<p>Faith Community</p>
-<p><strong>Mobile Version Working!</strong></p>
-<a href="/api/auth/login" class="btn">Sign In with Replit</a>
-<p style="font-size: 0.9rem; color: #6b7280; margin-top: 20px;">Mobile browsers should see this page instead of a blank screen.</p>
+<div class="success">Cache Bypass Test</div>
+<p>If you see this RED background, the cache bypass is working</p>
+<button onclick="alert('Cache bypass successful!')" class="btn">Test Cache Bypass</button>
+<button onclick="window.location.href='https://proofofamiracle.com/'" class="btn" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">Go to Main Site</button>
+<div class="cache-info">
+  Cache test loaded at: <span id="time"></span><br>
+  If main site still shows blue circles, clear browser cache manually
 </div>
+</div>
+<script>
+document.getElementById('time').textContent = new Date().toLocaleTimeString();
+</script>
 </body>
 </html>
