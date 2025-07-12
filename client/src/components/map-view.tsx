@@ -172,7 +172,11 @@ export default function MapView() {
               onClick={() => setSelectedPost(post)}
             >
               <div className="relative">
-                <ChristianCross className="text-faith-gold hover:scale-125 transition-transform drop-shadow-lg" size={42} />
+                <img 
+                  src="/cross.png" 
+                  alt="Cross" 
+                  className="w-[42px] h-auto hover:scale-125 transition-transform drop-shadow-lg"
+                />
                 <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-xs text-faith-text opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
                   {post.location || `${post.mappedLat!.toFixed(2)}, ${post.mappedLng!.toFixed(2)}`}
                 </div>
@@ -186,7 +190,11 @@ export default function MapView() {
       {postsWithLocation.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center bg-white/90 p-6 rounded-lg shadow-lg">
-            <ChristianCross className="text-faith-blue mb-4 mx-auto" size={96} />
+            <img 
+              src="/cross.png" 
+              alt="Cross" 
+              className="w-24 h-auto mb-4 mx-auto"
+            />
             <p className="text-faith-text font-semibold">No miracle locations to display</p>
             <p className="text-sm text-gray-600 mt-2">Share your faith experiences with location to see them on the map</p>
           </div>

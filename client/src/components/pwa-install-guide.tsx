@@ -30,7 +30,11 @@ export default function PWAInstallGuide() {
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Cross className="h-5 w-5 text-faith-gold" />
+            <img 
+              src="/cross.png" 
+              alt="Cross" 
+              className="w-5 h-auto"
+            />
             Install Proof of a Miracle on Your Phone
           </DialogTitle>
           <DialogDescription>

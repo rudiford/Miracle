@@ -217,7 +217,11 @@ export default function Register() {
             className="w-full bg-faith-blue hover:bg-blue-800 text-white font-semibold py-4 px-6 h-auto shadow-lg"
             disabled={updateProfileMutation.isPending}
           >
-            <Cross className="w-4 h-4 mr-2" />
+            <img 
+              src="/cross.png" 
+              alt="Cross" 
+              className="w-4 h-auto mr-2"
+            />
             {updateProfileMutation.isPending ? "Joining..." : "Join Faith Community"}
           </Button>
         </form>

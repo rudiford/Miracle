@@ -50,7 +50,11 @@ export default function HelpModal({ currentView = "feed" }: HelpModalProps) {
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Cross className="h-5 w-5 text-faith-gold" />
+            <img 
+              src="/cross.png" 
+              alt="Cross" 
+              className="w-5 h-auto"
+            />
             What does this screen mean?
           </DialogTitle>
           <DialogDescription>
@@ -151,7 +155,11 @@ export default function HelpModal({ currentView = "feed" }: HelpModalProps) {
           <TabsContent value="admin" className="space-y-4">
             <div className="space-y-3">
               <h3 className="font-semibold flex items-center gap-2">
-                <Cross className="h-4 w-4 text-faith-gold" />
+                <img 
+                  src="/cross.png" 
+                  alt="Cross" 
+                  className="w-4 h-auto"
+                />
                 Community Moderation
               </h3>
               <div className="space-y-2 text-sm">

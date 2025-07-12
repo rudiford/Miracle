@@ -101,7 +101,11 @@ export default function Admin() {
     return (
       <div className="min-h-screen bg-faith-light flex items-center justify-center">
         <div className="text-center">
-          <div className="cross-loading text-4xl text-faith-blue mb-4">✝</div>
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-12 h-auto mx-auto mb-4"
+          />
           <p className="text-faith-text">Verifying admin access...</p>
         </div>
       </div>
@@ -157,7 +161,11 @@ export default function Admin() {
         
         <Card>
           <CardContent className="p-4 text-center">
-            <Cross className="w-8 h-8 text-faith-blue mb-2 mx-auto" />
+            <img 
+              src="/cross.png" 
+              alt="Cross" 
+              className="w-8 h-auto mb-2 mx-auto"
+            />
             <h3 className="text-2xl font-bold text-faith-text">
               {statsLoading ? "..." : stats?.activeMiracles || 0}
             </h3>
@@ -205,7 +213,11 @@ export default function Admin() {
           <CardContent>
             {usersLoading ? (
               <div className="text-center py-4">
-                <div className="cross-loading text-2xl text-faith-blue mb-2">✝</div>
+                <img 
+                  src="/cross.png" 
+                  alt="Cross" 
+                  className="w-8 h-auto mx-auto mb-2"
+                />
                 <p className="text-gray-600">Loading users...</p>
               </div>
             ) : users.length === 0 ? (

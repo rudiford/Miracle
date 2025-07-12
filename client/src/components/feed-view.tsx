@@ -66,7 +66,11 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
     return (
       <div className="p-4">
         <div className="text-center py-8">
-          <div className="cross-loading text-4xl text-faith-blue mb-4">✝</div>
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-12 h-auto mx-auto mb-4"
+          />
           <p className="text-faith-text">Loading faith experiences...</p>
         </div>
       </div>
@@ -112,7 +116,11 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
               Be the first to share a faith experience with the community
             </p>
             <Button onClick={onCreatePost} className="bg-faith-blue hover:bg-blue-800">
-              <Cross className="w-4 h-4 mr-2" />
+              <img 
+                src="/cross.png" 
+                alt="Cross" 
+                className="w-4 h-auto mr-2"
+              />
               Create Post
             </Button>
           </div>

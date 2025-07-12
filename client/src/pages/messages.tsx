@@ -50,7 +50,11 @@ export default function Messages() {
     return (
       <div className="min-h-screen bg-faith-light flex items-center justify-center">
         <div className="text-center">
-          <div className="cross-loading text-4xl text-faith-blue mb-4">✝</div>
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-12 h-auto mx-auto mb-4"
+          />
           <p className="text-faith-text">Loading messages...</p>
         </div>
       </div>

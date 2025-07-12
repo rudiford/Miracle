@@ -97,7 +97,11 @@ export default function ProfileUpload({ currentImageUrl, onImageUploaded }: Prof
       
       {isUploading && (
         <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
-          <div className="cross-loading text-white text-lg">✝</div>
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-5 h-auto filter invert"
+          />
         </div>
       )}
     </div>

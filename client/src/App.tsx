@@ -18,7 +18,11 @@ function Router() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 flex items-center justify-center">
         <div className="text-center text-white">
-          <div className="cross-loading text-6xl text-faith-gold mb-4">✝</div>
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-16 h-auto mx-auto mb-4"
+          />
           <p className="text-xl">Loading your faith journey...</p>
         </div>
       </div>
