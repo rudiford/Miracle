@@ -1,125 +1,62 @@
-// Simple test to verify the server can start without errors
-const express = require('express');
-const app = express();
+// Test production deployment status
+const https = require('https');
 
-app.get('/', (req, res) => {
-  const userAgent = req.headers['user-agent'] || '';
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-  
-  if (isMobile && !req.query.desktop) {
-    res.send(`<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proof of a Miracle - Mobile</title>
-<style>
-body { 
-  background: #1e3a8a; 
-  color: white; 
-  font-size: 1.2rem; 
-  padding: 20px; 
-  text-align: center; 
-  font-family: Arial, sans-serif;
-  margin: 0;
-}
-.container {
-  background: white;
-  color: #1e3a8a;
-  padding: 30px;
-  border-radius: 15px;
-  max-width: 400px;
-  margin: 50px auto;
-}
-.cross { font-size: 4rem; margin-bottom: 20px; }
-h1 { font-size: 2rem; margin-bottom: 10px; }
-p { margin-bottom: 20px; }
-.btn { 
-  display: block;
-  width: 100%; 
-  padding: 15px; 
-  margin: 10px 0; 
-  background: #f59e0b; 
-  color: #1e3a8a; 
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-}
-</style>
-</head>
-<body>
-<div class="container">
-<div class="cross">✞</div>
-<h1>Proof of a Miracle</h1>
-<p>Faith Community - Mobile</p>
-<p><strong>Mobile Version Working!</strong></p>
-<a href="/api/auth/login" class="btn">Sign In with Replit</a>
-<p style="font-size: 0.9rem; color: #6b7280; margin-top: 20px;">Production deployment successful!</p>
-</div>
-</body>
-</html>`);
-  } else {
-    res.send(`<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proof of a Miracle</title>
-<style>
-body { 
-  background: #1e3a8a; 
-  color: white; 
-  font-size: 1.2rem; 
-  padding: 20px; 
-  text-align: center; 
-  font-family: Arial, sans-serif;
-  margin: 0;
-}
-.container {
-  background: white;
-  color: #1e3a8a;
-  padding: 30px;
-  border-radius: 15px;
-  max-width: 400px;
-  margin: 50px auto;
-}
-.cross { font-size: 4rem; margin-bottom: 20px; }
-h1 { font-size: 2rem; margin-bottom: 10px; }
-p { margin-bottom: 20px; }
-.btn { 
-  display: block;
-  width: 100%; 
-  padding: 15px; 
-  margin: 10px 0; 
-  background: #f59e0b; 
-  color: #1e3a8a; 
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-}
-</style>
-</head>
-<body>
-<div class="container">
-<div class="cross">✞</div>
-<h1>Proof of a Miracle</h1>
-<p>Faith Community - Desktop</p>
-<p><strong>Desktop Version Working!</strong></p>
-<a href="/api/auth/login" class="btn">Sign In with Replit</a>
-<p style="font-size: 0.9rem; color: #6b7280; margin-top: 20px;">Production deployment successful!</p>
-</div>
-</body>
-</html>`);
-  }
-});
+console.log('Testing production deployment...');
 
-app.get('/api/auth/login', (req, res) => {
-  res.send('Auth endpoint working');
-});
+function testDeployment(userAgent, description) {
+  return new Promise((resolve) => {
+    const options = {
+      hostname: 'proofofamiracle.com',
+      port: 443,
+      path: '/',
+      method: 'GET',
+      headers: {
+        'User-Agent': userAgent
+      }
+    };
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        console.log(`\n${description}:`);
+        console.log(`Status: ${res.statusCode}`);
+        if (data.includes('Mobile Override Active') || data.includes('Desktop Override Active')) {
+          console.log('✅ FIXED - Override active');
+        } else if (data.includes('MOBILE DEPLOYMENT FIXED') || data.includes('DESKTOP DEPLOYMENT FIXED')) {
+          console.log('✅ FIXED - Deployment message found');
+        } else if (data.includes('Proof of a Miracle')) {
+          console.log('⚠️ OLD VERSION - Basic HTML found');
+        } else {
+          console.log('❌ BROKEN - No content or error');
+        }
+        resolve();
+      });
+    });
+
+    req.on('error', (e) => {
+      console.log(`\n${description}: ❌ ERROR - ${e.message}`);
+      resolve();
+    });
+
+    req.setTimeout(5000, () => {
+      console.log(`\n${description}: ❌ TIMEOUT`);
+      req.destroy();
+      resolve();
+    });
+
+    req.end();
+  });
+}
+
+async function runTests() {
+  await testDeployment('Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)', 'Mobile iOS');
+  await testDeployment('Mozilla/5.0 (Linux; Android 10; SM-G973F)', 'Mobile Android');
+  await testDeployment('Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124 Safari/537.36 Brave/1.27.111', 'Desktop Brave');
+  await testDeployment('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36', 'Desktop Safari');
+  console.log('\nProduction deployment test complete.');
+}
+
+runTests();
