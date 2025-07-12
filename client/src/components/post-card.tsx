@@ -56,7 +56,7 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       
       const title = response.action === "added" ? "Prayer Added" : "Prayer Removed";
       const description = response.action === "added" 
-        ? "Your prayer has been added to this miracle." 
+        ? "Your prayer has been added to this post." 
         : "Your prayer has been removed.";
       
       console.log("Toast message:", { title, description });
