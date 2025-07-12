@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import PWAInstallGuide from "@/components/pwa-install-guide";
-import crossImage from "@assets/Cross_1752286483357.png";
 
 export default function Landing() {
   const handleSignIn = () => {
@@ -19,7 +18,7 @@ export default function Landing() {
         {/* Cross image */}
         <div className="mb-8">
           <img 
-            src={crossImage} 
+            src="/cross.png" 
             alt="Cross" 
             className="mx-auto w-72 h-auto filter brightness-0 invert"
           />
