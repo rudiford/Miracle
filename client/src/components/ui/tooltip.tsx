@@ -1,13 +1,18 @@
-"use client"
+// Tooltip components completely removed due to React hooks error
+// All tooltip functionality is disabled
 
-import * as React from "react"
+export function TooltipProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
 
-// Tooltip components temporarily disabled due to React hooks error
-// This file exports empty components to prevent import errors
+export function Tooltip({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
 
-const TooltipProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const Tooltip = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const TooltipTrigger = ({ children }: { children: React.ReactNode; asChild?: boolean }) => <>{children}</>;
-const TooltipContent = ({ children }: { children: React.ReactNode; [key: string]: any }) => null;
+export function TooltipTrigger({ children, asChild, ...props }: { children: React.ReactNode; asChild?: boolean; [key: string]: any }) {
+  return <>{children}</>;
+}
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+export function TooltipContent({ children, ...props }: { children: React.ReactNode; [key: string]: any }) {
+  return null;
+}
