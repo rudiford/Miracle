@@ -38,6 +38,7 @@ function Router() {
           <Route path="/" component={Landing} />
           <Route path="/register" component={Register} />
           <Route path="/privacy" component={Privacy} />
+          <Route path="/delete-account" component={DeleteAccount} />
         </>
       ) : (
         <>
