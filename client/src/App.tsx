@@ -10,6 +10,7 @@ import Home from "@/pages/home";
 import Register from "@/pages/register";
 import Messages from "@/pages/messages";
 import Admin from "@/pages/admin";
+import Privacy from "@/pages/privacy";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -35,12 +36,14 @@ function Router() {
         <>
           <Route path="/" component={Landing} />
           <Route path="/register" component={Register} />
+          <Route path="/privacy" component={Privacy} />
         </>
       ) : (
         <>
           <Route path="/" component={Home} />
           <Route path="/messages" component={Messages} />
           <Route path="/register" component={Register} />
+          <Route path="/privacy" component={Privacy} />
           {user?.isAdmin && <Route path="/admin" component={Admin} />}
         </>
       )}
