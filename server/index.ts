@@ -4,16 +4,17 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// CRITICAL: Mobile detection must happen FIRST, before any other middleware
+// Enhanced error handling for production deployment
 app.use((req, res, next) => {
-  const userAgent = req.headers['user-agent'] || '';
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent);
-  
-  // Immediately serve mobile version for mobile browsers requesting root (unless desktop is requested)
-  if (req.method === 'GET' && req.path === '/' && isMobile && !req.query.desktop) {
-    console.log('MOBILE DETECTED - Serving mobile content:', userAgent.substring(0, 60));
+  try {
+    const userAgent = req.headers['user-agent'] || '';
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
     
-    const mobileHtml = `<!DOCTYPE html>
+    // Serve mobile version for mobile browsers requesting root (unless desktop is requested)
+    if (req.method === 'GET' && req.path === '/' && isMobile && !req.query.desktop) {
+      console.log('MOBILE DETECTED - Serving mobile content:', userAgent.substring(0, 60));
+      
+      const mobileHtml = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -66,12 +67,15 @@ p { margin-bottom: 20px; }
 </div>
 </body>
 </html>`;
+      
+      return res.send(mobileHtml);
+    }
     
-    return res.send(mobileHtml);
+    next();
+  } catch (error) {
+    console.error('Mobile detection error:', error);
+    next();
   }
-
-  
-  next();
 });
 
 // Restored React development mode for full functionality
@@ -112,12 +116,19 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
+    console.error('Server error:', err);
+    console.error('Request path:', req.path);
+    console.error('Request method:', req.method);
+    
     res.status(status).json({ message });
-    throw err;
+    // Don't throw error in production to prevent crashes
+    if (process.env.NODE_ENV !== 'production') {
+      throw err;
+    }
   });
 
   // importantly only setup vite in development and after
