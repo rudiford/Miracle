@@ -160,7 +160,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/posts', isAuthenticated, upload.single('image'), async (req: any, res) => {
     try {
+      console.log("POST /api/posts - Request body:", req.body);
+      console.log("POST /api/posts - Request file:", req.file);
+      
       const userId = req.user.claims.sub;
+      console.log("POST /api/posts - User ID:", userId);
+      
       let imageUrl = null;
       
       if (req.file) {
@@ -168,6 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const newPath = path.join('uploads', filename);
         fs.renameSync(req.file.path, newPath);
         imageUrl = `/uploads/${filename}`;
+        console.log("POST /api/posts - Image saved as:", imageUrl);
       }
       
       const postData = {
@@ -175,13 +181,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         imageUrl,
       };
       
+      console.log("POST /api/posts - Post data before validation:", postData);
+      
       const validatedData = insertPostSchema.parse(postData);
+      console.log("POST /api/posts - Validated data:", validatedData);
+      
       const post = await storage.createPost(userId, validatedData);
+      console.log("POST /api/posts - Created post:", post);
       
       res.json(post);
     } catch (error) {
       console.error("Error creating post:", error);
-      res.status(500).json({ message: "Failed to create post" });
+      console.error("Error stack:", error.stack);
+      res.status(500).json({ message: "Failed to create post", error: error.message });
     }
   });
 

@@ -43,6 +43,9 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
 
   const createPostMutation = useMutation({
     mutationFn: async (data: CreatePostForm) => {
+      console.log("Creating post with data:", data);
+      console.log("Selected image:", selectedImage);
+      
       const formData = new FormData();
       formData.append("content", data.content);
       if (data.location) formData.append("location", data.location);
@@ -50,17 +53,26 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
       if (data.longitude) formData.append("longitude", data.longitude);
       if (selectedImage) formData.append("image", selectedImage);
 
+      console.log("Sending FormData to /api/posts");
+      
       const response = await fetch("/api/posts", {
         method: "POST",
         body: formData,
         credentials: "include",
       });
 
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+
       if (!response.ok) {
-        throw new Error("Failed to create post");
+        const errorText = await response.text();
+        console.error("Create post error response:", errorText);
+        throw new Error(`Failed to create post: ${response.status} - ${errorText}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log("Post created successfully:", result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
@@ -73,9 +85,10 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
     },
     onError: (error) => {
       console.error("Post creation error:", error);
+      console.error("Error details:", error.message);
       toast({
         title: "Error",
-        description: "Failed to create post. Please try again.",
+        description: `Failed to create post: ${error.message}`,
         variant: "destructive",
       });
     },
