@@ -228,13 +228,13 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       )}
       
       {/* Post Actions */}
-      <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-around">
+      <div className="px-2 py-3 border-t border-gray-100 flex items-center justify-between">
         <Button 
           variant="ghost" 
           size="sm"
           onClick={handlePrayer}
           disabled={prayerMutation.isPending}
-          className={`flex items-center space-x-1 transition-colors ${
+          className={`flex items-center space-x-1 transition-colors px-2 ${
             hasPrayed 
               ? "text-faith-blue bg-blue-50" 
               : "text-gray-600 hover:text-faith-blue"
@@ -243,10 +243,10 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
           <img 
             src="/cross.png" 
             alt="Cross" 
-            className="w-4 h-auto"
+            className="w-3 h-auto"
           />
-          <span className="text-sm">Pray</span>
-          <span className="text-sm">{post.prayerCount}</span>
+          <span className="text-xs">Pray</span>
+          <span className="text-xs">{post.prayerCount}</span>
         </Button>
         
         <Button 
@@ -254,36 +254,36 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
           size="sm"
           onClick={handleLove}
           disabled={loveMutation.isPending}
-          className={`flex items-center space-x-1 transition-colors ${
+          className={`flex items-center space-x-1 transition-colors px-2 ${
             hasLoved 
               ? "text-red-500 bg-red-50" 
               : "text-gray-600 hover:text-red-500"
           }`}
         >
-          <Heart className={`w-4 h-4 ${hasLoved ? "fill-current text-red-500" : ""}`} />
-          <span className="text-sm">Love</span>
-          <span className="text-sm">{post.loveCount}</span>
+          <Heart className={`w-3 h-3 ${hasLoved ? "fill-current text-red-500" : ""}`} />
+          <span className="text-xs">Love</span>
+          <span className="text-xs">{post.loveCount}</span>
         </Button>
         
         <Button 
           variant="ghost" 
           size="sm"
           onClick={handleComment}
-          className="flex items-center space-x-1 text-gray-600 hover:text-faith-blue transition-colors"
+          className="flex items-center space-x-1 text-gray-600 hover:text-faith-blue transition-colors px-2"
         >
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-sm">Comment</span>
-          <span className="text-sm">{post.commentCount}</span>
+          <MessageCircle className="w-3 h-3" />
+          <span className="text-xs">Comment</span>
+          <span className="text-xs">{post.commentCount}</span>
         </Button>
         
         <Button 
           variant="ghost" 
           size="sm"
           onClick={handleShare}
-          className="flex items-center space-x-1 text-gray-600 hover:text-faith-blue transition-colors"
+          className="flex items-center space-x-1 text-gray-600 hover:text-faith-blue transition-colors px-2"
         >
-          <Share className="w-4 h-4" />
-          <span className="text-sm">Share</span>
+          <Share className="w-3 h-3" />
+          <span className="text-xs">Share</span>
         </Button>
       </div>
       

@@ -17,6 +17,7 @@ Preferred communication style: Simple, everyday language.
 - Removed map-related content from help modal and documentation
 - Streamlined user interface for simpler, cleaner experience
 - Moved navigation menu from bottom to top directly under "Proof of a Miracle" title
+- Fixed post action buttons layout to fit mobile screens properly with smaller icons and text
 
 **Cross Image Integration (July 12, 2025)**
 - Integrated user's custom black cross image across the entire application for complete consistency
