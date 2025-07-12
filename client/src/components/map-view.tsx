@@ -23,8 +23,10 @@ export default function MapView() {
     queryKey: ["/api/posts"],
   });
 
-  // Filter posts that have location data
-  const postsWithLocation = posts.filter(post => post.latitude && post.longitude);
+  // Filter posts that have location data (either GPS coordinates or text location)
+  const postsWithLocation = posts.filter(post => 
+    (post.latitude && post.longitude) || post.location
+  );
 
   return (
     <div className="h-screen relative">
@@ -40,22 +42,32 @@ export default function MapView() {
         </div>
       </div>
       
-      {/* Cross-shaped map pins overlay */}
-      <div className="absolute top-1/3 left-1/4 text-faith-gold text-2xl cursor-pointer hover:scale-110 transition-transform">
-        <Cross />
-      </div>
-      <div className="absolute top-1/2 right-1/3 text-faith-gold text-2xl cursor-pointer hover:scale-110 transition-transform">
-        <Cross />
-      </div>
-      <div className="absolute bottom-1/3 left-1/2 text-faith-gold text-2xl cursor-pointer hover:scale-110 transition-transform">
-        <Cross />
-      </div>
-      <div className="absolute top-2/3 left-1/5 text-faith-gold text-2xl cursor-pointer hover:scale-110 transition-transform">
-        <Cross />
-      </div>
-      <div className="absolute top-1/4 right-1/4 text-faith-gold text-2xl cursor-pointer hover:scale-110 transition-transform">
-        <Cross />
-      </div>
+      {/* Dynamic cross markers for actual posts */}
+      {postsWithLocation.map((post, index) => {
+        // Create semi-random but consistent positions based on post content
+        const hash = post.content.length + post.id;
+        const leftPos = 20 + (hash % 60); // 20-80% from left
+        const topPos = 20 + ((hash * 7) % 60); // 20-80% from top
+        
+        return (
+          <div 
+            key={post.id}
+            className="absolute text-faith-gold text-2xl cursor-pointer hover:scale-110 transition-transform group"
+            style={{ 
+              left: `${leftPos}%`, 
+              top: `${topPos}%`,
+              transform: 'translate(-50%, -50%)'
+            }}
+            title={`${post.location || 'Unknown location'} - ${post.content.substring(0, 50)}...`}
+          >
+            <Cross />
+            {/* Location label on hover */}
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-xs text-faith-text opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+              {post.location || 'GPS Location'}
+            </div>
+          </div>
+        );
+      })}
       
       {/* Map Controls */}
       <div className="absolute top-4 right-4 space-y-2">
