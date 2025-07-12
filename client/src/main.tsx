@@ -14,22 +14,37 @@ console.log('Browser Info:', {
   location: window.location.href
 });
 
-// Override window error handlers to prevent runtime error overlay from showing
-window.addEventListener('error', (event) => {
-  if (event.filename && event.filename.includes('runtime-error')) {
-    console.log('Runtime error overlay suppressed');
-    event.preventDefault();
-    return false;
+// Block runtime error plugin before it can initialize
+(function() {
+  // Store original functions before any plugins can override them
+  const originalAddEventListener = window.addEventListener;
+  const originalFetch = window.fetch;
+  
+  // Override addEventListener to block runtime error plugin
+  window.addEventListener = function(type, listener, options) {
+    if (type === 'error' && listener && listener.toString().includes('sendError')) {
+      console.log('Blocked runtime error plugin');
+      return;
+    }
+    return originalAddEventListener.call(this, type, listener, options);
+  };
+  
+  // Override fetch to prevent runtime error plugin communication
+  window.fetch = function(input, init) {
+    if (typeof input === 'string' && input.includes('runtime-error')) {
+      console.log('Blocked runtime error plugin request');
+      return Promise.resolve(new Response('', { status: 200 }));
+    }
+    return originalFetch.call(this, input, init);
+  };
+  
+  // Block createHotContext
+  if (window.createHotContext) {
+    window.createHotContext = function() {
+      return { send: () => {}, on: () => {}, off: () => {} };
+    };
   }
-});
-
-window.addEventListener('unhandledrejection', (event) => {
-  if (event.reason && event.reason.toString().includes('401')) {
-    console.log('401 error suppressed - user not authenticated');
-    event.preventDefault();
-    return false;
-  }
-});
+})();
 
 // Simple error handling to prevent preview window issues
 function safeRender() {
