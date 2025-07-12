@@ -16,7 +16,7 @@ export default function Landing() {
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
         {/* Cross image */}
-        <div className="mb-10">
+        <div className="mb-6">
           <img 
             src="/cross.png" 
             alt="Cross" 
@@ -24,16 +24,16 @@ export default function Landing() {
           />
         </div>
         
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 font-georgia">
+        <h1 className="text-5xl md:text-6xl font-bold mb-4 font-georgia">
           Proof of a Miracle
         </h1>
         
-        <p className="text-2xl mb-10 max-w-lg opacity-90">
+        <p className="text-2xl mb-6 max-w-lg opacity-90">
           Discovering miracles and faith experiences around the world
         </p>
         
         {/* Faith community message */}
-        <div className="w-full max-w-lg mb-10">
+        <div className="w-full max-w-lg mb-6">
           <Card className="bg-white/10 border-white/20">
             <CardContent className="p-6">
               <div className="text-center">
