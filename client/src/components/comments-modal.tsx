@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertCommentSchema } from "@shared/schema";
 import { z } from "zod";
@@ -34,7 +34,7 @@ interface CommentsModalProps {
 }
 
 export default function CommentsModal({ open, onOpenChange, postId }: CommentsModalProps) {
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
   const form = useForm<CommentForm>({
     resolver: zodResolver(commentSchema),
@@ -57,18 +57,9 @@ export default function CommentsModal({ open, onOpenChange, postId }: CommentsMo
       queryClient.invalidateQueries({ queryKey: ["/api/posts", postId, "comments"] });
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
       form.reset();
-      toast({
-        title: "Comment Added",
-        description: "Your comment has been posted.",
-      });
     },
     onError: (error) => {
       console.error("Comment creation error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to post comment. Please try again.",
-        variant: "destructive",
-      });
     },
   });
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Camera, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 
 interface ProfileUploadProps {
   currentImageUrl?: string | null;
@@ -11,7 +11,7 @@ interface ProfileUploadProps {
 
 export default function ProfileUpload({ currentImageUrl, onImageUploaded }: ProfileUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -32,18 +32,11 @@ export default function ProfileUpload({ currentImageUrl, onImageUploaded }: Prof
     },
     onSuccess: (data) => {
       onImageUploaded(data.profileImageUrl);
-      toast({
-        title: "Profile Picture Updated",
-        description: "Your profile picture has been successfully uploaded.",
-      });
+      console.log("Profile picture updated successfully!");
     },
     onError: (error) => {
       console.error("Upload error:", error);
-      toast({
-        title: "Upload Failed",
-        description: "Failed to upload profile picture. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Failed to upload profile picture!");
     },
     onSettled: () => {
       setIsUploading(false);

@@ -2,20 +2,20 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { z } from "zod";
-import { Camera, MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import ProfileUpload from "./profile-upload";
+import { Label } from "@/components/ui/label";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { insertPostSchema } from "@shared/schema";
+import { z } from "zod";
+import ProfileUpload from "@/components/profile-upload";
+import { X } from "lucide-react";
 
-const editPostSchema = z.object({
-  content: z.string().min(1, "Please share your faith experience"),
-  location: z.string().optional(),
+const editPostSchema = insertPostSchema.extend({
+  imageUrl: z.string().optional(),
 });
 
 type EditPostForm = z.infer<typeof editPostSchema>;
@@ -41,7 +41,6 @@ interface EditPostModalProps {
 
 export default function EditPostModal({ open, onOpenChange, post }: EditPostModalProps) {
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>();
-  const { toast } = useToast();
 
   const form = useForm<EditPostForm>({
     resolver: zodResolver(editPostSchema),
@@ -71,21 +70,12 @@ export default function EditPostModal({ open, onOpenChange, post }: EditPostModa
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
-      toast({
-        title: "Post Updated",
-        description: "Your faith experience has been updated successfully.",
-      });
       onOpenChange(false);
       form.reset();
       setCurrentImageUrl(undefined);
     },
     onError: (error) => {
       console.error("Edit post error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update your post. Please try again.",
-        variant: "destructive",
-      });
     },
   });
 
@@ -115,14 +105,18 @@ export default function EditPostModal({ open, onOpenChange, post }: EditPostModa
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-faith-text">Share your experience</FormLabel>
+                  <FormLabel>Your Faith Experience</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Tell us about this miracle or faith experience..."
-                      className="min-h-[100px] resize-none"
                       {...field}
+                      placeholder="Share your miracle, answered prayer, or faith experience..."
+                      className="min-h-[120px] resize-none border-faith-light/20 focus:border-faith"
+                      maxLength={500}
                     />
                   </FormControl>
+                  <div className="text-right text-sm text-faith-light">
+                    {field.value?.length || 0}/500
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -133,14 +127,12 @@ export default function EditPostModal({ open, onOpenChange, post }: EditPostModa
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-faith-text flex items-center">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Location (optional)
-                  </FormLabel>
+                  <FormLabel>Location (Optional)</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Where did this happen? (e.g., Dallas, Texas)"
                       {...field}
+                      placeholder="Where did this happen?"
+                      className="border-faith-light/20 focus:border-faith"
                     />
                   </FormControl>
                   <FormMessage />
@@ -148,35 +140,35 @@ export default function EditPostModal({ open, onOpenChange, post }: EditPostModa
               )}
             />
 
-            <div>
-              <label className="text-sm font-medium text-faith-text flex items-center mb-2">
-                <Camera className="w-4 h-4 mr-1" />
-                Photo (optional)
-              </label>
-              
-              {currentImageUrl ? (
-                <div className="relative">
-                  <img 
-                    src={currentImageUrl} 
-                    alt="Post content" 
-                    className="w-full h-32 object-cover rounded-lg border"
+            <div className="space-y-2">
+              <Label>Photo (Optional)</Label>
+              <div className="space-y-3">
+                {currentImageUrl && (
+                  <div className="relative">
+                    <img 
+                      src={currentImageUrl} 
+                      alt="Post" 
+                      className="w-full h-48 object-cover rounded-lg border border-faith-light/20"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={removeImage}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+                
+                <div className="flex justify-center">
+                  <ProfileUpload
+                    currentImageUrl={currentImageUrl}
+                    onImageUploaded={handleImageUploaded}
                   />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={removeImage}
-                    className="absolute top-2 right-2"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
                 </div>
-              ) : (
-                <ProfileUpload
-                  currentImageUrl={currentImageUrl}
-                  onImageUploaded={handleImageUploaded}
-                />
-              )}
+              </div>
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
@@ -184,16 +176,15 @@ export default function EditPostModal({ open, onOpenChange, post }: EditPostModa
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                disabled={editPostMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={editPostMutation.isPending}
-                className="bg-faith-blue hover:bg-faith-blue/90"
+                className="bg-faith hover:bg-faith/90"
               >
-                {editPostMutation.isPending ? "Updating..." : "Update Post"}
+                {editPostMutation.isPending ? "Updating..." : "Update Experience"}
               </Button>
             </div>
           </form>

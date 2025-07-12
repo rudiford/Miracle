@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+// // import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertUserSchema } from "@shared/schema";
 import ProfileUpload from "@/components/profile-upload";
@@ -24,7 +24,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function Register() {
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
+  // // const { toast } = useToast();
   const { user } = useAuth();
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
@@ -70,20 +70,13 @@ export default function Register() {
       // Invalidate user data to refetch from server
       import("@/lib/queryClient").then(({ queryClient }) => {
         queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      });
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been saved successfully!",
-      });
+);
+      console.log("Profile updated successfully!");
       console.log("Profile updated successfully:", data);
     },
     onError: (error) => {
       console.error("Profile update error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Failed to update profile. Please try again.);
     },
   });
 

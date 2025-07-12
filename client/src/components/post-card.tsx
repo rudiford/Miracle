@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit, UserX, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import CommentsModal from "./comments-modal";
@@ -43,7 +43,7 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
   const [hasLoved, setHasLoved] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const { user } = useAuth();
   
   // Check if current user owns this post
@@ -60,26 +60,10 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       console.log("Prayer response:", response);
       setHasPrayed(response.action === "added");
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
-      
-      const title = response.action === "added" ? "Prayer Added" : "Prayer Removed";
-      const description = response.action === "added" 
-        ? "Your prayer has been added to this post." 
-        : "Your prayer has been removed.";
-      
-      console.log("Toast message:", { title, description });
-      
-      toast({
-        title,
-        description,
-      });
+      console.log("Prayer action:", response.action);
     },
     onError: (error) => {
       console.error("Prayer toggle error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update prayer. Please try again.",
-        variant: "destructive",
-      });
     },
   });
 
@@ -94,26 +78,10 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       console.log("Love response:", response);
       setHasLoved(response.action === "added");
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
-      
-      const title = response.action === "added" ? "Love Added" : "Love Removed";
-      const description = response.action === "added" 
-        ? "Your love has been added to this post." 
-        : "Your love has been removed.";
-      
-      console.log("Love toast message:", { title, description });
-      
-      toast({
-        title,
-        description,
-      });
+      console.log("Love action:", response.action);
     },
     onError: (error) => {
       console.error("Love toggle error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update love. Please try again.",
-        variant: "destructive",
-      });
     },
   });
 
@@ -151,26 +119,15 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
       return response.json();
     },
     onSuccess: () => {
-      toast({
-        title: "User Blocked",
-        description: "You have successfully blocked this user. You will no longer see their posts.",
-      });
       queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
     },
     onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to block user",
-        variant: "destructive",
-      });
     },
   });
 
   const handleBlockUser = (userId: string) => {
     blockUserMutation.mutate(userId);
   };
-
-
 
   return (
     <Card className="shadow-sm border border-gray-200 overflow-hidden">
