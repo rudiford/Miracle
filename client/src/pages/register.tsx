@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft, Camera, User, Cross } from "lucide-react";
+import { ArrowLeft, Camera, User, Cross, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,6 +71,10 @@ export default function Register() {
 
   const goBack = () => {
     setLocation("/");
+  };
+
+  const handleDeleteAccount = () => {
+    setLocation("/delete-account");
   };
 
   return (
@@ -225,6 +229,24 @@ export default function Register() {
             {updateProfileMutation.isPending ? "Joining..." : "Join Faith Community"}
           </Button>
         </form>
+        
+        {/* Danger Zone - Account Deletion */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-red-800 mb-2">Danger Zone</h3>
+            <p className="text-red-700 mb-4">
+              Once you delete your account, all your posts, messages, and data will be permanently removed. This action cannot be undone.
+            </p>
+            <Button 
+              onClick={handleDeleteAccount}
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Account
+            </Button>
+          </div>
+        </div>
       </div>
       
       {/* Help Modal */}

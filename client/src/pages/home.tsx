@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home as HomeIcon, Search, Plus, MessageCircle, User, Settings, LogOut, Trash2 } from "lucide-react";
+import { Home as HomeIcon, Search, Plus, MessageCircle, User, Settings, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import FeedView from "@/components/feed-view";
@@ -37,9 +37,7 @@ export default function Home() {
     setLocation("/register");
   };
 
-  const handleDeleteAccount = () => {
-    setLocation("/delete-account");
-  };
+
 
   return (
     <div className="min-h-screen bg-faith-light">
@@ -77,9 +75,6 @@ export default function Home() {
               <div className="flex items-center space-x-2">
                 <Button variant="ghost" size="sm" onClick={handleProfile}>
                   <Settings className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="sm" onClick={handleDeleteAccount} className="text-red-600">
-                  <Trash2 className="w-4 h-4" />
                 </Button>
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
                   <LogOut className="w-4 h-4" />
