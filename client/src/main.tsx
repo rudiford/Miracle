@@ -51,12 +51,22 @@ function isMobile() {
 }
 
 function shouldUseMobileFallback() {
-  const isFirefox = navigator.userAgent.includes('Firefox');
-  const isChrome = navigator.userAgent.includes('Chrome');
+  const userAgent = navigator.userAgent;
   const mobile = isMobile();
   
-  // Use mobile fallback for ANY mobile browser if screen is small or if there are rendering issues
-  return mobile || window.innerWidth <= 600 || window.innerHeight <= 600;
+  // Force mobile fallback for ALL mobile browsers to avoid blank screens
+  if (mobile) {
+    console.log('Mobile browser detected, redirecting to mobile version');
+    return true;
+  }
+  
+  // Also redirect very small screens
+  if (window.innerWidth <= 768 || window.innerHeight <= 600) {
+    console.log('Small screen detected, redirecting to mobile version');
+    return true;
+  }
+  
+  return false;
 }
 
 // Simple error handling to prevent preview window issues
