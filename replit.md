@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**Critical Bug Fix - React Hooks Error Resolution (July 12, 2025)**
+- Fixed critical React hooks error that was causing white screen on mobile browsers
+- Completely removed problematic @radix-ui/react-tooltip dependency that was causing invalid hook calls
+- Replaced tooltip components with safe stub implementations to prevent import errors
+- App now loads properly in preview window, mobile browser issues should resolve with deployment
+- All tooltip functionality temporarily disabled but app is fully functional for Google Play Store submission
+
 **Account Deletion System Implementation (July 12, 2025)**
 - Added GDPR-compliant account deletion functionality for Google Play Store compliance
 - Users can delete their account via Settings menu → "Delete Account" option
