@@ -209,6 +209,14 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
             src={post.imageUrl} 
             alt="Post content" 
             className="w-full h-64 object-cover rounded-lg" 
+            style={{ 
+              pointerEvents: 'auto',
+              WebkitUserSelect: 'none',
+              userSelect: 'none'
+            }}
+            data-pin-nopin="true"
+            data-pin-no-hover="true"
+            onContextMenu={(e) => e.preventDefault()}
           />
         </div>
       )}

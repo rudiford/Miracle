@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Disable Pinterest and other social media save buttons on images */
+img[data-pin-nopin="true"] {
+  pointer-events: auto !important;
+}
+
+/* Hide Pinterest hover buttons */
+span[data-text="Create Pin"] {
+  display: none !important;
+}
+
+/* General protection against overlays */
+.pinterest-hover-button,
+.pinterest-save-button {
+  display: none !important;
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(222, 84%, 4.9%);
