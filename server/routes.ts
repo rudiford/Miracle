@@ -661,6 +661,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(path.join(process.cwd(), "client/public/mobile-simple.html"));
   });
 
+  app.get("/mobile-test.html", (req, res) => {
+    res.sendFile(path.join(process.cwd(), "mobile-test.html"));
+  });
+
   // Mobile API endpoint for basic functionality
   app.get("/api/mobile/check", (req, res) => {
     const userAgent = req.headers['user-agent'] || '';

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            color: #1e3a8a;
+        }
+        .cross {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: #f59e0b;
+            color: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cross">✞</div>
+        <h1>Proof of a Miracle</h1>
+        <p>Mobile Test Page</p>
+        <button class="btn" onclick="alert('Button works!')">Test Button</button>
+        <div style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+            <p>User Agent: <span id="ua"></span></p>
+            <p>Screen: <span id="screen"></span></p>
+            <p>Time: <span id="time"></span></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ua').textContent = navigator.userAgent;
+        document.getElementById('screen').textContent = window.innerWidth + 'x' + window.innerHeight;
+        document.getElementById('time').textContent = new Date().toLocaleTimeString();
+        console.log('Mobile test page loaded successfully');
+    </script>
+</body>
+</html>
