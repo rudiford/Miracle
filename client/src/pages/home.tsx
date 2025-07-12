@@ -1,18 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Cross, List, Map, User, Menu } from "lucide-react";
+import { Cross, List, Map } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import FeedView from "@/components/feed-view";
 import MapView from "@/components/map-view";
 import BottomNavigation from "@/components/bottom-navigation";
 import CreatePostModal from "@/components/create-post-modal";
 import HelpModal from "@/components/help-modal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 type ViewType = "feed" | "map";
 
@@ -71,34 +65,17 @@ export default function Home() {
                 </Button>
               </div>
               
-              {/* Profile Menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="relative">
-                    {user?.profileImageUrl ? (
-                      <img 
-                        src={user.profileImageUrl} 
-                        alt="Profile" 
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 bg-faith-blue rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {user?.isAdmin && (
-                    <DropdownMenuItem onClick={goToAdmin}>
-                      Admin Dashboard
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={handleLogout}>
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {/* Admin Button (if admin user) */}
+              {user?.isAdmin && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToAdmin}
+                  className="text-faith-blue border-faith-blue hover:bg-faith-blue hover:text-white"
+                >
+                  Admin
+                </Button>
+              )}
             </div>
           </div>
         </div>
