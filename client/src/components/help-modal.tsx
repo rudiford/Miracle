@@ -17,7 +17,7 @@ import {
 import { HelpCircle, Heart, MapPin, MessageCircle, Users, Cross } from "lucide-react";
 
 interface HelpModalProps {
-  currentView?: "feed" | "map" | "messages" | "admin" | "register";
+  currentView?: "feed" | "messages" | "admin" | "register";
 }
 
 export default function HelpModal({ currentView = "feed" }: HelpModalProps) {
@@ -27,8 +27,6 @@ export default function HelpModal({ currentView = "feed" }: HelpModalProps) {
     switch (currentView) {
       case "feed":
         return "feed";
-      case "map":
-        return "map";
       case "messages":
         return "messages";
       case "admin":
@@ -63,9 +61,8 @@ export default function HelpModal({ currentView = "feed" }: HelpModalProps) {
         </DialogHeader>
 
         <Tabs defaultValue={getContextualHelp()} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="feed" className="text-xs">Feed</TabsTrigger>
-            <TabsTrigger value="map" className="text-xs">Map</TabsTrigger>
             <TabsTrigger value="messages" className="text-xs">Messages</TabsTrigger>
             <TabsTrigger value="register" className="text-xs">Profile</TabsTrigger>
             <TabsTrigger value="admin" className="text-xs">Admin</TabsTrigger>
@@ -85,32 +82,13 @@ export default function HelpModal({ currentView = "feed" }: HelpModalProps) {
                   <li>Tap the <Heart className="inline h-3 w-3" /> prayer button to pray for someone</li>
                   <li>Leave encouraging comments on posts</li>
                   <li>Share your own miracle by tapping the "+" button</li>
-                  <li>Switch to map view to see where miracles happened</li>
                 </ul>
                 <p><strong>Purpose:</strong> Build faith community by sharing and celebrating God's miraculous works.</p>
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="map" className="space-y-4">
-            <div className="space-y-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-faith-gold" />
-                Miracle Discovery Map
-              </h3>
-              <div className="space-y-2 text-sm">
-                <p><strong>What you see:</strong> An interactive world map showing cross markers where miracles and faith experiences have occurred.</p>
-                <p><strong>How to use:</strong></p>
-                <ul className="list-disc list-inside space-y-1 ml-4">
-                  <li>Explore cross markers to discover miracles near you</li>
-                  <li>Tap any cross to read the full testimony</li>
-                  <li>Zoom in/out to explore different regions</li>
-                  <li>Switch to feed view for a chronological timeline</li>
-                </ul>
-                <p><strong>Purpose:</strong> Visualize God's global work and discover faith experiences in your area or places you've traveled.</p>
-              </div>
-            </div>
-          </TabsContent>
+
 
           <TabsContent value="messages" className="space-y-4">
             <div className="space-y-3">

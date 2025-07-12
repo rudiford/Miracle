@@ -3,16 +3,14 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
 interface BottomNavigationProps {
-  currentView: "feed" | "map";
-  onViewChange: (view: "feed" | "map") => void;
   onCreatePost: () => void;
 }
 
-export default function BottomNavigation({ currentView, onViewChange, onCreatePost }: BottomNavigationProps) {
+export default function BottomNavigation({ onCreatePost }: BottomNavigationProps) {
   const [, setLocation] = useLocation();
 
   const handleHome = () => {
-    onViewChange("feed");
+    // Already on home feed view
   };
 
   const handleDiscover = () => {
@@ -34,12 +32,10 @@ export default function BottomNavigation({ currentView, onViewChange, onCreatePo
         <Button 
           variant="ghost" 
           onClick={handleHome}
-          className={`flex flex-col items-center space-y-1 py-2 px-3 ${
-            currentView === "feed" ? "text-faith-blue" : "text-gray-400 hover:text-faith-blue"
-          }`}
+          className="flex flex-col items-center space-y-1 py-2 px-3 text-faith-blue"
         >
           <Home className="w-5 h-5" />
-          <span className="text-xs font-medium">Home</span>
+          <span className="text-xs font-medium">Feed</span>
         </Button>
         
         <Button 

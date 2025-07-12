@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**App Simplification - Feed-Only View (July 12, 2025)**
+- Completely removed map view functionality from the entire application
+- Simplified navigation to show only feed view with bottom navigation
+- Updated home page to only display feed content without view switching
+- Removed map-related content from help modal and documentation
+- Streamlined user interface for simpler, cleaner experience
+
 **Cross Image Integration (July 12, 2025)**
 - Integrated user's custom black cross image across the entire application for complete consistency
 - Landing page: Large cross (288px) as main focal point, black color for contrast

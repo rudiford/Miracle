@@ -170,6 +170,8 @@ export default function MapView() {
           const x = ((post.mappedLng! + 180) / 360) * 800;
           const y = ((90 - post.mappedLat!) / 180) * 400;
           
+          console.log(`Marker for post ${post.id}: x=${x}, y=${y}, lat=${post.mappedLat}, lng=${post.mappedLng}`);
+          
           return (
             <div
               key={post.id}
@@ -185,7 +187,7 @@ export default function MapView() {
                 <img 
                   src="/cross.png" 
                   alt="Cross" 
-                  className="w-[42px] h-auto hover:scale-125 transition-transform drop-shadow-lg"
+                  className="w-[60px] h-auto hover:scale-125 transition-transform drop-shadow-lg border-2 border-white rounded-lg bg-white/80 p-1"
                 />
                 <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-xs text-faith-text opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
                   {post.location || `${post.mappedLat!.toFixed(2)}, ${post.mappedLng!.toFixed(2)}`}
