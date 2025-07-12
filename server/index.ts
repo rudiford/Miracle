@@ -4,14 +4,19 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// Enhanced error handling for production deployment
+// Production-ready mobile detection with fallback
 app.use((req, res, next) => {
   try {
+    // Skip mobile detection for API routes, static files, and other non-root requests
+    if (req.path !== '/' || req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+      return next();
+    }
+    
     const userAgent = req.headers['user-agent'] || '';
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
     
     // Serve mobile version for mobile browsers requesting root (unless desktop is requested)
-    if (req.method === 'GET' && req.path === '/' && isMobile && !req.query.desktop) {
+    if (req.method === 'GET' && isMobile && !req.query.desktop) {
       console.log('MOBILE DETECTED - Serving mobile content:', userAgent.substring(0, 60));
       
       const mobileHtml = `<!DOCTYPE html>
@@ -21,6 +26,7 @@ app.use((req, res, next) => {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proof of a Miracle - Mobile</title>
 <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
   background: #1e3a8a; 
   color: white; 
@@ -28,7 +34,10 @@ body {
   padding: 20px; 
   text-align: center; 
   font-family: Arial, sans-serif;
-  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .container {
   background: white;
@@ -36,10 +45,11 @@ body {
   padding: 30px;
   border-radius: 15px;
   max-width: 400px;
-  margin: 50px auto;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .cross { font-size: 4rem; margin-bottom: 20px; }
-h1 { font-size: 2rem; margin-bottom: 10px; }
+h1 { font-size: 2rem; margin-bottom: 10px; font-weight: bold; }
 p { margin-bottom: 20px; }
 .btn { 
   display: block;
@@ -52,7 +62,9 @@ p { margin-bottom: 20px; }
   border-radius: 8px;
   font-size: 1.1rem;
   font-weight: bold;
+  transition: background-color 0.3s;
 }
+.btn:hover { background: #d97706; }
 .debug { font-size: 0.9rem; color: #6b7280; margin-top: 20px; }
 </style>
 </head>
@@ -60,10 +72,11 @@ p { margin-bottom: 20px; }
 <div class="container">
 <div class="cross">✞</div>
 <h1>Proof of a Miracle</h1>
-<p>Faith Community - Mobile</p>
-<p><strong>Mobile browsers should see this working version!</strong></p>
+<p>Faith Community</p>
+<p><strong>Mobile Version - Production Ready!</strong></p>
 <a href="/api/auth/login" class="btn">Sign In with Replit</a>
-<p class="debug">Mobile detection working. Desktop users can access the full app.</p>
+<a href="/?desktop=1" class="btn" style="background: #6b7280; margin-top: 5px;">Desktop Version</a>
+<p class="debug">Mobile compatibility fixed - ${new Date().toISOString()}</p>
 </div>
 </body>
 </html>`;
@@ -123,6 +136,56 @@ app.use((req, res, next) => {
     console.error('Server error:', err);
     console.error('Request path:', req.path);
     console.error('Request method:', req.method);
+    console.error('Stack trace:', err.stack);
+    
+    // Enhanced error handling for production
+    if (req.path === '/' && !res.headersSent) {
+      // For root path errors, serve a working fallback
+      const fallbackHtml = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof of a Miracle</title>
+<style>
+body { 
+  background: #1e3a8a; 
+  color: white; 
+  font-family: Arial, sans-serif;
+  padding: 20px; 
+  text-align: center; 
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  background: white;
+  color: #1e3a8a;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 100%;
+}
+.cross { font-size: 4rem; margin-bottom: 20px; }
+h1 { font-size: 2rem; margin-bottom: 20px; }
+p { margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="cross">✞</div>
+<h1>Proof of a Miracle</h1>
+<p>Faith Community</p>
+<p><strong>Service Temporarily Unavailable</strong></p>
+<p>We're working to restore full service. Please try again in a few minutes.</p>
+<p style="font-size: 0.9rem; color: #6b7280; margin-top: 20px;">Error: ${message}</p>
+</div>
+</body>
+</html>`;
+      
+      return res.status(503).send(fallbackHtml);
+    }
     
     res.status(status).json({ message });
     // Don't throw error in production to prevent crashes
