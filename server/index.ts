@@ -3,6 +3,13 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Force production mode to bypass Vite development server
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Forcing production mode to bypass Vite development server');
+  app.set('env', 'production');
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
