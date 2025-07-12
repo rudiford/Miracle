@@ -12,10 +12,11 @@ Preferred communication style: Simple, everyday language.
 
 **App Simplification - Feed-Only View (July 12, 2025)**
 - Completely removed map view functionality from the entire application
-- Simplified navigation to show only feed view with bottom navigation
+- Simplified navigation to show only feed view with top navigation
 - Updated home page to only display feed content without view switching
 - Removed map-related content from help modal and documentation
 - Streamlined user interface for simpler, cleaner experience
+- Moved navigation menu from bottom to top directly under "Proof of a Miracle" title
 
 **Cross Image Integration (July 12, 2025)**
 - Integrated user's custom black cross image across the entire application for complete consistency
