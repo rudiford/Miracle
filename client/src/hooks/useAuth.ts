@@ -5,6 +5,7 @@ export function useAuth() {
   const { data: user, isLoading, error } = useQuery<User>({
     queryKey: ["/api/auth/user"],
     retry: false,
+    throwOnError: false,
   });
 
   // Don't log 401 errors as these are expected for unauthenticated users
@@ -16,5 +17,6 @@ export function useAuth() {
     user,
     isLoading,
     isAuthenticated: !!user,
+    error,
   };
 }
