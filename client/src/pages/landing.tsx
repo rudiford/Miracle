@@ -16,7 +16,7 @@ export default function Landing() {
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
         {/* Cross image */}
-        <div className="mb-2">
+        <div className="mb-2 mt-4">
           <img 
             src="/cross.png" 
             alt="Cross" 
