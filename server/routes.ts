@@ -31,8 +31,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     // Only redirect GET requests to root path for mobile browsers
     if (req.method === 'GET' && req.path === '/' && isMobile) {
-      console.log('Mobile browser detected, redirecting to mobile version:', userAgent.substring(0, 50));
-      return res.redirect('/mobile.html');
+      console.log('Mobile browser detected, serving simple mobile version:', userAgent.substring(0, 50));
+      return res.sendFile(path.join(process.cwd(), "client/public/mobile-simple.html"));
     }
     
     next();
@@ -655,6 +655,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/mobile-redirect.html", (req, res) => {
     res.sendFile(path.join(process.cwd(), "client/public/mobile-redirect.html"));
+  });
+
+  app.get("/mobile-simple.html", (req, res) => {
+    res.sendFile(path.join(process.cwd(), "client/public/mobile-simple.html"));
   });
 
   // Mobile API endpoint for basic functionality
