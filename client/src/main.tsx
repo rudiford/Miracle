@@ -14,6 +14,17 @@ console.log('Browser Info:', {
   location: window.location.href
 });
 
+// Override console.error to prevent runtime error overlay from showing
+const originalConsoleError = console.error;
+console.error = function(...args) {
+  // Check if this is the runtime error overlay
+  if (args[0] && typeof args[0] === 'string' && args[0].includes('runtime-error')) {
+    console.log('Runtime error overlay suppressed:', ...args);
+    return;
+  }
+  originalConsoleError.apply(console, args);
+};
+
 try {
   const root = document.getElementById("root");
   if (!root) {

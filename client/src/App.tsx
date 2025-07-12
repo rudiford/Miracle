@@ -15,6 +15,9 @@ import Privacy from "@/pages/privacy";
 import DeleteAccount from "@/pages/delete-account";
 
 function ErrorFallback({error}: {error: Error}) {
+  // Log the error but don't show the error overlay in preview
+  console.log('Error caught by boundary:', error);
+  
   return (
     <div className="min-h-screen bg-red-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
