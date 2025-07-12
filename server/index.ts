@@ -4,11 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// Force production mode to bypass Vite development server
-if (process.env.NODE_ENV !== 'production') {
-  console.log('Forcing production mode to bypass Vite development server');
-  app.set('env', 'production');
-}
+// Restored React development mode for full functionality
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -57,11 +53,8 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+  // Always use development mode to get full React app functionality
+  await setupVite(app, server);
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
   // Other ports are firewalled. Default to 5000 if not specified.
