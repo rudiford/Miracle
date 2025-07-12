@@ -98,11 +98,18 @@ const setupServer = async () => {
 // Setup and start auth server first
 setupServer().catch(console.error);
 
-// Block development assets
+// Block ALL static serving to force proper route handling
+app.use('/client', (req, res, next) => {
+  console.log(`BLOCKING CLIENT PATH: ${req.path}`);
+  return res.status(404).send('<!-- Static files blocked -->');
+});
+
+// Block development assets AND old static files
 app.use((req, res, next) => {
-  if (req.path.includes('.js') || req.path.includes('.css') || req.path.includes('vite') || req.path.includes('react') || req.path.includes('@')) {
-    console.log(`BLOCKING ASSET: ${req.path}`);
-    return res.status(404).send('<!-- Emergency override: Asset blocked -->');
+  // Block all assets and static files that might interfere
+  if (req.path.includes('.js') || req.path.includes('.css') || req.path.includes('vite') || req.path.includes('react') || req.path.includes('@') || req.path.includes('.html') || req.path.includes('mobile')) {
+    console.log(`BLOCKING ASSET/FILE: ${req.path}`);
+    return res.status(404).send('<!-- Emergency override: Asset/File blocked -->');
   }
   next();
 });
