@@ -3,7 +3,7 @@ interface ChristianCrossProps {
   size?: number;
 }
 
-export default function ChristianCross({ className = "", size = 24 }: ChristianCrossProps) {
+export default function ChristianCross({ className = "", size = 32 }: ChristianCrossProps) {
   return (
     <svg
       width={size}

@@ -31,7 +31,7 @@ export default function Home() {
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <ChristianCross className="text-faith-blue" size={24} />
+              <ChristianCross className="text-faith-blue" size={32} />
               <h1 className="text-xl font-bold text-faith-text">Proof of a Miracle</h1>
             </div>
             
