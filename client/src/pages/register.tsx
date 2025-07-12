@@ -66,9 +66,9 @@ export default function Register() {
     onSuccess: () => {
       toast({
         title: "Profile Updated",
-        description: "Welcome to our faith community!",
+        description: "Your profile has been saved successfully!",
       });
-      setLocation("/");
+      // Don't redirect, stay on profile page
     },
     onError: (error) => {
       console.error("Profile update error:", error);
