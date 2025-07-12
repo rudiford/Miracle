@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Plus, Minus, Navigation, Cross, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import ChristianCross from "./christian-cross";
 
 interface Post {
   id: number;
@@ -135,7 +136,7 @@ export default function MapView() {
               onClick={() => setSelectedPost(post)}
             >
               <div className="relative">
-                <Cross className="w-6 h-6 text-faith-gold hover:scale-125 transition-transform drop-shadow-lg" />
+                <ChristianCross className="text-faith-gold hover:scale-125 transition-transform drop-shadow-lg" size={24} />
                 <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-xs text-faith-text opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
                   {post.location || `${post.mappedLat!.toFixed(2)}, ${post.mappedLng!.toFixed(2)}`}
                 </div>
@@ -149,7 +150,7 @@ export default function MapView() {
       {postsWithLocation.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center bg-white/90 p-6 rounded-lg shadow-lg">
-            <Cross className="w-12 h-12 text-faith-blue mb-4 mx-auto" />
+            <ChristianCross className="text-faith-blue mb-4 mx-auto" size={48} />
             <p className="text-faith-text font-semibold">No miracle locations to display</p>
             <p className="text-sm text-gray-600 mt-2">Share your faith experiences with location to see them on the map</p>
           </div>

@@ -99,34 +99,7 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
             </Button>
           </div>
           
-          <div className="flex justify-between items-center">
-            <Button 
-              variant="ghost" 
-              onClick={handleCapturePhoto}
-              className="flex items-center space-x-2 text-faith-blue hover:bg-blue-50 px-4 py-2 rounded-lg"
-            >
-              <Camera className="w-4 h-4" />
-              <span className="text-sm font-medium">Photo</span>
-            </Button>
-            
-            <Button 
-              variant="ghost"
-              onClick={handleAddLocation}
-              className="flex items-center space-x-2 text-faith-blue hover:bg-blue-50 px-4 py-2 rounded-lg"
-            >
-              <MapPin className="w-4 h-4" />
-              <span className="text-sm font-medium">Location</span>
-            </Button>
-            
-            <Button 
-              variant="ghost"
-              onClick={handleAddTestimony}
-              className="flex items-center space-x-2 text-faith-blue hover:bg-blue-50 px-4 py-2 rounded-lg"
-            >
-              <Heart className="w-4 h-4" />
-              <span className="text-sm font-medium">Testimony</span>
-            </Button>
-          </div>
+
         </CardContent>
       </Card>
 
