@@ -102,6 +102,11 @@ export async function setupAuth(app: Express) {
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
+  // Add legacy /api/login route for compatibility
+  app.get("/api/login", (req, res, next) => {
+    res.redirect("/api/auth/login");
+  });
+
   app.get("/api/auth/login", (req, res, next) => {
     const hostname = req.hostname;
     console.log(`Login attempt for hostname: ${hostname}`);

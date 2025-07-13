@@ -235,8 +235,8 @@ p {
   <div class="status">CLEAN IMPLEMENTATION - PORT 5000</div>
   <p>Share testimonies • Connect with believers • Discover miracles</p>
   
-  <a href="/api/login" class="btn">Sign In with Replit</a>
-  <a href="/app" class="btn">Enter Community</a>
+  <a href="/api/auth/login" class="btn">Sign In with Replit</a>
+  <a href="/api/auth/login" class="btn">Enter Community</a>
   
   <p class="info">
     ${device.mobile ? 'Mobile' : 'Desktop'} • ${new Date().toLocaleTimeString()}
