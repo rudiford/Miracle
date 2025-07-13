@@ -235,13 +235,40 @@ p {
   <div class="status">CLEAN IMPLEMENTATION - PORT 5000</div>
   <p>Share testimonies • Connect with believers • Discover miracles</p>
   
-  <a href="/api/auth/login" class="btn">Sign In with Replit</a>
-  <a href="/api/auth/login" class="btn">Enter Community</a>
+  <a href="javascript:void(0)" onclick="directAuth()" class="btn">Sign In with Replit</a>
+  <a href="javascript:void(0)" onclick="directAuth()" class="btn">Enter Community</a>
   
   <p class="info">
     ${device.mobile ? 'Mobile' : 'Desktop'} • ${new Date().toLocaleTimeString()}
   </p>
 </div>
+
+<script>
+function directAuth() {
+  console.log('Direct authentication attempt...');
+  // Multiple fallback auth methods for mobile compatibility
+  const currentDomain = window.location.hostname;
+  const authUrl = window.location.origin + '/api/auth/login';
+  
+  // Force navigation to auth endpoint
+  window.location.href = authUrl;
+}
+
+// Auto-redirect for mobile users after 3 seconds
+if (/Mobile|Android|iPhone|iPad/.test(navigator.userAgent)) {
+  let countdown = 3;
+  const status = document.querySelector('.status');
+  const timer = setInterval(() => {
+    status.innerHTML = 'AUTO-LOGIN IN ' + countdown + ' SECONDS...';
+    countdown--;
+    if (countdown < 0) {
+      clearInterval(timer);
+      status.innerHTML = 'REDIRECTING TO AUTHENTICATION...';
+      directAuth();
+    }
+  }, 1000);
+}
+</script>
 </body>
 </html>`);
   }
