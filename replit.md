@@ -10,6 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**Profile Update Cache Fix (July 13, 2025)**
+- Fixed issue where profile name changes didn't immediately reflect in existing posts
+- Profile updates now invalidate both user and posts queries for instant data refresh
+- User name changes now appear immediately across all posts and UI components
+- Improved data consistency across the entire application interface
+
 **Critical Bug Fixes and UI Improvements (July 13, 2025)**
 - Fixed white screen issue caused by React rendering error in gender Select component
 - Resolved duplicate DELETE route conflicts that were causing backend routing issues
