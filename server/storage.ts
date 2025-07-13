@@ -825,6 +825,10 @@ export class DatabaseStorage implements IStorage {
       .insert(prayers)
       .values({ userId, postId })
       .returning();
+    
+    // Increment the prayer count on the post
+    await this.incrementPrayerCount(postId);
+    
     return prayer;
   }
 
@@ -832,7 +836,14 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(prayers)
       .where(and(eq(prayers.userId, userId), eq(prayers.postId, postId)));
-    return result.rowCount! > 0;
+    
+    if (result.rowCount! > 0) {
+      // Decrement the prayer count on the post
+      await this.decrementPrayerCount(postId);
+      return true;
+    }
+    
+    return false;
   }
 
   async hasUserPrayed(userId: string, postId: number): Promise<boolean> {
@@ -848,6 +859,10 @@ export class DatabaseStorage implements IStorage {
       .insert(loves)
       .values({ userId, postId })
       .returning();
+    
+    // Increment the love count on the post
+    await this.incrementLoveCount(postId);
+    
     return love;
   }
 
@@ -855,7 +870,14 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(loves)
       .where(and(eq(loves.userId, userId), eq(loves.postId, postId)));
-    return result.rowCount! > 0;
+    
+    if (result.rowCount! > 0) {
+      // Decrement the love count on the post
+      await this.decrementLoveCount(postId);
+      return true;
+    }
+    
+    return false;
   }
 
   async hasUserLoved(userId: string, postId: number): Promise<boolean> {
