@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -8,12 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { insertUserSchema } from "@shared/schema";
 import ProfileUpload from "@/components/profile-upload";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import HelpModal from "@/components/help-modal";
+import { useAuth } from "@/hooks/useAuth";
 
 const registerSchema = insertUserSchema.extend({
   profilePicture: z.any().optional(),
@@ -24,6 +25,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { user, isLoading } = useAuth();
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
   const form = useForm<RegisterForm>({
@@ -40,11 +42,30 @@ export default function Register() {
     },
   });
 
+  // Load existing user data into the form
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        age: user.age || undefined,
+        gender: user.gender || "",
+        city: user.city || "",
+        state: user.state || "",
+        country: user.country || "",
+      });
+      setProfileImageUrl(user.profileImageUrl || null);
+    }
+  }, [user, form]);
+
   const updateProfileMutation = useMutation({
     mutationFn: async (data: RegisterForm) => {
       return await apiRequest("PUT", "/api/users/profile", data);
     },
     onSuccess: () => {
+      // Invalidate the user query to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: "Profile Updated",
         description: "Welcome to our faith community!",
