@@ -169,7 +169,10 @@ export default function Register() {
               <Label htmlFor="gender" className="block text-faith-text font-medium mb-2">
                 Gender
               </Label>
-              <Select onValueChange={(value) => form.setValue("gender", value)}>
+              <Select 
+                value={form.watch("gender") || undefined} 
+                onValueChange={(value) => form.setValue("gender", value)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
