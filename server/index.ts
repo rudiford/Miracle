@@ -106,8 +106,8 @@ app.use('/client', (req, res, next) => {
 
 // Block development assets AND old static files
 app.use((req, res, next) => {
-  // Block all assets and static files that might interfere
-  if (req.path.includes('.js') || req.path.includes('.css') || req.path.includes('vite') || req.path.includes('react') || req.path.includes('@') || req.path.includes('.html') || req.path.includes('mobile')) {
+  // Block all assets and static files except authentication routes
+  if ((req.path.includes('.js') || req.path.includes('.css') || req.path.includes('vite') || req.path.includes('react') || req.path.includes('@') || req.path.includes('.html')) && !req.path.startsWith('/mobile-auth') && !req.path.startsWith('/api/auth')) {
     console.log(`BLOCKING ASSET/FILE: ${req.path}`);
     return res.status(404).send('<!-- Emergency override: Asset/File blocked -->');
   }
@@ -115,20 +115,26 @@ app.use((req, res, next) => {
 });
 
 // Main homepage route
+// Mobile authentication immediate redirect
+app.get('/mobile-auth-direct', (req, res) => {
+  console.log('MOBILE DIRECT AUTH: Immediate authentication redirect');
+  res.redirect(302, '/api/auth/login');
+});
+
 app.get('/', (req, res) => {
   const userAgent = req.headers['user-agent'] || '';
   const device = detectDevice(userAgent);
+  const timestamp = Date.now();
   
-  // Force ultra-aggressive cache clearing headers  
+  // Ultra-aggressive cache clearing headers  
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private, s-maxage=0');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '-1');
-  res.setHeader('Last-Modified', new Date(Date.now() + 1000).toUTCString());
-  res.setHeader('ETag', '"force-refresh-' + Date.now() + '-' + Math.random().toString(36).substr(2) + '"');
-  res.setHeader('X-Mobile-Auth-Fix', 'active-' + Date.now());
-  res.setHeader('X-Cache-Bypass', 'force-' + Date.now());
-  res.setHeader('X-Auth-Version', '2.0-' + Date.now());
-  res.setHeader('Vary', 'User-Agent, Cache-Control');
+  res.setHeader('Last-Modified', new Date(timestamp + 1000).toUTCString());
+  res.setHeader('ETag', '"mobile-fix-' + timestamp + '-' + Math.random().toString(36).substr(2) + '"');
+  res.setHeader('X-Mobile-Fix', 'v3-' + timestamp);
+  res.setHeader('X-Cache-Version', timestamp.toString());
+  res.setHeader('Vary', 'User-Agent, Cache-Control, Accept');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   
   console.log(`HOMEPAGE: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request`);
@@ -219,7 +225,7 @@ p {
 <p>Faith Community</p>
 <p class="success">MOBILE BROWSER WORKING!</p>
 <p>Cache cleared successfully • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} detection active</p>
-<a href="/auth-mobile" class="btn">Sign In with Replit</a>
+<a href="/mobile-auth-direct" class="btn">Sign In with Replit</a>
 <a href="/test-mobile-direct" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
 <p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
@@ -310,7 +316,7 @@ p {
 <p>Faith Community</p>
 <p class="success">DESKTOP HOMEPAGE FIXED!</p>
 <p>All desktop browsers working • ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} detected</p>
-<a href="/auth-mobile" class="btn">Sign In with Replit</a>
+<a href="/mobile-auth-direct" class="btn">Sign In with Replit</a>
 <a href="/test-mobile-direct" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Desktop</a>
 <p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
@@ -376,7 +382,7 @@ app.get('/test', (req, res) => {
 });
 
 // Dynamic authentication route to bypass cache
-app.get('/auth-mobile', (req, res) => {
+app.get('/mobile-auth-direct', (req, res) => {
   console.log('MOBILE AUTH: Dynamic mobile login bypass route');
   
   // Force no-cache on this redirect
