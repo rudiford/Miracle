@@ -291,6 +291,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete post route (for post owners)
+  app.delete('/api/posts/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const postId = parseInt(req.params.id);
+      
+      // First, get all posts to find the specific post
+      const allPosts = await storage.getAllPosts();
+      const post = allPosts.find(p => p.id === postId);
+      
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      
+      // Check if user owns the post
+      if (post.userId !== userId) {
+        return res.status(403).json({ message: "You can only delete your own posts" });
+      }
+      
+      const deleted = await storage.deletePost(postId);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      
+      res.json({ message: "Post deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      res.status(500).json({ message: "Failed to delete post" });
+    }
+  });
+
   // Prayer routes
   app.post('/api/posts/:id/prayer', isAuthenticated, async (req: any, res) => {
     try {

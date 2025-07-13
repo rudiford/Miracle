@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit, UserX, Flag } from "lucide-react";
+import { Heart, MessageCircle, MoreHorizontal, User, MapPin, Edit, UserX, Flag, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -170,6 +170,33 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
     blockUserMutation.mutate(userId);
   };
 
+  const deletePostMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("DELETE", `/api/posts/${post.id}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Post Deleted",
+        description: "Your post has been successfully deleted.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete post",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeletePost = () => {
+    if (confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
+      deletePostMutation.mutate();
+    }
+  };
+
 
 
   return (
@@ -215,6 +242,14 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
               <DropdownMenuItem onClick={() => onEditPost?.(post)}>
                 <Edit className="w-4 h-4 mr-2" />
                 Edit Post
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={handleDeletePost}
+                className="text-red-600 focus:text-red-600"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Post
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
