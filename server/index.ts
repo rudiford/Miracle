@@ -218,7 +218,7 @@ p {
 <p>Faith Community</p>
 <p class="success">MOBILE BROWSER WORKING!</p>
 <p>Cache cleared successfully • ${device.ios ? 'iOS' : device.android ? 'Android' : 'mobile'} detection active</p>
-<a href="/api/login" class="btn">Sign In with Replit</a>
+<a href="/api/auth/login" class="btn">Sign In with Replit</a>
 <a href="/test-mobile-direct" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Mobile</a>
 <p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
@@ -309,7 +309,7 @@ p {
 <p>Faith Community</p>
 <p class="success">DESKTOP HOMEPAGE FIXED!</p>
 <p>All desktop browsers working • ${device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : device.brave ? 'Brave' : 'desktop'} detected</p>
-<a href="/api/login" class="btn">Sign In with Replit</a>
+<a href="/api/auth/login" class="btn">Sign In with Replit</a>
 <a href="/test-mobile-direct" class="btn" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">Test Desktop</a>
 <p class="debug">Cache bypass active • ${new Date().toLocaleDateString()}</p>
 </div>
