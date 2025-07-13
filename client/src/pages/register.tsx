@@ -174,7 +174,7 @@ export default function Register() {
                 Gender
               </Label>
               <Select 
-                value={form.watch("gender") || undefined} 
+                value={form.watch("gender") || ""} 
                 onValueChange={(value) => form.setValue("gender", value)}
               >
                 <SelectTrigger className="w-full">
