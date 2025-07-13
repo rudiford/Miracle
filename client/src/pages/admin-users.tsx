@@ -3,16 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, User, Trash2, Shield } from "lucide-react";
+import { Calendar, MapPin, User, Trash2, Shield, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import type { User as DatabaseUser } from "@shared/schema";
 
 export default function AdminUsers() {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     if (!authLoading && (!user || !user.isAdmin)) {
@@ -61,6 +63,10 @@ export default function AdminUsers() {
     }
   };
 
+  const goBackToAdmin = () => {
+    setLocation("/admin");
+  };
+
   if (authLoading || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
@@ -86,6 +92,16 @@ export default function AdminUsers() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <Button 
+              variant="ghost" 
+              onClick={goBackToAdmin}
+              className="mr-4 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Back to Admin Dashboard
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             User Management
           </h1>
