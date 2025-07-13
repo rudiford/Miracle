@@ -375,10 +375,33 @@ app.get('/test', (req, res) => {
   }
 });
 
-// Mobile authentication bypass route
+// Mobile authentication bypass route with immediate redirect
 app.get('/mobile-login', (req, res) => {
   console.log('MOBILE AUTH: Direct mobile login bypass route');
-  res.redirect('/api/auth/login');
+  
+  // Force no-cache on this redirect
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  
+  // Immediate JavaScript redirect page
+  res.send(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting to Authentication...</title>
+<script>
+console.log('Mobile auth redirect page loaded');
+window.location.href = '/api/auth/login';
+</script>
+</head>
+<body style="background:#1e3a8a;color:white;font-family:Arial;text-align:center;padding:50px;">
+<h1>Redirecting to Authentication...</h1>
+<p>Please wait while we redirect you to sign in...</p>
+<a href="/api/auth/login" style="color:#f59e0b;">Click here if not redirected automatically</a>
+</body>
+</html>`);
 });
 
 const port = parseInt(process.env.PORT || "5000", 10);
