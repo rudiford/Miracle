@@ -95,6 +95,12 @@ const setupServer = async () => {
   return httpServer;
 };
 
+// Mobile authentication immediate redirect - BEFORE any blocking
+app.get('/mobile-auth-direct', (req, res) => {
+  console.log('MOBILE DIRECT AUTH: Immediate authentication redirect');
+  res.redirect(302, '/api/auth/login');
+});
+
 // Setup and start auth server first
 setupServer().catch(console.error);
 
@@ -115,11 +121,6 @@ app.use((req, res, next) => {
 });
 
 // Main homepage route
-// Mobile authentication immediate redirect
-app.get('/mobile-auth-direct', (req, res) => {
-  console.log('MOBILE DIRECT AUTH: Immediate authentication redirect');
-  res.redirect(302, '/api/auth/login');
-});
 
 app.get('/', (req, res) => {
   const userAgent = req.headers['user-agent'] || '';
