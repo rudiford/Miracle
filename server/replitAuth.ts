@@ -92,7 +92,7 @@ export async function setupAuth(app: Express) {
         name: `replitauth:${trimmedDomain}`,
         config,
         scope: "openid email profile offline_access",
-        callbackURL: `https://${trimmedDomain}/api/auth/callback`,
+        callbackURL: trimmedDomain === 'localhost' ? `http://localhost:5000/api/auth/callback` : `https://${trimmedDomain}/api/auth/callback`,
       },
       verify,
     );
