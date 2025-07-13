@@ -787,6 +787,12 @@ export class DatabaseStorage implements IStorage {
 
     const [user] = await db.select().from(users).where(eq(users.id, userId));
     
+    // Increment the comment count on the post
+    await db
+      .update(posts)
+      .set({ commentCount: sql`${posts.commentCount} + 1` })
+      .where(eq(posts.id, commentData.postId));
+    
     return { ...comment, user };
   }
 

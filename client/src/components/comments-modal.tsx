@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Send, X } from "lucide-react";
+import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -105,17 +105,7 @@ export default function CommentsModal({ open, onOpenChange, postId }: CommentsMo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            Comments
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-              className="h-6 w-6 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
+          <DialogTitle>Comments</DialogTitle>
         </DialogHeader>
 
         {/* Comments List */}
