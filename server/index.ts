@@ -142,44 +142,111 @@ app.get('/', (req, res) => {
   console.log(`Browser: ${device.brave ? 'Brave' : device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : 'Unknown'}`);
   console.log(`Platform: ${device.ios ? 'iOS' : device.android ? 'Android' : 'Desktop'}`);
   
-  // Mobile browsers: Force immediate working response
-  if (device.mobile) {
-    console.log('MOBILE DETECTED: Sending immediate response for ' + userAgent);
-    res.status(200);
-    res.type('text/html');
-    return res.end(`<!DOCTYPE html>
-<html>
+  // Clean interface for all devices
+  const isCleanMode = true; // Force clean interface
+  
+  if (isCleanMode) {
+    console.log(`CLEAN INTERFACE: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request`);
+    return res.send(`<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proof of a Miracle - Mobile</title>
+<title>Proof of a Miracle - Faith Community</title>
 <style>
-body { font-family: Arial; text-align: center; padding: 30px; background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%); color: white; min-height: 100vh; margin: 0; }
-.cross { font-size: 120px; margin: 20px 0; color: #f59e0b; }
-h1 { font-size: 2rem; margin: 20px 0; }
-.btn { display: block; width: 80%; margin: 20px auto; padding: 20px; background: #f59e0b; color: white; text-decoration: none; border-radius: 12px; font-size: 1.2rem; font-weight: bold; }
-.status { background: #059669; padding: 10px; border-radius: 8px; margin: 20px 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+.container {
+  max-width: 400px;
+  background: rgba(255,255,255,0.1);
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.cross {
+  font-size: ${device.mobile ? '80px' : '120px'};
+  color: #f59e0b;
+  margin: 20px 0;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from { text-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+  to { text-shadow: 0 0 30px rgba(245, 158, 11, 0.8); }
+}
+h1 {
+  font-size: ${device.mobile ? '1.8rem' : '2.5rem'};
+  margin: 20px 0;
+  font-weight: bold;
+}
+p {
+  font-size: 1.1rem;
+  margin: 15px 0;
+  opacity: 0.9;
+}
+.btn {
+  display: inline-block;
+  background: #f59e0b;
+  color: white;
+  padding: 15px 30px;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: bold;
+  margin: 20px 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+.btn:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+.status {
+  background: #059669;
+  padding: 12px;
+  border-radius: 10px;
+  margin: 25px 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+.info {
+  font-size: 0.8rem;
+  margin-top: 30px;
+  opacity: 0.7;
+}
 </style>
 </head>
 <body>
-<div class="cross">✞</div>
-<h1>Proof of a Miracle</h1>
-<p class="status">MOBILE AUTHENTICATION READY</p>
-<p>Faith Community - Mobile Access</p>
-<a href="/api/login" class="btn">Sign In with Replit</a>
-<p>Mobile fix active • Working now • ${timestamp}</p>
-<script>
-console.log('Mobile page loaded successfully');
-setTimeout(() => {
-  console.log('Auto-redirect to auth in 3 seconds');
-  window.location.href = '/api/login';
-}, 3000);
-</script>
+<div class="container">
+  <div class="cross">✞</div>
+  <h1>Proof of a Miracle</h1>
+  <p>Faith Community for Believers</p>
+  <div class="status">CLEAN IMPLEMENTATION - PORT 5000</div>
+  <p>Share testimonies • Connect with believers • Discover miracles</p>
+  
+  <a href="/api/login" class="btn">Sign In with Replit</a>
+  <a href="/app" class="btn">Enter Community</a>
+  
+  <p class="info">
+    ${device.mobile ? 'Mobile' : 'Desktop'} • ${new Date().toLocaleTimeString()}
+  </p>
+</div>
 </body>
 </html>`);
   }
   
-  // Desktop response
+  // Fallback (should not reach here with clean mode)
   if (device.desktop) {
     res.send(`<!DOCTYPE html>
 <html lang="en">
