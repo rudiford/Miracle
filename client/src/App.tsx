@@ -10,6 +10,7 @@ import Home from "@/pages/home";
 import Register from "@/pages/register";
 import Messages from "@/pages/messages";
 import Admin from "@/pages/admin";
+import AdminUsers from "@/pages/admin-users";
 import Privacy from "@/pages/privacy";
 import DeleteAccount from "@/pages/delete-account";
 
@@ -49,6 +50,7 @@ function Router() {
           <Route path="/privacy" component={Privacy} />
           <Route path="/delete-account" component={DeleteAccount} />
           {user?.isAdmin && <Route path="/admin" component={Admin} />}
+          {user?.isAdmin && <Route path="/admin/users" component={AdminUsers} />}
         </>
       )}
       <Route component={NotFound} />

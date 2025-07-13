@@ -130,13 +130,13 @@ export default function Admin() {
       
       {/* Admin Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-        <Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setLocation("/admin/users")}>
           <CardContent className="p-4 text-center">
             <Users className="w-8 h-8 text-faith-blue mb-2 mx-auto" />
             <h3 className="text-2xl font-bold text-faith-text">
               {statsLoading ? "..." : stats?.totalUsers || 0}
             </h3>
-            <p className="text-sm text-gray-600">Total Users</p>
+            <p className="text-sm text-gray-600">Click to manage users</p>
           </CardContent>
         </Card>
         
@@ -193,7 +193,10 @@ export default function Admin() {
                 <span>Review Images</span>
               </Button>
               
-              <Button className="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white h-auto py-3">
+              <Button 
+                className="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white h-auto py-3"
+                onClick={() => setLocation("/admin/users")}
+              >
                 <Users className="w-4 h-4" />
                 <span>View All Users</span>
               </Button>
