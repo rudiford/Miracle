@@ -86,23 +86,19 @@ p { font-size: 18px; margin-bottom: 20px; }
 </html>`);
 });
 
-// Setup authentication and database
+// Setup authentication and database FIRST
 import { registerRoutes } from './routes';
 
-// Create HTTP server with auth routes
-const setupServer = async () => {
-  const httpServer = await registerRoutes(app);
-  return httpServer;
-};
+// Register authentication and API routes before any blocking middleware
+registerRoutes(app).then(httpServer => {
+  console.log('BUTTON FIX: Auth routes working');
+}).catch(console.error);
 
-// Mobile authentication immediate redirect - BEFORE any blocking
+// Mobile authentication immediate redirect
 app.get('/mobile-auth-direct', (req, res) => {
   console.log('MOBILE DIRECT AUTH: Immediate authentication redirect');
   res.redirect(302, '/api/auth/login');
 });
-
-// Setup and start auth server first
-setupServer().catch(console.error);
 
 // Block ALL static serving to force proper route handling
 app.use('/client', (req, res, next) => {
