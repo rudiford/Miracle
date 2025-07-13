@@ -68,7 +68,9 @@ export default function Register() {
       // Invalidate both user and posts queries to refresh all displayed data
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
-      alert("Profile Updated! Welcome to our faith community!");
+      // Force refetch posts to show updated user names
+      queryClient.refetchQueries({ queryKey: ["/api/posts"] });
+      alert("Profile Updated! Your name changes will now appear on all your posts.");
       setLocation("/");
     },
     onError: (error) => {
