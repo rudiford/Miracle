@@ -112,7 +112,13 @@ app.use('/client', (req, res, next) => {
 
 // Block development assets AND old static files
 app.use((req, res, next) => {
-  // Block all assets and static files except authentication routes
+  // Allow mobile.html static file to bypass all blocking
+  if (req.path === '/mobile.html' || req.path === '/server/public/mobile.html') {
+    console.log(`ALLOWING STATIC MOBILE FILE: ${req.path}`);
+    return next();
+  }
+  
+  // Block all assets and static files except authentication routes  
   if ((req.path.includes('.js') || req.path.includes('.css') || req.path.includes('vite') || req.path.includes('react') || req.path.includes('@') || req.path.includes('.html')) && !req.path.startsWith('/mobile-auth') && !req.path.startsWith('/api/auth')) {
     console.log(`BLOCKING ASSET/FILE: ${req.path}`);
     return res.status(404).send('<!-- Emergency override: Asset/File blocked -->');
