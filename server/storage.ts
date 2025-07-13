@@ -607,7 +607,9 @@ export class MemStorage implements IStorage {
     const report: Report = {
       id: this.currentReportId++,
       reporterId,
-      ...reportData,
+      postId: reportData.postId,
+      reason: reportData.reason,
+      description: reportData.description || null,
       status: "pending",
       createdAt: new Date(),
       reviewedAt: null,
@@ -629,7 +631,11 @@ export class MemStorage implements IStorage {
         post: { ...post!, user: postUser! }
       };
     }).filter(report => report.reporter && report.post && report.post.user)
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    .sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
   }
 
   async updateReportStatus(reportId: number, status: string, reviewedBy?: string): Promise<Report | undefined> {
