@@ -127,23 +127,45 @@ app.get('/', (req, res) => {
   const device = detectDevice(userAgent);
   const timestamp = Date.now();
   
-  // Ultra-aggressive cache clearing headers  
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private, s-maxage=0');
+  // Force no cache with immediate response
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
   res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '-1');
-  res.setHeader('Last-Modified', new Date(timestamp + 1000).toUTCString());
-  res.setHeader('ETag', '"mobile-fix-' + timestamp + '-' + Math.random().toString(36).substr(2) + '"');
-  res.setHeader('X-Mobile-Fix', 'v3-' + timestamp);
-  res.setHeader('X-Cache-Version', timestamp.toString());
-  res.setHeader('Vary', 'User-Agent, Cache-Control, Accept');
-  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Expires', '0');
   
   console.log(`HOMEPAGE: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request`);
   console.log(`Browser: ${device.brave ? 'Brave' : device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : 'Unknown'}`);
   console.log(`Platform: ${device.ios ? 'iOS' : device.android ? 'Android' : 'Desktop'}`);
   
-  // Force immediate HTML response for ALL requests
+  // Mobile browsers: Direct authentication redirect
   if (device.mobile) {
+    console.log('MOBILE REDIRECT: Sending direct auth redirect page');
+    return res.send(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof of a Miracle - Mobile</title>
+<style>
+body { font-family: Arial; text-align: center; padding: 30px; background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%); color: white; min-height: 100vh; margin: 0; }
+.cross { font-size: 120px; margin: 20px 0; color: #f59e0b; }
+h1 { font-size: 2rem; margin: 20px 0; }
+.btn { display: block; width: 80%; margin: 20px auto; padding: 20px; background: #f59e0b; color: white; text-decoration: none; border-radius: 12px; font-size: 1.2rem; font-weight: bold; }
+.status { background: #059669; padding: 10px; border-radius: 8px; margin: 20px 0; }
+</style>
+</head>
+<body>
+<div class="cross">✞</div>
+<h1>Proof of a Miracle</h1>
+<p class="status">MOBILE AUTHENTICATION READY</p>
+<p>Faith Community - Mobile Access</p>
+<a href="/api/auth/login" class="btn">Sign In with Replit</a>
+<p>Direct mobile authentication • ${new Date().toLocaleTimeString()}</p>
+</body>
+</html>`);
+  }
+  
+  // Desktop response
+  if (device.desktop) {
     res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
