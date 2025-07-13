@@ -136,10 +136,12 @@ app.get('/', (req, res) => {
   console.log(`Browser: ${device.brave ? 'Brave' : device.safari ? 'Safari' : device.chrome ? 'Chrome' : device.firefox ? 'Firefox' : 'Unknown'}`);
   console.log(`Platform: ${device.ios ? 'iOS' : device.android ? 'Android' : 'Desktop'}`);
   
-  // Mobile browsers: Direct authentication redirect
+  // Mobile browsers: Force immediate working response
   if (device.mobile) {
-    console.log('MOBILE REDIRECT: Sending direct auth redirect page');
-    return res.send(`<!DOCTYPE html>
+    console.log('MOBILE DETECTED: Sending immediate response for ' + userAgent);
+    res.status(200);
+    res.type('text/html');
+    return res.end(`<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -158,8 +160,15 @@ h1 { font-size: 2rem; margin: 20px 0; }
 <h1>Proof of a Miracle</h1>
 <p class="status">MOBILE AUTHENTICATION READY</p>
 <p>Faith Community - Mobile Access</p>
-<a href="/api/auth/login" class="btn">Sign In with Replit</a>
-<p>Direct mobile authentication • ${new Date().toLocaleTimeString()}</p>
+<a href="/api/login" class="btn">Sign In with Replit</a>
+<p>Mobile fix active • Working now • ${timestamp}</p>
+<script>
+console.log('Mobile page loaded successfully');
+setTimeout(() => {
+  console.log('Auto-redirect to auth in 3 seconds');
+  window.location.href = '/api/login';
+}, 3000);
+</script>
 </body>
 </html>`);
   }
