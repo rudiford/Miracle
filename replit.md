@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**Critical Bug Fixes and UI Improvements (July 13, 2025)**
+- Fixed white screen issue caused by React rendering error in gender Select component
+- Resolved duplicate DELETE route conflicts that were causing backend routing issues
+- Gender field now properly saves and displays selected values in user profile
+- Added admin dashboard access button to user profile page for convenient admin access
+- Admin panel section visible only to admin users with Shield icon and descriptive text
+- Combined post deletion logic to allow both post owners and admins to delete posts
+- Application now loads properly across all browsers after cache clearing
+
 **PostgreSQL Database Backend Implementation (July 13, 2025)**
 - Successfully migrated from in-memory storage to PostgreSQL database backend
 - Created comprehensive DatabaseStorage class implementing all IStorage interface methods
