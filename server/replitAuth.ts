@@ -81,8 +81,10 @@ export async function setupAuth(app: Express) {
     verified(null, user);
   };
 
-  for (const domain of process.env
-    .REPLIT_DOMAINS!.split(",")) {
+  // Add localhost for development
+  const domains = [...process.env.REPLIT_DOMAINS!.split(","), "localhost"];
+  
+  for (const domain of domains) {
     const trimmedDomain = domain.trim();
     console.log(`Setting up auth strategy for domain: ${trimmedDomain}`);
     const strategy = new Strategy(
