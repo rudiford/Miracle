@@ -15,6 +15,7 @@ import { useLocation } from "wouter";
 import { z } from "zod";
 import HelpModal from "@/components/help-modal";
 import { useAuth } from "@/hooks/useAuth";
+import { isProfileComplete, getIncompleteFields } from "@/lib/profileUtils";
 
 const registerSchema = insertUserSchema.extend({
   profilePicture: z.any().optional(),

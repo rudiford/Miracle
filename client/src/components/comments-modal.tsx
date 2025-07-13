@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertCommentSchema } from "@shared/schema";
 import { z } from "zod";
+import { useAuth } from "@/hooks/useAuth";
+import { isProfileComplete } from "@/lib/profileUtils";
 
 const commentSchema = insertCommentSchema.pick({ content: true });
 type CommentForm = z.infer<typeof commentSchema>;
@@ -34,7 +35,7 @@ interface CommentsModalProps {
 }
 
 export default function CommentsModal({ open, onOpenChange, postId }: CommentsModalProps) {
-  const { toast } = useToast();
+  const { user } = useAuth();
 
   const form = useForm<CommentForm>({
     resolver: zodResolver(commentSchema),
@@ -57,18 +58,11 @@ export default function CommentsModal({ open, onOpenChange, postId }: CommentsMo
       queryClient.invalidateQueries({ queryKey: ["/api/posts", postId, "comments"] });
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
       form.reset();
-      toast({
-        title: "Comment Added",
-        description: "Your comment has been posted.",
-      });
+      alert("Comment Added: Your comment has been posted.");
     },
     onError: (error) => {
       console.error("Comment creation error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to post comment. Please try again.",
-        variant: "destructive",
-      });
+      alert("Error: Failed to post comment. Please try again.");
     },
   });
 
@@ -146,23 +140,39 @@ export default function CommentsModal({ open, onOpenChange, postId }: CommentsMo
         </div>
 
         {/* Comment Form */}
-        <form onSubmit={form.handleSubmit(onSubmit)} className="border-t pt-4">
-          <div className="flex space-x-2">
-            <Textarea
-              {...form.register("content")}
-              placeholder="Write a comment..."
-              className="flex-1 min-h-[60px] resize-none"
-              disabled={createCommentMutation.isPending}
-            />
-            <Button
-              type="submit"
-              disabled={createCommentMutation.isPending || !form.watch("content")?.trim()}
-              className="bg-faith-blue hover:bg-blue-800 px-3"
+        {isProfileComplete(user) ? (
+          <form onSubmit={form.handleSubmit(onSubmit)} className="border-t pt-4">
+            <div className="flex space-x-2">
+              <Textarea
+                {...form.register("content")}
+                placeholder="Write a comment..."
+                className="flex-1 min-h-[60px] resize-none"
+                disabled={createCommentMutation.isPending}
+              />
+              <Button
+                type="submit"
+                disabled={createCommentMutation.isPending || !form.watch("content")?.trim()}
+                className="bg-faith-blue hover:bg-blue-800 px-3"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <div className="border-t pt-4 bg-gray-50 text-center p-4">
+            <p className="text-gray-600 mb-2">Complete your profile to comment</p>
+            <Button 
+              onClick={() => {
+                onOpenChange(false);
+                window.location.href = "/register";
+              }}
+              size="sm"
+              className="bg-faith-blue hover:bg-blue-700"
             >
-              <Send className="w-4 h-4" />
+              Complete Profile
             </Button>
           </div>
-        </form>
+        )}
       </DialogContent>
     </Dialog>
   );

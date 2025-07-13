@@ -12,6 +12,8 @@ import { queryClient } from "@/lib/queryClient";
 import { insertPostSchema } from "@shared/schema";
 import { z } from "zod";
 import LocationPermissionGuide from "@/components/location-permission-guide";
+import { useAuth } from "@/hooks/useAuth";
+import { isProfileComplete } from "@/lib/profileUtils";
 
 const createPostSchema = insertPostSchema.extend({
   image: z.any().optional(),
@@ -28,6 +30,41 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isCapturingLocation, setIsCapturingLocation] = useState(false);
+  const { user } = useAuth();
+  
+  // Check if profile is complete
+  if (!isProfileComplete(user)) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <img 
+                src="/cross.png" 
+                alt="Cross" 
+                className="w-5 h-auto"
+              />
+              Complete Your Profile
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center py-4">
+            <p className="text-gray-600 mb-4">
+              Please complete your profile before creating posts. This helps build a trusted faith community.
+            </p>
+            <Button 
+              onClick={() => {
+                onOpenChange(false);
+                window.location.href = "/register";
+              }}
+              className="bg-faith-blue hover:bg-blue-700"
+            >
+              Complete Profile
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   const form = useForm<CreatePostForm>({
     resolver: zodResolver(createPostSchema),

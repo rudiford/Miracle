@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 // import { Toaster } from "@/components/ui/toaster";
 
 import { useAuth } from "@/hooks/useAuth";
+import { isProfileComplete } from "@/lib/profileUtils";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
@@ -18,6 +19,7 @@ import DeleteAccount from "@/pages/delete-account";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
+  const profileComplete = isProfileComplete(user);
 
   if (isLoading) {
     return (
@@ -42,6 +44,14 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/privacy" component={Privacy} />
           <Route path="/delete-account" component={DeleteAccount} />
+        </>
+      ) : !profileComplete ? (
+        <>
+          {/* Force profile completion for authenticated users */}
+          <Route path="/register" component={Register} />
+          <Route path="/privacy" component={Privacy} />
+          <Route path="/delete-account" component={DeleteAccount} />
+          <Route component={() => <Register />} />
         </>
       ) : (
         <>
