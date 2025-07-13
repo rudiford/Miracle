@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { insertUserSchema } from "@shared/schema";
 import ProfileUpload from "@/components/profile-upload";
@@ -24,7 +24,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function Register() {
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const { user, isLoading } = useAuth();
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
@@ -64,21 +64,15 @@ export default function Register() {
       return await apiRequest("PUT", "/api/users/profile", data);
     },
     onSuccess: () => {
-      // Invalidate the user query to refresh the data
+      // Invalidate both user and posts queries to refresh all displayed data
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      toast({
-        title: "Profile Updated",
-        description: "Welcome to our faith community!",
-      });
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      alert("Profile Updated! Welcome to our faith community!");
       setLocation("/");
     },
     onError: (error) => {
       console.error("Profile update error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
-      });
+      alert("Error: Failed to update profile. Please try again.");
     },
   });
 
