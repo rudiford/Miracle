@@ -1,8 +1,7 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-// Toaster removed to fix useContext error
-import { ErrorBoundary } from "react-error-boundary";
+import { Toaster } from "@/components/ui/toaster";
 
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
@@ -14,31 +13,9 @@ import Admin from "@/pages/admin";
 import Privacy from "@/pages/privacy";
 import DeleteAccount from "@/pages/delete-account";
 
-function ErrorFallback({error}: {error: Error}) {
-  // Log the error but don't show the error overlay in preview
-  console.log('Error caught by boundary:', error);
-  
-  return (
-    <div className="min-h-screen bg-red-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
-        <h2 className="text-2xl font-bold text-red-800 mb-4">Something went wrong</h2>
-        <p className="text-gray-600 mb-4">
-          {error.message || "An unexpected error occurred"}
-        </p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Reload Page
-        </button>
-      </div>
-    </div>
-  );
-}
+
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
-
-  console.log('Router state:', { isAuthenticated, isLoading, user: user?.firstName });
 
   if (isLoading) {
     return (
@@ -74,24 +51,17 @@ function Router() {
           {user?.isAdmin && <Route path="/admin" component={Admin} />}
         </>
       )}
-      <Route path="/:rest*" component={NotFound} />
+      <Route component={NotFound} />
     </Switch>
   );
 }
 
 function App() {
   return (
-    <ErrorBoundary 
-      FallbackComponent={ErrorFallback}
-      onError={(error, errorInfo) => {
-        console.log('Error boundary caught:', error, errorInfo);
-      }}
-    >
-      <QueryClientProvider client={queryClient}>
-        <Router />
-        {/* Toaster removed to fix useContext error */}
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <Toaster />
+      <Router />
+    </QueryClientProvider>
   );
 }
 

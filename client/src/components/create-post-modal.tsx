@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// // import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { insertPostSchema } from "@shared/schema";
 import { z } from "zod";
@@ -29,7 +29,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isCapturingLocation, setIsCapturingLocation] = useState(false);
-  // // const { toast } = useToast();
+  const { toast } = useToast();
 
   const form = useForm<CreatePostForm>({
     resolver: zodResolver(createPostSchema),
@@ -76,14 +76,21 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
-      console.log("Post created successfully!");
+      toast({
+        title: "Post Created",
+        description: "Your faith experience has been shared with the community.",
+      });
       onOpenChange(false);
       resetForm();
     },
     onError: (error) => {
       console.error("Post creation error:", error);
       console.error("Error details:", error.message);
-      console.error("Failed to create post!");
+      toast({
+        title: "Error",
+        description: `Failed to create post: ${error.message}`,
+        variant: "destructive",
+      });
     },
   });
 
@@ -127,6 +134,10 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
           form.setValue("location", `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`);
           
           setIsCapturingLocation(false);
+          toast({
+            title: "Location Captured",
+            description: "Your current location has been added to the post.",
+          });
         },
         (error) => {
           console.error("Geolocation error:", error);
@@ -149,11 +160,21 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
               break;
           }
           
+          toast({
+            title: "Location Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
         },
         options
       );
     } else {
       setIsCapturingLocation(false);
+      toast({
+        title: "Not Supported",
+        description: "Geolocation is not supported by your browser.",
+        variant: "destructive",
+      });
     }
   };
 

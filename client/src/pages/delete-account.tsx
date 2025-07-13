@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertTriangle, Trash2, ArrowLeft } from "lucide-react";
-// import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
@@ -24,7 +24,7 @@ import {
 export default function DeleteAccount() {
   const [, setLocation] = useLocation();
   const { user, isLoading } = useAuth();
-  // const { toast } = useToast();
+  const { toast } = useToast();
   const [reason, setReason] = useState("");
   const [feedback, setFeedback] = useState("");
 
@@ -37,12 +37,21 @@ export default function DeleteAccount() {
       return response.json();
     },
     onSuccess: () => {
+      toast({
+        title: "Account Deleted",
+        description: "Your account and all associated data have been permanently deleted. You will be logged out shortly.",
+      });
       // Redirect to logout after a brief delay
       setTimeout(() => {
         window.location.href = "/api/logout";
       }, 2000);
     },
     onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete account. Please contact support.",
+        variant: "destructive",
+      });
     },
   });
 

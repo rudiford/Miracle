@@ -37,6 +37,8 @@ export default function Home() {
     setLocation("/register");
   };
 
+
+
   return (
     <div className="min-h-screen bg-faith-light">
       {/* Top Navigation */}

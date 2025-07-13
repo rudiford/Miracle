@@ -61,11 +61,6 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
-        // Faith-specific colors
-        "faith-blue": "var(--faith-blue)",
-        "faith-gold": "var(--faith-gold)",
-        "faith-light": "var(--faith-light)",
-        "faith-text": "var(--faith-text)",
       },
       keyframes: {
         "accordion-down": {

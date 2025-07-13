@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Flag, User, Clock, CheckCircle, XCircle } from "lucide-react";
-// import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import {
   Select,
@@ -41,7 +41,7 @@ interface Report {
 }
 
 export default function ReportsManagement() {
-  // const { toast } = useToast();
+  const { toast } = useToast();
   const [filter, setFilter] = useState("pending");
 
   const { data: reports, isLoading } = useQuery({
@@ -56,9 +56,18 @@ export default function ReportsManagement() {
       return response.json();
     },
     onSuccess: () => {
+      toast({
+        title: "Report Updated",
+        description: "Report status has been updated successfully.",
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/reports'] });
     },
     onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update report status",
+        variant: "destructive",
+      });
     },
   });
 

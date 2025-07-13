@@ -28,12 +28,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-// import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Flag } from "lucide-react";
 
 const reportSchema = z.object({
   reason: z.string().min(1, "Please select a reason"),
+  description: z.string().optional(),
 });
 
 type ReportForm = z.infer<typeof reportSchema>;
@@ -55,12 +56,13 @@ const reportReasons = [
 ];
 
 export default function ReportPostModal({ open, onOpenChange, postId }: ReportPostModalProps) {
-  // const { toast } = useToast();
+  const { toast } = useToast();
   
   const form = useForm<ReportForm>({
     resolver: zodResolver(reportSchema),
     defaultValues: {
       reason: "",
+      description: "",
     },
   });
 
@@ -69,14 +71,24 @@ export default function ReportPostModal({ open, onOpenChange, postId }: ReportPo
       const response = await apiRequest("POST", "/api/reports", {
         postId,
         reason: data.reason,
+        description: data.description || null,
       });
       return response.json();
     },
     onSuccess: () => {
+      toast({
+        title: "Report Submitted",
+        description: "Thank you for reporting this post. Our admins will review it soon.",
+      });
       form.reset();
       onOpenChange(false);
     },
     onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to submit report. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 

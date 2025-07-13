@@ -24,28 +24,17 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Disabled mobile redirect - let homepage handle all devices
-  // app.use((req, res, next) => {
-  //   console.log('Mobile redirect disabled - using homepage for all devices');
-  //   next();
-  // });
-
   // Auth middleware
   await setupAuth(app);
 
   // Serve uploaded files
   app.use('/uploads', express.static('uploads'));
-  
-  // Serve mobile files with highest priority
-  app.use('/mobile', express.static('.'));
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      console.log("Fetching user for ID:", userId);
       const user = await storage.getUser(userId);
-      console.log("Found user:", user);
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -92,13 +81,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/users/profile', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      console.log("Profile update request:", { userId, body: req.body });
-      
       const validatedData = insertUserSchema.parse(req.body);
-      console.log("Validated data:", validatedData);
-      
       const updatedUser = await storage.updateUserProfile(userId, validatedData);
-      console.log("Updated user:", updatedUser);
       
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
@@ -636,43 +620,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error updating report:", error);
       res.status(500).json({ message: "Failed to update report" });
     }
-  });
-
-  // Add a special route to serve the production HTML app
-  app.get('/production', (req, res) => {
-    res.sendFile(path.join(process.cwd(), "client", "public", "index.html"));
-  });
-
-  // Mobile detection and routing
-  app.get("/mobile.html", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "client/public/mobile.html"));
-  });
-
-  app.get("/mobile-redirect.html", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "client/public/mobile-redirect.html"));
-  });
-
-  app.get("/mobile-simple.html", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "client/public/mobile-simple.html"));
-  });
-
-  app.get("/mobile-test.html", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "mobile-test.html"));
-  });
-
-  app.get("/test-mobile-direct.html", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "test-mobile-direct.html"));
-  });
-
-  // Mobile API endpoint for basic functionality
-  app.get("/api/mobile/check", (req, res) => {
-    const userAgent = req.headers['user-agent'] || '';
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-    res.json({ 
-      isMobile, 
-      userAgent: userAgent.substring(0, 100),
-      timestamp: new Date().toISOString()
-    });
   });
 
   const httpServer = createServer(app);

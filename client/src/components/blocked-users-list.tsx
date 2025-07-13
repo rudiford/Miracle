@@ -3,7 +3,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UserX, User } from "lucide-react";
-// import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 interface BlockedUser {
@@ -15,7 +15,7 @@ interface BlockedUser {
 }
 
 export default function BlockedUsersList() {
-  // const { toast } = useToast();
+  const { toast } = useToast();
 
   const { data: blockedUsers, isLoading } = useQuery({
     queryKey: ['/api/blocked-users'],
@@ -27,10 +27,19 @@ export default function BlockedUsersList() {
       return response.json();
     },
     onSuccess: () => {
+      toast({
+        title: "User Unblocked",
+        description: "User has been unblocked successfully.",
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/blocked-users'] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
     },
     onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to unblock user",
+        variant: "destructive",
+      });
     },
   });
 

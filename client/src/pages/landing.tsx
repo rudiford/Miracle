@@ -1,35 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-// PWA install guide temporarily disabled for debugging
+import PWAInstallGuide from "@/components/pwa-install-guide";
 
 export default function Landing() {
-  console.log('Landing page rendering...');
-  
-  // Enhanced mobile compatibility check
-  console.log('Browser info:', {
-    userAgent: navigator.userAgent,
-    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-    isFirefox: navigator.userAgent.includes('Firefox'),
-    viewport: { width: window.innerWidth, height: window.innerHeight }
-  });
-  
   const handleSignIn = () => {
-    window.location.href = "/api/auth/login";
+    window.location.href = "/api/login";
   };
 
   const handleRegister = () => {
-    window.location.href = "/api/auth/login";
+    window.location.href = "/api/login";
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 text-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 text-white flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
         {/* Cross image */}
         <div className="mb-2 mt-4">
-          <div className="w-60 h-60 mx-auto flex items-center justify-center">
-            <div className="text-8xl">✞</div>
-          </div>
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="mx-auto w-60 h-auto"
+          />
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold mb-2 font-georgia">
@@ -56,7 +48,7 @@ export default function Landing() {
         <div className="space-y-3 w-full max-w-md">
           <Button 
             onClick={handleSignIn}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-blue-900 text-base font-semibold py-4 px-6 h-auto shadow-lg"
+            className="w-full bg-faith-gold hover:bg-yellow-500 text-faith-blue text-base font-semibold py-4 px-6 h-auto shadow-lg"
           >
             Sign In
           </Button>
@@ -64,15 +56,13 @@ export default function Landing() {
           <Button 
             onClick={handleRegister}
             variant="outline"
-            className="w-full border-2 border-white text-white hover:bg-white hover:text-blue-900 text-base font-semibold py-4 px-6 h-auto"
+            className="w-full border-2 border-white text-white hover:bg-white hover:text-faith-blue text-base font-semibold py-4 px-6 h-auto"
           >
             Create Account
           </Button>
           
           <div className="pt-4">
-            <button className="text-sm text-white/70 hover:text-white">
-              Install on Phone
-            </button>
+            <PWAInstallGuide />
           </div>
         </div>
       </div>
