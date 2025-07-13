@@ -237,6 +237,26 @@ export default function Register() {
             </div>
           </div>
           
+          {/* Privacy Policy Agreement */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-800 mb-2">
+              By joining our faith community, you agree to our privacy practices. We protect your personal information and give you control over your data.
+            </p>
+            <div className="flex flex-wrap gap-2 text-sm">
+              <a 
+                href="/privacy-policy.md" 
+                target="_blank" 
+                className="text-faith-blue hover:underline font-medium"
+              >
+                Privacy Policy
+              </a>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-600">Account deletion available anytime</span>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-600">GDPR compliant</span>
+            </div>
+          </div>
+
           <Button 
             type="submit" 
             className="w-full bg-faith-blue hover:bg-blue-800 text-white font-semibold py-4 px-6 h-auto shadow-lg"
