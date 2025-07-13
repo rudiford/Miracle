@@ -451,7 +451,7 @@ export default function Register() {
               </p>
               <Button 
                 onClick={goToAdmin}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-red-600 hover:bg-red-700 text-white"
               >
                 <Shield className="w-4 h-4 mr-2" />
                 Open Admin Dashboard
