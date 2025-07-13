@@ -119,15 +119,16 @@ app.get('/', (req, res) => {
   const userAgent = req.headers['user-agent'] || '';
   const device = detectDevice(userAgent);
   
-  // Force aggressive no-cache headers
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private');
+  // Force ultra-aggressive cache clearing headers  
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private, s-maxage=0');
   res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.setHeader('Last-Modified', new Date().toUTCString());
-  res.setHeader('ETag', '"cache-bypass-' + Date.now() + '-' + Math.random().toString(36) + '"');
-  res.setHeader('X-Mobile-Fix', 'active');
-  res.setHeader('X-Cache-Bypass', Date.now().toString());
-  res.setHeader('Vary', 'User-Agent');
+  res.setHeader('Expires', '-1');
+  res.setHeader('Last-Modified', new Date(Date.now() + 1000).toUTCString());
+  res.setHeader('ETag', '"force-refresh-' + Date.now() + '-' + Math.random().toString(36).substr(2) + '"');
+  res.setHeader('X-Mobile-Auth-Fix', 'active-' + Date.now());
+  res.setHeader('X-Cache-Bypass', 'force-' + Date.now());
+  res.setHeader('X-Auth-Version', '2.0-' + Date.now());
+  res.setHeader('Vary', 'User-Agent, Cache-Control');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   
   console.log(`HOMEPAGE: ${device.mobile ? 'MOBILE' : 'DESKTOP'} request`);
