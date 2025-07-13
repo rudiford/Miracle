@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft, Camera, User, Cross, Trash2 } from "lucide-react";
+import { ArrowLeft, Camera, User, Cross, Trash2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -96,6 +96,10 @@ export default function Register() {
 
   const handleDeleteAccount = () => {
     setLocation("/delete-account");
+  };
+
+  const goToAdmin = () => {
+    setLocation("/admin");
   };
 
   return (
@@ -433,6 +437,28 @@ export default function Register() {
             {updateProfileMutation.isPending ? "Joining..." : "Join Faith Community"}
           </Button>
         </form>
+        
+        {/* Admin Panel Access (if admin user) */}
+        {user?.isAdmin && (
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2 flex items-center">
+                <Shield className="w-5 h-5 mr-2" />
+                Administrator Panel
+              </h3>
+              <p className="text-blue-700 mb-4">
+                Access administrative features to manage users, view reports, and monitor community activity.
+              </p>
+              <Button 
+                onClick={goToAdmin}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Open Admin Dashboard
+              </Button>
+            </div>
+          </div>
+        )}
         
         {/* Danger Zone - Account Deletion */}
         <div className="mt-12 pt-8 border-t border-gray-200">
