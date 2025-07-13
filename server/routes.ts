@@ -24,19 +24,11 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Server-side mobile detection middleware - redirect mobile users to mobile version
-  app.use((req, res, next) => {
-    const userAgent = req.headers['user-agent'] || '';
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-    
-    // Only redirect GET requests to root path for mobile browsers
-    if (req.method === 'GET' && req.path === '/' && isMobile) {
-      console.log('Mobile browser detected, serving simple mobile version:', userAgent.substring(0, 50));
-      return res.sendFile(path.join(process.cwd(), "client/public/mobile-simple.html"));
-    }
-    
-    next();
-  });
+  // Disabled mobile redirect - let homepage handle all devices
+  // app.use((req, res, next) => {
+  //   console.log('Mobile redirect disabled - using homepage for all devices');
+  //   next();
+  // });
 
   // Auth middleware
   await setupAuth(app);

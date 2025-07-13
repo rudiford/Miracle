@@ -374,27 +374,6 @@ app.get('/test', (req, res) => {
   }
 });
 
-// Catch all other routes
-app.get('*', (req, res) => {
-  console.log(`EMERGENCY OVERRIDE: Route ${req.path} requested`);
-  res.send(`<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Page Not Found - Proof of a Miracle</title>
-</head>
-<body style="background:#1e3a8a;color:white;font-family:Arial;text-align:center;padding:50px 20px;margin:0;">
-<div style="background:white;color:#1e3a8a;padding:40px;border-radius:15px;max-width:500px;margin:0 auto;">
-<div style="font-size:80px;margin-bottom:30px;">✞</div>
-<h1 style="font-size:36px;margin-bottom:20px;">Page Not Found</h1>
-<p style="font-size:18px;margin-bottom:20px;">The requested page could not be found.</p>
-<a href="/" style="display:block;width:100%;padding:20px;margin:15px 0;background:#f59e0b;color:#1e3a8a;text-decoration:none;border-radius:10px;font-size:20px;font-weight:bold;">← Back to Home</a>
-</div>
-</body>
-</html>`);
-});
-
 const port = parseInt(process.env.PORT || "5000", 10);
 
 // Start server
