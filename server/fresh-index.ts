@@ -108,7 +108,7 @@ p {
   <div class="status">FRESH START - CLEAN IMPLEMENTATION</div>
   <p>Share testimonies • Connect with believers • Discover miracles</p>
   
-  <a href="/api/login" class="btn">Sign In</a>
+  <a href="http://localhost:5000/api/login" class="btn">Sign In</a>
   <a href="/app" class="btn">Enter App</a>
   
   <p style="font-size: 0.8rem; margin-top: 30px; opacity: 0.7;">
@@ -207,8 +207,10 @@ textarea {
 // Initialize fresh server
 async function startFreshServer() {
   try {
+    log('Setting up authentication system...');
     // Setup authentication
     await setupAuth(app);
+    log('Authentication setup complete');
     
     // API Routes
     app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
