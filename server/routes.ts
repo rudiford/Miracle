@@ -273,30 +273,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(userId);
       const postId = parseInt(req.params.id);
       
-      // Only admin can delete any post
-      if (!user?.isAdmin) {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-      
-      const deleted = await storage.deletePost(postId);
-      
-      if (!deleted) {
-        return res.status(404).json({ message: "Post not found" });
-      }
-      
-      res.json({ message: "Post deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting post:", error);
-      res.status(500).json({ message: "Failed to delete post" });
-    }
-  });
-
-  // Delete post route (for post owners)
-  app.delete('/api/posts/:id', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const postId = parseInt(req.params.id);
-      
       // First, get all posts to find the specific post
       const allPosts = await storage.getAllPosts();
       const post = allPosts.find(p => p.id === postId);
@@ -305,8 +281,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Post not found" });
       }
       
-      // Check if user owns the post
-      if (post.userId !== userId) {
+      // Check if user owns the post OR is admin
+      if (post.userId !== userId && !user?.isAdmin) {
         return res.status(403).json({ message: "You can only delete your own posts" });
       }
       
