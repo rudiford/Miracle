@@ -1,0 +1,33 @@
+{
+  "packageId": "com.proofofamiracle.app",
+  "host": {
+    "scheme": "https",
+    "url": "proofofamiracle.com"
+  },
+  "name": "Proof of a Miracle",
+  "launcherName": "Proof of a Miracle",
+  "display": "standalone",
+  "themeColor": "#2563eb",
+  "backgroundColor": "#ffffff",
+  "startUrl": "/",
+  "iconUrl": "https://proofofamiracle.com/cross.png",
+  "maskableIconUrl": "https://proofofamiracle.com/cross.png",
+  "monochromeIconUrl": "https://proofofamiracle.com/cross.png",
+  "shortcuts": [],
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "androidManifest": {
+    "permissions": [
+      {
+        "name": "android.permission.INTERNET"
+      },
+      {
+        "name": "android.permission.ACCESS_NETWORK_STATE"
+      }
+    ]
+  }
+}
