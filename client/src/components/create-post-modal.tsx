@@ -32,10 +32,10 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isCapturingLocation, setIsCapturingLocation] = useState(false);
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Check if profile is complete
-  if (!isProfileComplete(user)) {
+  if (!isProfileComplete(user, language)) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">

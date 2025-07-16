@@ -12,6 +12,7 @@ import { insertCommentSchema } from "@shared/schema";
 import { z } from "zod";
 import { useAuth } from "@/hooks/useAuth";
 import { isProfileComplete } from "@/lib/profileUtils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const commentSchema = insertCommentSchema.pick({ content: true });
 type CommentForm = z.infer<typeof commentSchema>;
@@ -36,6 +37,7 @@ interface CommentsModalProps {
 
 export default function CommentsModal({ open, onOpenChange, postId }: CommentsModalProps) {
   const { user } = useAuth();
+  const { language } = useLanguage();
 
   const form = useForm<CommentForm>({
     resolver: zodResolver(commentSchema),
@@ -140,7 +142,7 @@ export default function CommentsModal({ open, onOpenChange, postId }: CommentsMo
         </div>
 
         {/* Comment Form */}
-        {isProfileComplete(user) ? (
+        {isProfileComplete(user, language) ? (
           <form onSubmit={form.handleSubmit(onSubmit)} className="border-t pt-4">
             <div className="flex space-x-2">
               <Textarea

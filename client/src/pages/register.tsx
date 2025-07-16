@@ -16,6 +16,7 @@ import { z } from "zod";
 import HelpModal from "@/components/help-modal";
 import { useAuth } from "@/hooks/useAuth";
 import { isProfileComplete, getIncompleteFields } from "@/lib/profileUtils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const registerSchema = insertUserSchema.extend({
   profilePicture: z.any().optional(),
@@ -28,9 +29,10 @@ export default function Register() {
   const [, setLocation] = useLocation();
   // const { toast } = useToast();
   const { user, isLoading } = useAuth();
+  const { language } = useLanguage();
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   
-  console.log('Register component state:', { user, isLoading });
+  console.log('Register component state:', { user, isLoading, language });
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
@@ -231,24 +233,25 @@ export default function Register() {
             
             <div>
               <Label htmlFor="city" className="block text-faith-text font-medium mb-2">
-                City
+                City {language === 'es' ? '(opcional)' : '*'}
               </Label>
               <Input
                 id="city"
                 type="text"
                 {...form.register("city")}
-                placeholder="Your city"
+                placeholder={language === 'es' ? 'Tu ciudad (opcional)' : 'Your city'}
                 className="w-full"
+                required={language !== 'es'}
               />
             </div>
             
             <div>
               <Label htmlFor="state" className="block text-faith-text font-medium mb-2">
-                State
+                {language === 'es' ? 'Estado/Provincia (opcional)' : 'State *'}
               </Label>
               <Select onValueChange={(value) => form.setValue("state", value)} value={form.watch("state") || ""}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your state" />
+                  <SelectValue placeholder={language === 'es' ? 'Selecciona tu estado/provincia (opcional)' : 'Select your state'} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="AL">Alabama</SelectItem>
@@ -308,18 +311,47 @@ export default function Register() {
             
             <div className="md:col-span-2">
               <Label htmlFor="country" className="block text-faith-text font-medium mb-2">
-                Country
+                {language === 'es' ? 'País *' : 'Country *'}
               </Label>
               <Select onValueChange={(value) => form.setValue("country", value)} value={form.watch("country") || ""}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your country" />
+                  <SelectValue placeholder={language === 'es' ? 'Selecciona tu país' : 'Select your country'} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="US">🇺🇸 United States</SelectItem>
+                  {/* For English speakers, show US first */}
+                  {language !== 'es' && <SelectItem value="US">🇺🇸 United States</SelectItem>}
+                  
+                  {/* Spanish-speaking countries first for Spanish users */}
+                  {language === 'es' && (
+                    <>
+                      <SelectItem value="MX">🇲🇽 México</SelectItem>
+                      <SelectItem value="ES">🇪🇸 España</SelectItem>
+                      <SelectItem value="AR">🇦🇷 Argentina</SelectItem>
+                      <SelectItem value="CO">🇨🇴 Colombia</SelectItem>
+                      <SelectItem value="PE">🇵🇪 Perú</SelectItem>
+                      <SelectItem value="VE">🇻🇪 Venezuela</SelectItem>
+                      <SelectItem value="CL">🇨🇱 Chile</SelectItem>
+                      <SelectItem value="EC">🇪🇨 Ecuador</SelectItem>
+                      <SelectItem value="GT">🇬🇹 Guatemala</SelectItem>
+                      <SelectItem value="CU">🇨🇺 Cuba</SelectItem>
+                      <SelectItem value="BO">🇧🇴 Bolivia</SelectItem>
+                      <SelectItem value="DO">🇩🇴 República Dominicana</SelectItem>
+                      <SelectItem value="HN">🇭🇳 Honduras</SelectItem>
+                      <SelectItem value="PY">🇵🇾 Paraguay</SelectItem>
+                      <SelectItem value="NI">🇳🇮 Nicaragua</SelectItem>
+                      <SelectItem value="CR">🇨🇷 Costa Rica</SelectItem>
+                      <SelectItem value="PA">🇵🇦 Panamá</SelectItem>
+                      <SelectItem value="UY">🇺🇾 Uruguay</SelectItem>
+                      <SelectItem value="SV">🇸🇻 El Salvador</SelectItem>
+                      <SelectItem value="GQ">🇬🇶 Guinea Ecuatorial</SelectItem>
+                    </>
+                  )}
+                  
+                  {/* All other countries alphabetically */}
                   <SelectItem value="AF">🇦🇫 Afghanistan</SelectItem>
                   <SelectItem value="AL">🇦🇱 Albania</SelectItem>
                   <SelectItem value="DZ">🇩🇿 Algeria</SelectItem>
-                  <SelectItem value="AR">🇦🇷 Argentina</SelectItem>
+                  {language !== 'es' && <SelectItem value="AR">🇦🇷 Argentina</SelectItem>}
                   <SelectItem value="AM">🇦🇲 Armenia</SelectItem>
                   <SelectItem value="AU">🇦🇺 Australia</SelectItem>
                   <SelectItem value="AT">🇦🇹 Austria</SelectItem>
@@ -329,7 +361,7 @@ export default function Register() {
                   <SelectItem value="BY">🇧🇾 Belarus</SelectItem>
                   <SelectItem value="BE">🇧🇪 Belgium</SelectItem>
                   <SelectItem value="BZ">🇧🇿 Belize</SelectItem>
-                  <SelectItem value="BO">🇧🇴 Bolivia</SelectItem>
+                  {language !== 'es' && <SelectItem value="BO">🇧🇴 Bolivia</SelectItem>}
                   <SelectItem value="BA">🇧🇦 Bosnia and Herzegovina</SelectItem>
                   <SelectItem value="BW">🇧🇼 Botswana</SelectItem>
                   <SelectItem value="BR">🇧🇷 Brazil</SelectItem>
@@ -337,19 +369,19 @@ export default function Register() {
                   <SelectItem value="KH">🇰🇭 Cambodia</SelectItem>
                   <SelectItem value="CM">🇨🇲 Cameroon</SelectItem>
                   <SelectItem value="CA">🇨🇦 Canada</SelectItem>
-                  <SelectItem value="CL">🇨🇱 Chile</SelectItem>
+                  {language !== 'es' && <SelectItem value="CL">🇨🇱 Chile</SelectItem>}
                   <SelectItem value="CN">🇨🇳 China</SelectItem>
-                  <SelectItem value="CO">🇨🇴 Colombia</SelectItem>
-                  <SelectItem value="CR">🇨🇷 Costa Rica</SelectItem>
+                  {language !== 'es' && <SelectItem value="CO">🇨🇴 Colombia</SelectItem>}
+                  {language !== 'es' && <SelectItem value="CR">🇨🇷 Costa Rica</SelectItem>}
                   <SelectItem value="HR">🇭🇷 Croatia</SelectItem>
-                  <SelectItem value="CU">🇨🇺 Cuba</SelectItem>
+                  {language !== 'es' && <SelectItem value="CU">🇨🇺 Cuba</SelectItem>}
                   <SelectItem value="CY">🇨🇾 Cyprus</SelectItem>
                   <SelectItem value="CZ">🇨🇿 Czech Republic</SelectItem>
                   <SelectItem value="DK">🇩🇰 Denmark</SelectItem>
-                  <SelectItem value="DO">🇩🇴 Dominican Republic</SelectItem>
-                  <SelectItem value="EC">🇪🇨 Ecuador</SelectItem>
+                  {language !== 'es' && <SelectItem value="DO">🇩🇴 Dominican Republic</SelectItem>}
+                  {language !== 'es' && <SelectItem value="EC">🇪🇨 Ecuador</SelectItem>}
                   <SelectItem value="EG">🇪🇬 Egypt</SelectItem>
-                  <SelectItem value="SV">🇸🇻 El Salvador</SelectItem>
+                  {language !== 'es' && <SelectItem value="SV">🇸🇻 El Salvador</SelectItem>}
                   <SelectItem value="EE">🇪🇪 Estonia</SelectItem>
                   <SelectItem value="ET">🇪🇹 Ethiopia</SelectItem>
                   <SelectItem value="FI">🇫🇮 Finland</SelectItem>
@@ -358,8 +390,8 @@ export default function Register() {
                   <SelectItem value="DE">🇩🇪 Germany</SelectItem>
                   <SelectItem value="GH">🇬🇭 Ghana</SelectItem>
                   <SelectItem value="GR">🇬🇷 Greece</SelectItem>
-                  <SelectItem value="GT">🇬🇹 Guatemala</SelectItem>
-                  <SelectItem value="HN">🇭🇳 Honduras</SelectItem>
+                  {language !== 'es' && <SelectItem value="GT">🇬🇹 Guatemala</SelectItem>}
+                  {language !== 'es' && <SelectItem value="HN">🇭🇳 Honduras</SelectItem>}
                   <SelectItem value="HU">🇭🇺 Hungary</SelectItem>
                   <SelectItem value="IS">🇮🇸 Iceland</SelectItem>
                   <SelectItem value="IN">🇮🇳 India</SelectItem>
@@ -381,19 +413,19 @@ export default function Register() {
                   <SelectItem value="LT">🇱🇹 Lithuania</SelectItem>
                   <SelectItem value="LU">🇱🇺 Luxembourg</SelectItem>
                   <SelectItem value="MY">🇲🇾 Malaysia</SelectItem>
-                  <SelectItem value="MX">🇲🇽 Mexico</SelectItem>
+                  {language !== 'es' && <SelectItem value="MX">🇲🇽 Mexico</SelectItem>}
                   <SelectItem value="MD">🇲🇩 Moldova</SelectItem>
                   <SelectItem value="MA">🇲🇦 Morocco</SelectItem>
                   <SelectItem value="NL">🇳🇱 Netherlands</SelectItem>
                   <SelectItem value="NZ">🇳🇿 New Zealand</SelectItem>
-                  <SelectItem value="NI">🇳🇮 Nicaragua</SelectItem>
+                  {language !== 'es' && <SelectItem value="NI">🇳🇮 Nicaragua</SelectItem>}
                   <SelectItem value="NG">🇳🇬 Nigeria</SelectItem>
                   <SelectItem value="NO">🇳🇴 Norway</SelectItem>
                   <SelectItem value="OM">🇴🇲 Oman</SelectItem>
                   <SelectItem value="PK">🇵🇰 Pakistan</SelectItem>
-                  <SelectItem value="PA">🇵🇦 Panama</SelectItem>
-                  <SelectItem value="PY">🇵🇾 Paraguay</SelectItem>
-                  <SelectItem value="PE">🇵🇪 Peru</SelectItem>
+                  {language !== 'es' && <SelectItem value="PA">🇵🇦 Panama</SelectItem>}
+                  {language !== 'es' && <SelectItem value="PY">🇵🇾 Paraguay</SelectItem>}
+                  {language !== 'es' && <SelectItem value="PE">🇵🇪 Peru</SelectItem>}
                   <SelectItem value="PH">🇵🇭 Philippines</SelectItem>
                   <SelectItem value="PL">🇵🇱 Poland</SelectItem>
                   <SelectItem value="PT">🇵🇹 Portugal</SelectItem>
@@ -407,7 +439,7 @@ export default function Register() {
                   <SelectItem value="SI">🇸🇮 Slovenia</SelectItem>
                   <SelectItem value="ZA">🇿🇦 South Africa</SelectItem>
                   <SelectItem value="KR">🇰🇷 South Korea</SelectItem>
-                  <SelectItem value="ES">🇪🇸 Spain</SelectItem>
+                  {language !== 'es' && <SelectItem value="ES">🇪🇸 Spain</SelectItem>}
                   <SelectItem value="LK">🇱🇰 Sri Lanka</SelectItem>
                   <SelectItem value="SE">🇸🇪 Sweden</SelectItem>
                   <SelectItem value="CH">🇨🇭 Switzerland</SelectItem>
@@ -417,9 +449,10 @@ export default function Register() {
                   <SelectItem value="UA">🇺🇦 Ukraine</SelectItem>
                   <SelectItem value="AE">🇦🇪 United Arab Emirates</SelectItem>
                   <SelectItem value="GB">🇬🇧 United Kingdom</SelectItem>
-                  <SelectItem value="UY">🇺🇾 Uruguay</SelectItem>
+                  {language === 'es' && <SelectItem value="US">🇺🇸 Estados Unidos</SelectItem>}
+                  {language !== 'es' && <SelectItem value="UY">🇺🇾 Uruguay</SelectItem>}
                   <SelectItem value="UZ">🇺🇿 Uzbekistan</SelectItem>
-                  <SelectItem value="VE">🇻🇪 Venezuela</SelectItem>
+                  {language !== 'es' && <SelectItem value="VE">🇻🇪 Venezuela</SelectItem>}
                   <SelectItem value="VN">🇻🇳 Vietnam</SelectItem>
                   <SelectItem value="YE">🇾🇪 Yemen</SelectItem>
                   <SelectItem value="ZM">🇿🇲 Zambia</SelectItem>

@@ -6,7 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import { useAuth } from "@/hooks/useAuth";
 import { isProfileComplete } from "@/lib/profileUtils";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
@@ -20,7 +20,8 @@ import DeleteAccount from "@/pages/delete-account";
 
 function Router() {
   const { isAuthenticated, isLoading, user, error } = useAuth();
-  const profileComplete = isProfileComplete(user);
+  const { language } = useLanguage();
+  const profileComplete = isProfileComplete(user, language);
 
   console.log('Router state:', { isAuthenticated, isLoading, user, profileComplete, error });
 
