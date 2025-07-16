@@ -159,19 +159,32 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('en');
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es')) {
-      setLanguageState(savedLanguage);
+    try {
+      const savedLanguage = localStorage.getItem('language') as Language;
+      if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es')) {
+        setLanguageState(savedLanguage);
+      }
+    } catch (error) {
+      console.warn('Error accessing localStorage:', error);
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('language', lang);
+    try {
+      localStorage.setItem('language', lang);
+    } catch (error) {
+      console.warn('Error setting localStorage:', error);
+    }
   };
 
   const t = (key: string): string => {
-    return translations[language][key] || key;
+    try {
+      return translations[language]?.[key] || key;
+    } catch (error) {
+      console.warn('Translation error:', error);
+      return key;
+    }
   };
 
   return (
@@ -184,7 +197,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    console.error('useLanguage must be used within a LanguageProvider');
+    // Return fallback to prevent white screen
+    return {
+      language: 'en' as Language,
+      setLanguage: () => {},
+      t: (key: string) => key
+    };
   }
   return context;
 }

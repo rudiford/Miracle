@@ -6,7 +6,9 @@ import PWAInstallGuide from "@/components/pwa-install-guide";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Landing() {
+  console.log('Landing component mounting...');
   const { language, setLanguage, t } = useLanguage();
+  console.log('Language context loaded:', { language });
 
   const handleSignIn = () => {
     window.location.href = "/api/login";
@@ -18,8 +20,6 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 text-white flex flex-col">
-
-
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
         {/* Cross image */}
@@ -28,6 +28,16 @@ export default function Landing() {
             src="/cross.png" 
             alt="Cross" 
             className="mx-auto w-60 h-auto"
+            onError={(e) => {
+              console.error('Cross image failed to load');
+              // Show fallback cross using SVG
+              e.currentTarget.outerHTML = `
+                <svg class="mx-auto w-60 h-auto" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M45 10 L55 10 L55 45 L90 45 L90 55 L55 55 L55 90 L45 90 L45 55 L10 55 L10 45 L45 45 Z" 
+                        fill="black" stroke="white" stroke-width="2"/>
+                </svg>
+              `;
+            }}
           />
         </div>
         
