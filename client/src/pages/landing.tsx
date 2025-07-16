@@ -1,9 +1,14 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Languages } from "lucide-react";
 import PWAInstallGuide from "@/components/pwa-install-guide";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Landing() {
+  const { language, setLanguage, t } = useLanguage();
+
   const handleSignIn = () => {
     window.location.href = "/api/login";
   };
@@ -14,6 +19,22 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 text-white flex flex-col">
+      {/* Language Selector */}
+      <div className="absolute top-4 right-4 z-10">
+        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg p-2">
+          <Languages className="w-4 h-4 text-white" />
+          <Select value={language} onValueChange={(value: 'en' | 'es') => setLanguage(value)}>
+            <SelectTrigger className="w-24 bg-transparent border-white/20 text-white text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">EN</SelectItem>
+              <SelectItem value="es">ES</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
         {/* Cross image */}
@@ -26,11 +47,11 @@ export default function Landing() {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold mb-2 font-georgia">
-          Proof of a Miracle
+          {t('landing.title')}
         </h1>
         
         <p className="text-xl mb-3 max-w-lg opacity-90">
-          Discovering miracles and faith experiences around the world
+          {t('landing.subtitle')}
         </p>
         
         {/* Faith community message */}
@@ -39,7 +60,7 @@ export default function Landing() {
             <CardContent className="p-4">
               <div className="text-center">
                 <p className="text-base font-medium opacity-90 leading-relaxed">
-                  Share your faith experiences and God's miracles with others from around the world
+                  {t('landing.description')}
                 </p>
               </div>
             </CardContent>
@@ -51,7 +72,7 @@ export default function Landing() {
             onClick={handleSignIn}
             className="w-full bg-faith-gold hover:bg-yellow-500 text-faith-blue text-base font-semibold py-4 px-6 h-auto shadow-lg"
           >
-            Sign In
+            {t('landing.login')}
           </Button>
           
           <Button 
@@ -59,7 +80,7 @@ export default function Landing() {
             variant="outline"
             className="w-full border-2 border-white text-white hover:bg-white hover:text-faith-blue text-base font-semibold py-4 px-6 h-auto"
           >
-            Create Account
+            {t('landing.getStarted')}
           </Button>
           
           <div className="pt-4">

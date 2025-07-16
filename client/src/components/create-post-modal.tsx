@@ -14,6 +14,7 @@ import { z } from "zod";
 import LocationPermissionGuide from "@/components/location-permission-guide";
 import { useAuth } from "@/hooks/useAuth";
 import { isProfileComplete } from "@/lib/profileUtils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const createPostSchema = insertPostSchema.extend({
   image: z.any().optional(),
@@ -31,6 +32,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isCapturingLocation, setIsCapturingLocation] = useState(false);
   const { user } = useAuth();
+  const { t } = useLanguage();
   
   // Check if profile is complete
   if (!isProfileComplete(user)) {
@@ -44,12 +46,12 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
                 alt="Cross" 
                 className="w-5 h-auto"
               />
-              Complete Your Profile
+              {t('createPost.completeProfile')}
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-gray-600 mb-4">
-              Please complete your profile before creating posts. This helps build a trusted faith community.
+              {t('createPost.completeProfileDesc')}
             </p>
             <Button 
               onClick={() => {
@@ -58,7 +60,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
               }}
               className="bg-faith-blue hover:bg-blue-700"
             >
-              Complete Profile
+              {t('createPost.completeProfileBtn')}
             </Button>
           </div>
         </DialogContent>
@@ -111,7 +113,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
-      alert("Post Created! Your faith experience has been shared with the community.");
+      alert(t('createPost.success'));
       onOpenChange(false);
       resetForm();
     },
@@ -162,10 +164,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
           form.setValue("location", `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`);
           
           setIsCapturingLocation(false);
-          toast({
-            title: "Location Captured",
-            description: "Your current location has been added to the post.",
-          });
+          alert("Location captured successfully!");
         },
         (error) => {
           console.error("Geolocation error:", error);
@@ -188,21 +187,13 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
               break;
           }
           
-          toast({
-            title: "Location Error",
-            description: errorMessage,
-            variant: "destructive",
-          });
+          alert(`Location Error: ${errorMessage}`);
         },
         options
       );
     } else {
       setIsCapturingLocation(false);
-      toast({
-        title: "Not Supported",
-        description: "Geolocation is not supported by your browser.",
-        variant: "destructive",
-      });
+      alert("Not Supported: Geolocation is not supported by your browser.");
     }
   };
 
@@ -214,17 +205,17 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="text-faith-text">Share Your Faith Experience</DialogTitle>
+          <DialogTitle className="text-faith-text">{t('createPost.title')}</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* Content Textarea */}
           <div>
-            <Label htmlFor="content">Your testimony or experience *</Label>
+            <Label htmlFor="content">{t('createPost.content')} *</Label>
             <Textarea
               id="content"
               {...form.register("content")}
-              placeholder="Share your miracle, faith experience, or testimony..."
+              placeholder={t('createPost.content')}
               className="min-h-[100px] resize-none"
               required
             />
@@ -235,7 +226,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
 
           {/* Image Upload */}
           <div>
-            <Label>Add Photo</Label>
+            <Label>{t('createPost.uploadImage')}</Label>
             <div className="flex items-center space-x-4">
               <input
                 type="file"
@@ -296,7 +287,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
 
           {/* Location */}
           <div>
-            <Label htmlFor="location">Location</Label>
+            <Label htmlFor="location">{t('createPost.location')}</Label>
             <div className="flex space-x-2">
               <Input
                 id="location"
@@ -311,7 +302,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
                 disabled={isCapturingLocation}
               >
                 <MapPin className="w-4 h-4 mr-2" />
-                {isCapturingLocation ? "Capturing..." : "Use Current"}
+                {isCapturingLocation ? "Capturing..." : t('createPost.getLocation')}
               </Button>
             </div>
             <div className="text-xs text-gray-600 mt-1 flex items-center justify-between">
@@ -323,14 +314,14 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
           {/* Submit Button */}
           <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('createPost.cancel')}
             </Button>
             <Button 
               type="submit" 
               className="bg-faith-blue hover:bg-blue-800"
               disabled={createPostMutation.isPending}
             >
-              {createPostMutation.isPending ? "Sharing..." : "Share Experience"}
+              {createPostMutation.isPending ? "Sharing..." : t('createPost.share')}
             </Button>
           </div>
         </form>
