@@ -24,10 +24,13 @@ const registerSchema = insertUserSchema.extend({
 type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function Register() {
+  console.log('Register component mounting...');
   const [, setLocation] = useLocation();
   // const { toast } = useToast();
   const { user, isLoading } = useAuth();
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  
+  console.log('Register component state:', { user, isLoading });
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
@@ -98,6 +101,31 @@ export default function Register() {
   const goToAdmin = () => {
     setLocation("/admin");
   };
+
+  // Error boundary for registration form
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-faith-light flex items-center justify-center">
+        <div className="text-center">
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-16 h-auto mx-auto mb-4"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <p className="text-lg text-faith-text">Authentication required</p>
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="mt-4 px-6 py-2 bg-faith-gold text-faith-blue rounded-lg font-semibold"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">

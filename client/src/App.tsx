@@ -19,8 +19,10 @@ import DeleteAccount from "@/pages/delete-account";
 
 
 function Router() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, error } = useAuth();
   const profileComplete = isProfileComplete(user);
+
+  console.log('Router state:', { isAuthenticated, isLoading, user, profileComplete, error });
 
   if (isLoading) {
     return (
@@ -32,6 +34,28 @@ function Router() {
             className="w-16 h-auto mx-auto mb-4"
           />
           <p className="text-xl">Loading your faith journey...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Auth error:', error);
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <img 
+            src="/cross.png" 
+            alt="Cross" 
+            className="w-16 h-auto mx-auto mb-4"
+          />
+          <p className="text-xl">Connection error. Please refresh the page.</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-6 py-2 bg-faith-gold text-faith-blue rounded-lg font-semibold"
+          >
+            Refresh
+          </button>
         </div>
       </div>
     );

@@ -9,10 +9,13 @@ import CreatePostModal from "@/components/create-post-modal";
 import HelpModal from "@/components/help-modal";
 
 export default function Home() {
+  console.log('Home component mounting...');
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();
+  
+  console.log('Home component state:', { user, showCreatePost });
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
