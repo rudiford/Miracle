@@ -63,11 +63,11 @@ export default function Landing() {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold mb-2 font-georgia">
-          {t('landing.title')}
+          Proof of a Miracle
         </h1>
         
         <p className="text-xl mb-3 max-w-lg opacity-90">
-          {t('landing.subtitle')}
+          Share your faith experiences and connect with believers worldwide
         </p>
         
         {/* Faith community message */}
@@ -76,21 +76,38 @@ export default function Landing() {
             <CardContent className="p-4">
               <div className="text-center">
                 <p className="text-base font-medium opacity-90 leading-relaxed">
-                  {t('landing.description')}
+                  Join our Christian community to share testimonies, discover miracles, and strengthen your faith through the power of shared experiences.
                 </p>
               </div>
             </CardContent>
           </Card>
         </div>
         
-        <div className="space-y-3 w-full max-w-md">
-          <Button 
-            onClick={handleSignIn}
-            className="w-full bg-faith-gold hover:bg-yellow-500 text-faith-blue text-base font-semibold py-4 px-6 h-auto shadow-lg"
-          >
-            {t('landing.login')}
-          </Button>
+        <div className="space-y-4 w-full max-w-md">
+          {/* Dual Language Login Buttons */}
+          <div className="flex gap-3 w-full">
+            <Button 
+              onClick={() => {
+                setLanguage('en');
+                handleSignIn();
+              }}
+              className="flex-1 bg-faith-gold hover:bg-yellow-500 text-faith-blue text-sm font-semibold py-4 px-4 h-auto shadow-lg"
+            >
+              🇺🇸 Log In
+            </Button>
+            
+            <Button 
+              onClick={() => {
+                setLanguage('es');
+                handleSignIn();
+              }}
+              className="flex-1 bg-faith-gold hover:bg-yellow-500 text-faith-blue text-sm font-semibold py-4 px-4 h-auto shadow-lg"
+            >
+              🇪🇸 Iniciar Sesión
+            </Button>
+          </div>
           
+          {/* Single Get Started Button */}
           <Button 
             onClick={handleRegister}
             variant="outline"
