@@ -1,8 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Languages } from "lucide-react";
+
 import PWAInstallGuide from "@/components/pwa-install-guide";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -19,37 +18,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-faith-blue to-blue-900 text-white flex flex-col">
-      {/* Desktop Language Selector */}
-      <div className="hidden sm:block absolute top-4 right-4 z-10">
-        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg p-2">
-          <Languages className="w-4 h-4 text-white" />
-          <Select value={language} onValueChange={(value: 'en' | 'es') => setLanguage(value)}>
-            <SelectTrigger className="w-24 bg-transparent border-white/20 text-white text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-white border shadow-lg">
-              <SelectItem value="en" className="text-black">🇺🇸 EN</SelectItem>
-              <SelectItem value="es" className="text-black">🇪🇸 ES</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
 
-      {/* Mobile Language Selector - Prominent Position */}
-      <div className="sm:hidden fixed top-4 right-4 z-50">
-        <div className="flex items-center gap-2 bg-white/30 backdrop-blur-sm rounded-lg p-2 border border-white/20 shadow-lg">
-          <Languages className="w-4 h-4 text-white" />
-          <Select value={language} onValueChange={(value: 'en' | 'es') => setLanguage(value)}>
-            <SelectTrigger className="w-18 h-8 bg-white/10 border-white/30 text-white text-sm font-medium">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-white border shadow-lg">
-              <SelectItem value="en" className="text-black font-medium">🇺🇸 EN</SelectItem>
-              <SelectItem value="es" className="text-black font-medium">🇪🇸 ES</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
 
       {/* Hero Section */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 text-center">
@@ -107,14 +76,30 @@ export default function Landing() {
             </Button>
           </div>
           
-          {/* Single Get Started Button */}
-          <Button 
-            onClick={handleRegister}
-            variant="outline"
-            className="w-full border-2 border-white text-white hover:bg-white hover:text-faith-blue text-base font-semibold py-4 px-6 h-auto"
-          >
-            {t('landing.getStarted')}
-          </Button>
+          {/* Dual Language Get Started Buttons */}
+          <div className="flex gap-3 w-full">
+            <Button 
+              onClick={() => {
+                setLanguage('en');
+                handleRegister();
+              }}
+              variant="outline"
+              className="flex-1 border-2 border-white text-white hover:bg-white hover:text-faith-blue text-sm font-semibold py-4 px-4 h-auto"
+            >
+              🇺🇸 Get Started
+            </Button>
+            
+            <Button 
+              onClick={() => {
+                setLanguage('es');
+                handleRegister();
+              }}
+              variant="outline"
+              className="flex-1 border-2 border-white text-white hover:bg-white hover:text-faith-blue text-sm font-semibold py-4 px-4 h-auto"
+            >
+              🇪🇸 Comenzar
+            </Button>
+          </div>
           
           <div className="pt-4">
             <PWAInstallGuide />

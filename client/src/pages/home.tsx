@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Home as HomeIcon, Search, Plus, MessageCircle, User, Settings, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 import FeedView from "@/components/feed-view";
 import CreatePostModal from "@/components/create-post-modal";
 import HelpModal from "@/components/help-modal";
@@ -11,6 +12,7 @@ export default function Home() {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [, setLocation] = useLocation();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
