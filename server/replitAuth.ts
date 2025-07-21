@@ -54,13 +54,19 @@ function updateUserSession(
 async function upsertUser(
   claims: any,
 ) {
-  await storage.upsertUser({
+  // Check if user already exists to preserve custom profile data
+  const existingUser = await storage.getUser(claims["sub"]);
+  
+  const userData = {
     id: claims["sub"],
     email: claims["email"],
-    firstName: claims["first_name"],
-    lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
-  });
+    // Only update name fields if user doesn't exist yet (preserve custom names)
+    firstName: existingUser?.firstName || claims["first_name"],
+    lastName: existingUser?.lastName || claims["last_name"],
+  };
+  
+  await storage.upsertUser(userData);
 }
 
 export async function setupAuth(app: Express) {

@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**Profile Persistence & Image Loading Fix (July 21, 2025)**
+- Fixed critical issue where profile changes (like name initials) weren't persisting after logout/login
+- Modified Replit Auth upsertUser function to preserve existing custom profile data instead of overwriting
+- Fixed missing post images by updating database URLs to point to existing files in uploads folder
+- Profile customizations (initials "R C" instead of "Rudy Ced") now persist across browser sessions
+- All post images now load correctly with proper file paths
+- Users can safely customize their display names without them reverting on re-login
+
+## Recent Changes
+
 **Profile Update Cache Fix (July 13, 2025)**
 - Fixed issue where profile name changes didn't immediately reflect in existing posts
 - Profile updates now invalidate both user and posts queries for instant data refresh
