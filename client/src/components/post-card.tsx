@@ -271,6 +271,13 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
             data-pin-nopin="true"
             data-pin-no-hover="true"
             onContextMenu={(e) => e.preventDefault()}
+            onError={(e) => {
+              console.error('Image failed to load:', post.imageUrl);
+              console.error('Full error:', e);
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', post.imageUrl);
+            }}
           />
         </div>
       )}
