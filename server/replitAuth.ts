@@ -25,6 +25,8 @@ const getOidcConfig = memoize(
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const sessionStore = MemoryStore(session);
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   return session({
     secret: process.env.SESSION_SECRET!,
     store: new sessionStore({
@@ -32,11 +34,12 @@ export function getSession() {
     }),
     resave: false,
     saveUninitialized: false,
+    name: 'faith.sid', // Custom session name for better compatibility
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       maxAge: sessionTtl,
-      sameSite: 'lax',
+      sameSite: isProduction ? 'none' : 'lax',
     },
   });
 }
