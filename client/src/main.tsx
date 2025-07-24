@@ -12,8 +12,8 @@ window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
 });
 
-// Register service worker for PWA functionality (only in production or mobile)
-if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
+// Register service worker for PWA functionality
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
