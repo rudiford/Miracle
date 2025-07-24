@@ -16,6 +16,18 @@ export default function Home() {
   const { t } = useLanguage();
   
   console.log('Home component state:', { user, showCreatePost });
+  
+  // Add error boundary
+  if (!user) {
+    console.error('Home component rendered without user data');
+    return (
+      <div className="min-h-screen bg-faith-light flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-gray-600">Loading user data...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleLogout = () => {
     window.location.href = "/api/logout";

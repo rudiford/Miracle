@@ -24,6 +24,14 @@ function Router() {
   const profileComplete = isProfileComplete(user, language);
 
   console.log('Router state:', { isAuthenticated, isLoading, user, profileComplete, error });
+  
+  // Add detailed logging for debugging
+  if (isAuthenticated && user) {
+    console.log('User authenticated, rendering authenticated routes');
+    console.log('Profile complete:', profileComplete);
+  } else if (isAuthenticated && !user) {
+    console.log('Authenticated but no user data - potential issue');
+  }
 
   if (isLoading) {
     return (

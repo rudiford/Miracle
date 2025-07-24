@@ -29,13 +29,28 @@ interface FeedViewProps {
 }
 
 export default function FeedView({ onCreatePost }: FeedViewProps) {
+  console.log('FeedView component mounting...');
   const { user } = useAuth();
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
-  const { data: posts = [], isLoading } = useQuery<Post[]>({
+  const { data: posts = [], isLoading, error } = useQuery<Post[]>({
     queryKey: ["/api/posts"],
   });
+  
+  console.log('FeedView state:', { posts: posts?.length, isLoading, error });
+  
+  if (error) {
+    console.error('Posts query error:', error);
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-600">Error loading posts. Please try refreshing.</p>
+        <Button onClick={() => window.location.reload()} className="mt-2">
+          Refresh
+        </Button>
+      </div>
+    );
+  }
 
   const handleEditPost = (post: Post) => {
     setEditingPost(post);
