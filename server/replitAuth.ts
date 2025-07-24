@@ -87,16 +87,22 @@ export async function setupAuth(app: Express) {
     verified(null, user);
   };
 
-  for (const domain of process.env
-    .REPLIT_DOMAINS!.split(",")) {
+  // Get domains and add localhost for development  
+  const domains = process.env.REPLIT_DOMAINS!.split(",");
+  domains.push("localhost:5000"); // Add localhost for development
+  
+  for (const domain of domains) {
     const trimmedDomain = domain.trim();
     console.log(`Setting up auth strategy for domain: ${trimmedDomain}`);
+    const isLocalhost = trimmedDomain.includes('localhost');
+    const protocol = isLocalhost ? 'http' : 'https';
+    
     const strategy = new Strategy(
       {
-        name: `replitauth:${trimmedDomain}`,
+        name: `replitauth:${trimmedDomain.replace(':5000', '')}`, // Use clean domain name for strategy
         config,
         scope: "openid email profile offline_access",
-        callbackURL: `https://${trimmedDomain}/api/callback`,
+        callbackURL: `${protocol}://${trimmedDomain}/api/callback`,
       },
       verify,
     );
@@ -108,20 +114,16 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/login", (req, res, next) => {
     const hostname = req.hostname;
-    console.log(`Login attempt for hostname: ${hostname}`);
-    console.log(`Headers host: ${req.headers.host}`);
+    const host = req.headers.host || hostname;
+    console.log(`Login attempt for hostname: ${hostname}, host: ${host}`);
     
-    // Check if the strategy exists
-    const strategyName = `replitauth:${hostname}`;
+    // Use the actual hostname for strategy lookup (without port for localhost)
+    const strategyDomain = hostname === 'localhost' ? 'localhost' : hostname;
+    const strategyName = `replitauth:${strategyDomain}`;
+    
+    console.log(`Looking for strategy: ${strategyName}`);
+    
     try {
-      if (!passport._strategy(strategyName)) {
-        console.error(`Authentication strategy not found for: ${strategyName}`);
-        return res.status(500).json({ 
-          message: `Authentication not configured for domain: ${hostname}`,
-          availableDomains: process.env.REPLIT_DOMAINS?.split(',') || []
-        });
-      }
-      
       passport.authenticate(strategyName, {
         prompt: "login consent",
         scope: ["openid", "email", "profile", "offline_access"],
@@ -133,8 +135,12 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/callback", (req, res, next) => {
-    console.log(`Callback for hostname: ${req.hostname}`);
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    const hostname = req.hostname;
+    const strategyDomain = hostname === 'localhost' ? 'localhost' : hostname;
+    const strategyName = `replitauth:${strategyDomain}`;
+    
+    console.log(`Callback for hostname: ${hostname}, using strategy: ${strategyName}`);
+    passport.authenticate(strategyName, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
     })(req, res, next);
