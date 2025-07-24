@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**Authentication White Screen Fix & Firefox Compatibility (July 24, 2025)**
+- Fixed critical authentication bug that caused white screen after Replit login
+- Resolved TypeScript errors in server authentication routes preventing proper session handling
+- Added localhost domain support for development authentication testing
+- Enhanced error handling and browser compatibility for Chrome, Instagram browser, and Firefox
+- Profile customization "R C" displays correctly and persists across sessions
+- Mobile app works perfectly in Instagram browser with full responsive design
+- Firefox mobile may have browser-specific compatibility issues requiring further investigation
+
 **Profile Persistence & Image Loading Fix (July 21, 2025)**
 - Fixed critical issue where profile changes (like name initials) weren't persisting after logout/login
 - Modified Replit Auth upsertUser function to preserve existing custom profile data instead of overwriting
