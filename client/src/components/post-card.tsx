@@ -177,12 +177,17 @@ export default function PostCard({ post, onEditPost }: PostCardProps) {
               src={post.user.profileImageUrl} 
               alt="Profile" 
               className="w-10 h-10 rounded-full object-cover"
+              onError={(e) => {
+                console.error('Profile image failed to load:', post.user.profileImageUrl);
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+              onLoad={() => console.log('Profile image loaded:', post.user.profileImageUrl)}
             />
-          ) : (
-            <div className="w-10 h-10 bg-faith-gold rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
-            </div>
-          )}
+          ) : null}
+          <div className={`w-10 h-10 bg-faith-gold rounded-full flex items-center justify-center ${post.user.profileImageUrl ? 'hidden' : ''}`}>
+            <User className="w-5 h-5 text-white" />
+          </div>
           <div>
             <h3 className="font-semibold text-faith-text">
               {post.user.firstName} {post.user.lastName}
