@@ -27,8 +27,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
-  // Serve uploaded files
-  app.use('/uploads', express.static('uploads'));
+  // Serve uploaded files with better error handling
+  app.use('/uploads', express.static('uploads', {
+    maxAge: '7d', // Cache for 7 days
+    etag: true,
+    lastModified: true
+  }));
+
+  // Health check for images
+  app.get('/api/health/images', (req, res) => {
+    try {
+      const uploadsDir = 'uploads';
+      const exists = fs.existsSync(uploadsDir);
+      const files = exists ? fs.readdirSync(uploadsDir).filter(f => f.endsWith('.jpg') || f.endsWith('.png')) : [];
+      
+      res.json({
+        uploadsDirectoryExists: exists,
+        totalImageFiles: files.length,
+        recentFiles: files.slice(-5),
+        diskSpace: exists ? fs.statSync(uploadsDir) : null
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to check image health' });
+    }
+  });
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
@@ -199,7 +221,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user?.claims?.sub;
       const posts = await storage.getAllPosts(userId);
-      res.json(posts);
+      
+      // Verify image files exist and remove broken references
+      const verifiedPosts = posts.map(post => {
+        if (post.imageUrl) {
+          const imagePath = path.join('.', post.imageUrl);
+          if (!fs.existsSync(imagePath)) {
+            console.warn(`Image file missing for post ${post.id}: ${imagePath}`);
+            return { ...post, imageUrl: null };
+          }
+        }
+        return post;
+      });
+      
+      res.json(verifiedPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
       res.status(500).json({ message: "Failed to fetch posts" });
@@ -219,9 +254,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.file) {
         const filename = `post-${userId}-${Date.now()}${path.extname(req.file.originalname)}`;
         const newPath = path.join('uploads', filename);
-        fs.renameSync(req.file.path, newPath);
+        
+        // Ensure uploads directory exists
+        if (!fs.existsSync('uploads')) {
+          fs.mkdirSync('uploads', { recursive: true });
+        }
+        
+        // Copy instead of rename to ensure file persistence
+        fs.copyFileSync(req.file.path, newPath);
+        fs.unlinkSync(req.file.path); // Clean up temp file
+        
+        // Set proper permissions
+        fs.chmodSync(newPath, 0o644);
+        
         imageUrl = `/uploads/${filename}`;
         console.log("POST /api/posts - Image saved as:", imageUrl);
+        const fileStats = fs.statSync(newPath);
+        console.log("POST /api/posts - File size:", fileStats.size, "bytes");
+        console.log("POST /api/posts - File permissions:", fileStats.mode.toString(8));
       }
       
       const postData = {
