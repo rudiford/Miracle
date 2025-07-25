@@ -10,14 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**Image Loading & Profile Display Complete Fix (July 25, 2025)**
-- Successfully resolved all image loading issues and profile display problems
-- Profile images now display correctly instead of broken placeholders across all browsers
-- Fixed static file serving configuration for proper image access via HTTP
-- Cleaned up database posts with broken image references and restored appropriate content
-- Added comprehensive error handling for both profile and post images with fallback mechanisms
-- Updated posts to meaningful faith-based content suitable for Christian community
-- App displays clean, professional content without confusing or inappropriate images
+**Image Persistence Issue Identified & Workaround Implemented (July 25, 2025)**
+- Root cause identified: Replit environment doesn't preserve newly uploaded files between restarts or after time periods
+- Only files uploaded July 12-13 persist; newer uploads disappear within hours
+- Enhanced upload system ready for when file system issue is resolved
+- Implemented stable workaround using existing persistent image files
+- Profile images work correctly using older persistent files
+- Added automatic broken image reference cleanup to prevent display issues
+- Posts now use combination of text-only content and verified persistent images
+- Health check endpoint monitors image storage status
 
 **Authentication White Screen Fix & Firefox Compatibility (July 24, 2025)**
 - Fixed critical authentication bug that caused white screen after Replit login
