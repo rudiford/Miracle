@@ -4,3 +4,8 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Keep uploads directory structure but allow specific files
+uploads/*
+!uploads/.gitkeep
+!uploads/44812524-1752371713984.jpg
