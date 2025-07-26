@@ -36,7 +36,7 @@ export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  imageUrl: varchar("image_url"),
+  imageUrl: text("image_url"), // Changed to text to support base64 images
   latitude: text("latitude"),
   longitude: text("longitude"),
   location: varchar("location"), // Human readable location

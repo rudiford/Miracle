@@ -221,20 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user?.claims?.sub;
       const posts = await storage.getAllPosts(userId);
-      
-      // Verify image files exist and remove broken references
-      const verifiedPosts = posts.map(post => {
-        if (post.imageUrl) {
-          const imagePath = path.join('.', post.imageUrl);
-          if (!fs.existsSync(imagePath)) {
-            console.warn(`Image file missing for post ${post.id}: ${imagePath}`);
-            return { ...post, imageUrl: null };
-          }
-        }
-        return post;
-      });
-      
-      res.json(verifiedPosts);
+      res.json(posts);
     } catch (error) {
       console.error("Error fetching posts:", error);
       res.status(500).json({ message: "Failed to fetch posts" });
@@ -252,26 +239,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let imageUrl = null;
       
       if (req.file) {
-        const filename = `post-${userId}-${Date.now()}${path.extname(req.file.originalname)}`;
-        const newPath = path.join('uploads', filename);
+        // Convert image to base64 and store in database instead of file system
+        const imageBuffer = fs.readFileSync(req.file.path);
+        const base64Image = imageBuffer.toString('base64');
+        const mimeType = req.file.mimetype;
         
-        // Ensure uploads directory exists
-        if (!fs.existsSync('uploads')) {
-          fs.mkdirSync('uploads', { recursive: true });
-        }
+        // Store as data URL
+        imageUrl = `data:${mimeType};base64,${base64Image}`;
         
-        // Copy instead of rename to ensure file persistence
-        fs.copyFileSync(req.file.path, newPath);
-        fs.unlinkSync(req.file.path); // Clean up temp file
+        // Clean up temp file
+        fs.unlinkSync(req.file.path);
         
-        // Set proper permissions
-        fs.chmodSync(newPath, 0o644);
-        
-        imageUrl = `/uploads/${filename}`;
-        console.log("POST /api/posts - Image saved as:", imageUrl);
-        const fileStats = fs.statSync(newPath);
-        console.log("POST /api/posts - File size:", fileStats.size, "bytes");
-        console.log("POST /api/posts - File permissions:", fileStats.mode.toString(8));
+        console.log("POST /api/posts - Image converted to base64, size:", Math.round(base64Image.length / 1024), "KB");
       }
       
       const postData = {
