@@ -2,238 +2,40 @@
 
 ## Overview
 
-This is a full-stack Christian faith community application built with modern web technologies. The app allows users to share miracle testimonies, connect with fellow believers, and discover faith experiences through an interactive map interface. It features user authentication via Replit Auth, real-time social interactions, and a mobile-first responsive design.
+This is a full-stack Christian faith community application designed to connect believers, allow users to share miracle testimonies, and engage through an interactive platform. The app emphasizes real-time social interactions, user authentication, and a mobile-first responsive design, aiming to foster a global community around shared faith experiences.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes
-
-**Image Persistence Issue Identified & Workaround Implemented (July 25, 2025)**
-- Root cause identified: Replit environment doesn't preserve newly uploaded files between restarts or after time periods
-- Only files uploaded July 12-13 persist; newer uploads disappear within hours
-- Enhanced upload system ready for when file system issue is resolved
-- Implemented stable workaround using existing persistent image files
-- Profile images work correctly using older persistent files
-- Added automatic broken image reference cleanup to prevent display issues
-- Posts now use combination of text-only content and verified persistent images
-- Health check endpoint monitors image storage status
-
-**Authentication White Screen Fix & Firefox Compatibility (July 24, 2025)**
-- Fixed critical authentication bug that caused white screen after Replit login
-- Resolved TypeScript errors in server authentication routes preventing proper session handling
-- Added localhost domain support for development authentication testing
-- Enhanced error handling and browser compatibility for Chrome, Instagram browser, and Firefox
-- Profile customization "R C" displays correctly and persists across sessions
-- Mobile app works perfectly in Instagram browser with full responsive design
-- Firefox mobile may have browser-specific compatibility issues requiring further investigation
-
-**Profile Persistence & Image Loading Fix (July 21, 2025)**
-- Fixed critical issue where profile changes (like name initials) weren't persisting after logout/login
-- Modified Replit Auth upsertUser function to preserve existing custom profile data instead of overwriting
-- Fixed missing post images by updating database URLs to point to existing files in uploads folder
-- Profile customizations (initials "R C" instead of "Rudy Ced") now persist across browser sessions
-- All post images now load correctly with proper file paths
-- Users can safely customize their display names without them reverting on re-login
-
-## Recent Changes
-
-**Profile Update Cache Fix (July 13, 2025)**
-- Fixed issue where profile name changes didn't immediately reflect in existing posts
-- Profile updates now invalidate both user and posts queries for instant data refresh
-- Added forced refetch of posts data to ensure immediate name changes across all posts
-- User name changes now appear immediately across all posts and UI components
-- Profile data correctly syncs across all browsers when logging in with same Replit account
-- Improved data consistency across the entire application interface
-
-**Critical Bug Fixes and UI Improvements (July 13, 2025)**
-- Fixed white screen issue caused by React rendering error in gender Select component
-- Resolved duplicate DELETE route conflicts that were causing backend routing issues
-- Gender field now properly saves and displays selected values in user profile
-- Added admin dashboard access button to user profile page for convenient admin access
-- Admin panel section visible only to admin users with Shield icon and descriptive text
-- Combined post deletion logic to allow both post owners and admins to delete posts
-- Application now loads properly across all browsers after cache clearing
-
-**PostgreSQL Database Backend Implementation (July 13, 2025)**
-- Successfully migrated from in-memory storage to PostgreSQL database backend
-- Created comprehensive DatabaseStorage class implementing all IStorage interface methods
-- Added admin user management interface with full database access (/admin/users)
-- Users can now be viewed, managed, and deleted through admin dashboard
-- All user profile data now persists in PostgreSQL with proper schema relationships
-- Admin stats endpoint provides real-time database metrics (users, posts, reports)
-- Database schema automatically synced using Drizzle migrations (npm run db:push)
-- Full GDPR compliance maintained with complete user data deletion capabilities
-- Profile completion requirements implemented - users must complete all required fields before posting
-- Enhanced profile system ensures only verified community members can participate
-
-**Critical Bug Fix - React Hooks Error Resolution (July 12, 2025)**
-- Fixed critical React hooks error that was causing white screen on mobile browsers
-- Completely removed problematic @radix-ui/react-tooltip dependency that was causing invalid hook calls
-- Replaced tooltip components with safe stub implementations to prevent import errors
-- App now loads properly in preview window, mobile browser issues should resolve with deployment
-- All tooltip functionality temporarily disabled but app is fully functional for Google Play Store submission
-
-**Account Deletion System Implementation (July 12, 2025)**
-- Added GDPR-compliant account deletion functionality for Google Play Store compliance
-- Users can delete their account via Settings menu → "Delete Account" option
-- Complete deletion of all user data: posts, comments, messages, connections, prayers, blocks, reports
-- Account deletion page with warning messages and optional feedback collection
-- Backend API endpoint: DELETE /api/users/delete-account with session destruction
-- Privacy policy updated with account deletion process and user rights information
-- Direct link available at /delete-account for external access and Google Play requirements
-- Permanent deletion within 30 days as stated in privacy policy
-
-**Content Reporting System Implementation (July 12, 2025)**
-- Added comprehensive post reporting functionality for community moderation
-- Users can report inappropriate posts via "Report Post" button in post dropdown menu
-- Report modal with predefined reasons: inappropriate content, spam, harassment, false info, hate speech, violence, other
-- Admin dashboard now includes reports management interface with filtering by status
-- Admins can review, mark as reviewed, or resolve reports with detailed post context
-- Report API endpoints: POST /api/reports, GET /api/admin/reports, PATCH /api/admin/reports/:id
-- Backend storage includes reports table with status tracking and reviewer information
-- Admin stats dashboard shows pending report count for immediate attention
-- Toast notifications confirm successful report submissions and status updates
-
-**User Blocking System Implementation (July 12, 2025)**
-- Added comprehensive user blocking functionality for community safety
-- Users can now block other users via post dropdown menu to prevent seeing their content
-- Blocked users are automatically filtered out from post feeds
-- Block/unblock API endpoints: POST/DELETE /api/users/:id/block
-- Blocking a user automatically removes any existing connection/friendship
-- Added blocked users management interface with unblock functionality
-- Backend storage includes blocks table with proper data relationships
-- Frontend shows "Block User" option in post dropdown for non-own posts
-- Toast notifications confirm successful blocking/unblocking actions
-
-**App Simplification - Feed-Only View (July 12, 2025)**
-- Completely removed map view functionality from the entire application
-- Simplified navigation to show only feed view with top navigation
-- Updated home page to only display feed content without view switching
-- Removed map-related content from help modal and documentation
-- Streamlined user interface for simpler, cleaner experience
-- Moved navigation menu from bottom to top directly under "Proof of a Miracle" title
-- Fixed post action buttons layout to fit mobile screens properly with smaller icons and text
-- Adjusted top navigation menu with bigger fonts and icons, reduced padding for optimal mobile experience
-- Enlarged landing page elements including cross image, title, text, buttons, and spacing for better visibility
-- Moved text and buttons closer to cross image by reducing spacing between elements
-- Further tightened spacing to create ultra-compact landing page layout
-- Reduced empty state spacing for more compact browser view experience
-
-**Dual-Button Language Selection Implementation (July 16, 2025)**
-- Completely removed dropdown language selector for cleaner, more intuitive design
-- Finalized dual-button bilingual approach with side-by-side gold login buttons: "🇺🇸 Log In" and "🇪🇸 Iniciar Sesión"
-- Added matching dual registration buttons: "🇺🇸 Get Started" and "🇪🇸 Comenzar"
-- Implemented automatic language setting through login button choice - Spanish users get complete Spanish app experience
-- Created complete Spanish translation set covering landing page, navigation, posts, forms, and user interface
-- Translated key phrases: "Proof of a Miracle" → "Prueba de un Milagro", buttons, descriptions, and modal content
-- Language choice persists across browser sessions and immediately updates all visible text
-- Targeting Spanish-speaking Christian communities worldwide for expanded user base
-- All form placeholders, error messages, and success notifications fully translated
-
-**Google Play Store Submission Complete (July 13, 2025)**
-- Created PWA manifest.json with proper app metadata and icons
-- Added service worker for offline functionality and app installation
-- Configured favicon and PWA meta tags for professional app appearance
-- App now installable directly from browser on all platforms
-- Ready for Google Play Store distribution via Trusted Web Activity (TWA)
-- Published guide for app store submission process using Bubblewrap CLI
-- Custom domain configured: https://proofofamiracle.com/
-- User purchased Google Play Developer account ($25) - ready for Android app publishing
-- Successfully built Android app using Bubblewrap CLI on local machine
-- Generated final production files: app-release-bundle.aab (1.37 MB) ready for Google Play Store upload
-- App package name: com.proofofamiracle.app
-- **MILESTONE: Android app bundle successfully uploaded to Google Play Console**
-- App now in Google Play Store review process for worldwide Christian community distribution
-
-**Cross Image Integration (July 12, 2025)**
-- Integrated user's custom black cross image across the entire application for complete consistency
-- Landing page: Large cross (288px) as main focal point, black color for contrast
-- Navigation header: Custom cross (48px) replaces SVG cross next to "Proof of a Miracle" title
-- Replaced ALL cross icons (15+ locations): map markers, loading states, buttons, modals, empty states
-- Added zip code support (75214) to map view for location-based posts
-- Removed cross icon from "Create Post" button per user preference
-- Cross sizes range from 16px (small buttons) to 288px (landing page) with proper styling
-
 ## System Architecture
 
-The application follows a modern full-stack architecture with clear separation between frontend, backend, and data layers:
+The application employs a modern full-stack architecture with a clear separation of concerns.
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript for type safety
-- **Routing**: Wouter for lightweight client-side routing  
-- **State Management**: TanStack Query (React Query) for server state management
-- **UI Framework**: Radix UI components with Tailwind CSS for styling
-- **Form Handling**: React Hook Form with Zod validation
-- **Build Tool**: Vite for fast development and optimized builds
+### UI/UX Decisions
+- **Design Language**: Mobile-first responsive design.
+- **Color Scheme**: Dual-button language selection (English/Spanish) with distinct gold login/registration buttons.
+- **Iconography**: Integrated custom black cross image consistently across all UI elements, varying in size based on context.
+- **Navigation**: Streamlined top navigation bar with enlarged fonts and icons for mobile optimization.
+- **Landing Page**: Enlarged elements, cross image as a focal point, and tightened spacing for an ultra-compact layout.
 
-### Backend Architecture
-- **Runtime**: Node.js with Express.js web framework
-- **Language**: TypeScript for type safety across the stack
-- **API Pattern**: RESTful APIs with JSON responses
-- **File Uploads**: Multer for handling image uploads
-- **Session Management**: Express sessions with PostgreSQL storage
+### Technical Implementations
+- **Frontend**: React 18 with TypeScript, Wouter for routing, TanStack Query for state management, Radix UI with Tailwind CSS for styling, React Hook Form with Zod for validation, and Vite for building.
+- **Backend**: Node.js with Express.js, TypeScript, RESTful APIs, Multer for image uploads, and Express sessions.
+- **Database**: PostgreSQL with Drizzle ORM, connected via Neon Database (serverless PostgreSQL), and Drizzle Kit for migrations.
+- **Authentication**: Replit Auth using OpenID Connect, with sessions stored in PostgreSQL.
+- **Content Features**: Posts with images/location, threaded comments, prayer counters, and local static media storage.
+- **Social Features**: User connections, private messaging, customizable user profiles, and a chronological community feed.
+- **Geographic Features**: GPS coordinates for miracle locations and interactive location displays.
+- **Admin Dashboard**: User management, content moderation, and basic analytics.
+- **PWA**: Manifest.json, service worker, and PWA meta tags for installability and Google Play Store distribution.
 
-### Database Architecture
-- **Database**: PostgreSQL with Drizzle ORM
-- **Connection**: Neon Database (serverless PostgreSQL)
-- **Schema Management**: Drizzle Kit for migrations and schema evolution
-- **Session Storage**: PostgreSQL table for user sessions
-
-## Key Components
-
-### Authentication System
-- **Provider**: Replit Auth with OpenID Connect
-- **Session Management**: Express sessions stored in PostgreSQL
-- **Authorization**: Role-based access with admin privileges
-- **Security**: HTTP-only cookies with secure flags
-
-### Content Management
-- **Posts**: Faith testimonies and miracle stories with optional images and location data
-- **Comments**: Threaded commenting system on posts
-- **Prayer Counters**: Community engagement through prayer counts
-- **Media Storage**: Local file storage with served static assets
-
-### Social Features
-- **User Connections**: Friend request system with pending/accepted states
-- **Private Messaging**: Direct messaging between connected users
-- **User Profiles**: Customizable profiles with demographics and profile pictures
-- **Community Feed**: Chronological feed of posts from the community
-
-### Geographic Features
-- **Location Services**: GPS coordinates for miracle locations
-- **Interactive Map**: Visual representation of miracles worldwide
-- **Location Names**: Human-readable location descriptions
-
-### Admin Dashboard
-- **User Management**: View and manage community members
-- **Content Moderation**: Administrative oversight of posts and content
-- **Analytics**: Basic statistics on community growth and engagement
-
-## Data Flow
-
-### User Registration Flow
-1. User initiates authentication via Replit Auth
-2. OIDC provider validates credentials and returns user claims
-3. Backend creates/updates user record in PostgreSQL
-4. Session established with cookie-based authentication
-5. User completes profile registration with additional details
-
-### Content Creation Flow
-1. Authenticated user creates post through modal interface
-2. Optional image upload processed by Multer middleware
-3. Location data captured via browser geolocation API
-4. Post data validated against Zod schema
-5. Record persisted to PostgreSQL via Drizzle ORM
-6. Real-time UI updates via React Query cache invalidation
-
-### Social Interaction Flow
-1. User interactions (prayers, comments, connections) trigger API calls
-2. Backend validates user permissions and relationships
-3. Database updates executed within transactions
-4. Optimistic UI updates provide immediate feedback
-5. Error handling with rollback and user notifications
+### Feature Specifications
+- **Multi-language Support**: Complete Spanish translation implemented with language persistence based on login button choice.
+- **Account Management**: GDPR-compliant account deletion with full user data removal.
+- **Content Moderation**: Comprehensive post reporting system with predefined reasons and admin review interface.
+- **User Safety**: User blocking functionality to filter out unwanted content and interactions.
+- **Simplified Interface**: Removed map view, focusing solely on a feed-only experience with top navigation.
 
 ## External Dependencies
 
@@ -243,46 +45,19 @@ The application follows a modern full-stack architecture with clear separation b
 - **Deployment**: Replit hosting platform
 
 ### Frontend Libraries
-- **UI Components**: Radix UI primitives for accessibility
-- **Styling**: Tailwind CSS for utility-first styling
-- **Icons**: Lucide React for consistent iconography
-- **Validation**: Zod for runtime type validation
+- **UI Components**: Radix UI
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **Validation**: Zod
 - **Fonts**: Google Fonts (Inter, Georgia)
 
-### Backend Libraries  
-- **ORM**: Drizzle ORM for type-safe database queries
-- **File Uploads**: Multer for multipart form handling
-- **Session Storage**: connect-pg-simple for PostgreSQL sessions
-- **Build**: ESBuild for production bundling
+### Backend Libraries
+- **ORM**: Drizzle ORM
+- **File Uploads**: Multer
+- **Session Storage**: connect-pg-simple
 
 ### Development Tools
-- **TypeScript**: Static type checking across the stack
-- **Vite**: Development server with hot module replacement
-- **PostCSS**: CSS processing with Autoprefixer
-- **TSX**: TypeScript execution for Node.js
-
-## Deployment Strategy
-
-### Development Environment
-- **Local Development**: Vite dev server with Express backend
-- **Hot Reloading**: Automatic refresh on code changes
-- **Database**: Direct connection to Neon Database
-- **Environment Variables**: Local .env file configuration
-
-### Production Deployment
-- **Build Process**: Vite builds frontend assets, ESBuild bundles backend
-- **Static Assets**: Frontend served from dist/public directory
-- **Process Management**: Single Node.js process serving both API and static files
-- **Database Migrations**: Drizzle Kit push commands for schema updates
-
-### Environment Configuration
-- **Database**: DATABASE_URL environment variable for PostgreSQL connection
-- **Authentication**: REPL_ID and session secrets for Replit Auth
-- **File Storage**: Local uploads directory with Express static middleware
-- **Security**: HTTPS enforcement and secure cookie settings in production
-
-### Scaling Considerations
-- **Database**: Serverless PostgreSQL automatically scales with usage
-- **File Storage**: Local storage suitable for moderate usage, could migrate to cloud storage
-- **Session Management**: PostgreSQL session storage supports horizontal scaling
-- **Caching**: React Query provides client-side caching, could add Redis for server-side caching
+- **Type Checking**: TypeScript
+- **Development Server**: Vite
+- **CSS Preprocessing**: PostCSS
+- **TypeScript Execution**: TSX
