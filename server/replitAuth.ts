@@ -144,7 +144,7 @@ export async function setupAuth(app: Express) {
     
     console.log(`Callback for hostname: ${hostname}, using strategy: ${strategyName}`);
     passport.authenticate(strategyName, {
-      successReturnToOrRedirect: "/",
+      successReturnToOrRedirect: "/feed",
       failureRedirect: "/api/login",
     })(req, res, next);
   });

@@ -10,6 +10,7 @@ import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import LandingPage from "@/pages/LandingPage";
+import FeedPage from "@/pages/FeedPage";
 import Home from "@/pages/home";
 import Register from "@/pages/register";
 import Messages from "@/pages/messages";
@@ -104,7 +105,8 @@ function Router() {
         </>
       ) : (
         <>
-          <Route path="/" component={Home} />
+          <Route path="/" component={FeedPage} />
+          <Route path="/feed" component={FeedPage} />
           <Route path="/messages" component={Messages} />
           <Route path="/register" component={Register} />
           <Route path="/privacy" component={Privacy} />
