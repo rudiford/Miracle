@@ -9,6 +9,7 @@ import { isProfileComplete } from "@/lib/profileUtils";
 import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
+import LandingPage from "@/pages/LandingPage";
 import Home from "@/pages/home";
 import Register from "@/pages/register";
 import Messages from "@/pages/messages";
@@ -88,7 +89,7 @@ function Router() {
     <Switch>
       {!isAuthenticated ? (
         <>
-          <Route path="/" component={Landing} />
+          <Route path="/" component={LandingPage} />
           <Route path="/register" component={Register} />
           <Route path="/privacy" component={Privacy} />
           <Route path="/delete-account" component={DeleteAccount} />
