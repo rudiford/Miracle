@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home as HomeIcon, Search, Plus, MessageCircle, User, Settings, LogOut } from "lucide-react";
+import { Home as HomeIcon, Search, PlusCircle, MessageCircle, User, Settings, LogOut, Shield } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -9,17 +9,12 @@ import CreatePostModal from "@/components/create-post-modal";
 import HelpModal from "@/components/help-modal";
 
 export default function Home() {
-  console.log('Home component mounting...');
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();
-  
-  console.log('Home component state:', { user, showCreatePost });
-  
-  // Add error boundary
+
   if (!user) {
-    console.error('Home component rendered without user data');
     return (
       <div className="min-h-screen bg-faith-light flex items-center justify-center">
         <div className="text-center">
@@ -37,15 +32,6 @@ export default function Home() {
     window.location.href = "/admin";
   };
 
-  const handleHome = () => {
-    // Already on home feed view
-  };
-
-  const handleDiscover = () => {
-    // TODO: Implement user search/discovery
-    console.log("Discover users");
-  };
-
   const handleMessages = () => {
     setLocation("/messages");
   };
@@ -54,112 +40,95 @@ export default function Home() {
     setLocation("/register");
   };
 
-
-
   return (
     <div className="min-h-screen bg-faith-light">
-      {/* Top Navigation */}
       <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-        <div className="px-4 py-3">
+        <div className="max-w-6xl mx-auto px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img 
                 src="/cross.png" 
                 alt="Cross" 
-                className="w-12 h-auto"
+                className="w-10 h-auto"
                 onError={(e) => {
-                  console.error('Cross image failed to load');
                   e.currentTarget.style.display = 'none';
                 }}
               />
               <h1 className="text-xl font-bold text-faith-text">Proof of a Miracle</h1>
             </div>
-            
-            <div className="flex items-center space-x-2">
-              {/* Admin Button (if admin user) */}
-              {user?.isAdmin && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToAdmin}
-                  className="text-faith-blue border-faith-blue hover:bg-faith-blue hover:text-white"
-                >
-                  Admin
-                </Button>
-              )}
-              
-              {/* Temporary simple menu */}
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" onClick={handleProfile}>
+
+            <div className="flex items-center space-x-1">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-faith-blue font-medium"
+              >
+                <HomeIcon className="w-4 h-4 mr-2" />
+                Feed
+              </Button>
+
+              <Button 
+                variant="ghost"
+                size="sm"
+                onClick={handleMessages}
+                className="text-gray-600 hover:text-faith-blue font-medium"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Messages
+              </Button>
+
+              <Button 
+                variant="ghost"
+                size="sm"
+                onClick={handleProfile}
+                className="text-gray-600 hover:text-faith-blue font-medium"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Profile
+              </Button>
+
+              <Button 
+                onClick={() => setShowCreatePost(true)}
+                size="sm"
+                className="bg-faith-blue hover:bg-blue-800 text-white font-medium ml-2"
+              >
+                <PlusCircle className="w-4 h-4 mr-2" />
+                New Post
+              </Button>
+
+              <div className="border-l border-gray-200 ml-2 pl-2 flex items-center space-x-1">
+                {user?.isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={goToAdmin}
+                    className="text-faith-blue"
+                    title="Admin Dashboard"
+                  >
+                    <Shield className="w-4 h-4" />
+                  </Button>
+                )}
+                <Button variant="ghost" size="sm" onClick={handleProfile} title="Settings">
                   <Settings className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <Button variant="ghost" size="sm" onClick={handleLogout} title="Log Out">
                   <LogOut className="w-4 h-4" />
                 </Button>
               </div>
             </div>
           </div>
-          
-          {/* Navigation Menu */}
-          <div className="flex justify-around items-center pt-2 border-t border-gray-100 mt-2 px-1">
-            <Button 
-              variant="ghost" 
-              onClick={handleHome}
-              className="flex flex-col items-center space-y-1 py-2 px-1 text-faith-blue flex-1 min-w-0"
-            >
-              <HomeIcon className="w-6 h-6" />
-              <span className="text-sm font-medium">Feed</span>
-            </Button>
-            
-            <Button 
-              variant="ghost"
-              onClick={handleDiscover}
-              className="flex flex-col items-center space-y-1 py-2 px-1 text-gray-400 hover:text-faith-blue transition-colors flex-1 min-w-0"
-            >
-              <Search className="w-6 h-6" />
-              <span className="text-sm font-medium">Discover</span>
-            </Button>
-            
-            <Button 
-              onClick={() => setShowCreatePost(true)}
-              className="bg-faith-blue hover:bg-blue-800 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow mx-1"
-            >
-              <Plus className="w-6 h-6" />
-            </Button>
-            
-            <Button 
-              variant="ghost"
-              onClick={handleMessages}
-              className="flex flex-col items-center space-y-1 py-2 px-1 text-gray-400 hover:text-faith-blue transition-colors flex-1 min-w-0"
-            >
-              <MessageCircle className="w-6 h-6" />
-              <span className="text-sm font-medium">Messages</span>
-            </Button>
-            
-            <Button 
-              variant="ghost"
-              onClick={handleProfile}
-              className="flex flex-col items-center space-y-1 py-2 px-1 text-gray-400 hover:text-faith-blue transition-colors flex-1 min-w-0"
-            >
-              <User className="w-6 h-6" />
-              <span className="text-sm font-medium">Profile</span>
-            </Button>
-          </div>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <div>
+      <main className="max-w-2xl mx-auto py-6 px-4">
         <FeedView onCreatePost={() => setShowCreatePost(true)} />
-      </div>
+      </main>
 
-      {/* Create Post Modal */}
       <CreatePostModal 
         open={showCreatePost} 
         onOpenChange={setShowCreatePost} 
       />
 
-      {/* Help Modal */}
       <HelpModal />
     </div>
   );

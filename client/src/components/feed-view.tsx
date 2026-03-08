@@ -96,7 +96,7 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
   return (
     <div className="pb-4">
       {/* Create Post Section */}
-      <Card className="mx-4 mt-4 shadow-sm border border-gray-200">
+      <Card className="shadow-sm border border-gray-200">
         <CardContent className="p-4">
           <div className="flex items-center space-x-3 mb-4">
             {user?.profileImageUrl ? (
@@ -124,7 +124,7 @@ export default function FeedView({ onCreatePost }: FeedViewProps) {
       </Card>
 
       {/* Feed Posts */}
-      <div className="space-y-4 px-4 pt-2">
+      <div className="space-y-4 pt-2">
         {posts.length === 0 ? (
           <div className="text-center py-6">
             <h3 className="text-lg font-semibold text-faith-text mb-2">Share Your First Miracle</h3>

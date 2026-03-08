@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack Christian faith community application designed to connect believers, allow users to share miracle testimonies, and engage through an interactive platform. The app emphasizes real-time social interactions, user authentication, and a mobile-first responsive design, aiming to foster a global community around shared faith experiences.
+This is a full-stack Christian faith community website designed to connect believers, allow users to share miracle testimonies, and engage through an interactive platform. The site emphasizes real-time social interactions, user authentication, and a responsive website design, aiming to foster a global community around shared faith experiences.
 
 ## User Preferences
 
@@ -13,11 +13,11 @@ Preferred communication style: Simple, everyday language.
 The application employs a modern full-stack architecture with a clear separation of concerns.
 
 ### UI/UX Decisions
-- **Design Language**: Mobile-first responsive design.
+- **Design Language**: Desktop-friendly responsive website design with centered max-width layouts.
 - **Color Scheme**: Dual-button language selection (English/Spanish) with distinct gold login/registration buttons.
 - **Iconography**: Integrated custom black cross image consistently across all UI elements, varying in size based on context.
-- **Navigation**: Streamlined top navigation bar with enlarged fonts and icons for mobile optimization.
-- **Landing Page**: Enlarged elements, cross image as a focal point, and tightened spacing for an ultra-compact layout.
+- **Navigation**: Horizontal top navigation bar with inline links (Feed, Messages, Profile, New Post) and action icons.
+- **Landing Page**: Hero section with feature cards grid, cross image as a focal point, and clear call-to-action buttons.
 
 ### Technical Implementations
 - **Frontend**: React 18 with TypeScript, Wouter for routing, TanStack Query for state management, Radix UI with Tailwind CSS for styling, React Hook Form with Zod for validation, and Vite for building.
@@ -28,7 +28,7 @@ The application employs a modern full-stack architecture with a clear separation
 - **Social Features**: User connections, private messaging, customizable user profiles, and a chronological community feed.
 - **Geographic Features**: GPS coordinates for miracle locations and interactive location displays.
 - **Admin Dashboard**: User management, content moderation, and basic analytics.
-- **PWA**: Manifest.json, service worker, and PWA meta tags for installability and Google Play Store distribution.
+- **Website Mode**: Standard browser-based website (PWA standalone mode removed, service worker removed).
 
 ### Feature Specifications
 - **Multi-language Support**: Complete Spanish translation implemented with language persistence based on login button choice.
