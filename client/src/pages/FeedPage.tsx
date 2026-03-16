@@ -448,7 +448,7 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F7F4] text-[#1A1A1A]" style={{ fontFamily: BODY }}>
+    <div className="min-h-screen bg-[#F0F2F5] text-[#1A1A1A]" style={{ fontFamily: BODY }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
