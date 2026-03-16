@@ -498,10 +498,7 @@ export default function FeedPage() {
               { icon: "🏠", label: "My Feed" },
               { icon: "✨", label: "Discover" },
               { icon: "🌍", label: "Global Map" },
-              { icon: "👥", label: "Groups" },
-              { icon: "🔔", label: "Notifications" },
               { icon: "👤", label: "My Profile" },
-              { icon: "🔖", label: "Saved" },
             ].map(({ icon, label }) => (
               <button key={label}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-left transition-all duration-200 hover:bg-[rgba(201,168,76,0.07)] hover:text-[#111111]"
