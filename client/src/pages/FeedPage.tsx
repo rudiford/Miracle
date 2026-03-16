@@ -15,6 +15,7 @@ interface Post {
   category: string;
   title: string;
   body: string;
+  imageUrl?: string;
   prayerCount: number;
   commentCount: number;
   shareCount: number;
@@ -213,6 +214,15 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
         >
           {post.title}
         </h2>
+
+        {/* Post image */}
+        {post.imageUrl && (
+          <img
+            src={post.imageUrl.startsWith('data:') ? post.imageUrl : `data:image/jpeg;base64,${post.imageUrl}`}
+            alt="Post"
+            className="w-full rounded-sm mb-3 object-cover max-h-96"
+          />
+        )}
 
         {/* Post body */}
         <p className="text-sm leading-relaxed mb-2" style={{ color: "#4B4B4B" }}>
@@ -478,6 +488,7 @@ export default function FeedPage() {
     body: p.content,
     prayerCount: p.prayerCount,
     commentCount: p.commentCount,
+    imageUrl: p.imageUrl,
     shareCount: 0,
     prayed: false,
   }));
