@@ -358,7 +358,7 @@ function GlobalSnapshot() {
             </div>
             <div className="h-1 rounded-full" style={{ background: "#F0EDE6" }}>
               <div className="h-1 rounded-full transition-all duration-700"
-                style={{ width: `${r.pct}%`, background: "linear-gradient(to right, #C9A84C, #E8C97A)" }} />
+                style={{ width: `${r.pct}%`, background: "linear-gradient(to right, #A8A29E, #D6D3D1)" }} />
             </div>
           </div>
         ))}
@@ -455,7 +455,7 @@ export default function FeedPage() {
         body { margin: 0; }
         .feed-scroll::-webkit-scrollbar { width: 4px; }
         .feed-scroll::-webkit-scrollbar-track { background: transparent; }
-        .feed-scroll::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.4); border-radius: 2px; }
+        .feed-scroll::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 2px; }
         input:focus, textarea:focus, select:focus { border-color: #9CA3AF !important; }
       `}</style>
 
@@ -616,7 +616,7 @@ export default function FeedPage() {
                     <span className="text-[0.6rem]" style={{ color: "#9CA3AF" }}>{r.cat}</span>
                   </div>
                   <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: "#C9A84C", boxShadow: "0 0 4px #C9A84C", animation: i === 0 ? "pulse 2s infinite" : "none" }} />
+                    style={{ background: "#A8A29E", boxShadow: "0 0 4px #A8A29E", animation: i === 0 ? "pulse 2s infinite" : "none" }} />
                 </div>
               ))}
             </div>
