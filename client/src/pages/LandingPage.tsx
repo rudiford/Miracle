@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 // ── Starfield Canvas ──────────────────────────────────────────────────────────
 function StarField() {
@@ -133,12 +134,115 @@ const categories = [
 const DISPLAY = "'Cormorant Garamond', serif";
 const BODY    = "'Jost', sans-serif";
 
+// ── Auth Modal ────────────────────────────────────────────────────────────────
+function AuthModal({ onClose }: { onClose: () => void }) {
+  const [mode, setMode] = useState<'login' | 'signup'>('signup');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(true);
+    try {
+      if (mode === 'signup') {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        setSuccessMsg('Check your email to confirm your account, then log in.');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        // Auth state change in useAuth will handle redirect
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative bg-[#1A1A28] border border-[rgba(201,168,76,0.25)] rounded-sm p-8 w-full max-w-sm mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-[rgba(240,237,230,0.4)] hover:text-[#E8C97A] text-xl bg-transparent border-0 cursor-pointer"
+        >
+          ✕
+        </button>
+        <h2 className="text-2xl font-light text-[#F7F2E8] mb-1 text-center" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+          {mode === 'signup' ? 'Join the Community' : 'Welcome Back'}
+        </h2>
+        <p className="text-xs text-[rgba(240,237,230,0.4)] text-center mb-6">
+          {mode === 'signup' ? 'Free forever · All traditions welcome' : 'Sign in to your account'}
+        </p>
+
+        {successMsg ? (
+          <p className="text-sm text-[#C9A84C] text-center py-4">{successMsg}</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <input
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="px-4 py-3 bg-[#0D0D12] border border-[rgba(201,168,76,0.2)] rounded-sm text-[#F0EDE6] text-sm outline-none focus:border-[#C9A84C]"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              className="px-4 py-3 bg-[#0D0D12] border border-[rgba(201,168,76,0.2)] rounded-sm text-[#F0EDE6] text-sm outline-none focus:border-[#C9A84C]"
+            />
+            {errorMsg && <p className="text-red-400 text-xs">{errorMsg}</p>}
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-1 px-6 py-3 bg-[#C9A84C] text-[#0D0D12] text-xs font-medium tracking-[0.15em] uppercase rounded-sm border-0 cursor-pointer disabled:opacity-50"
+            >
+              {loading ? 'Please wait…' : mode === 'signup' ? 'Create Account' : 'Sign In'}
+            </button>
+          </form>
+        )}
+
+        <p className="text-xs text-[rgba(240,237,230,0.35)] text-center mt-5">
+          {mode === 'signup' ? (
+            <>Already have an account?{' '}
+              <button onClick={() => setMode('login')} className="text-[#C9A84C] bg-transparent border-0 cursor-pointer underline text-xs">Sign in</button>
+            </>
+          ) : (
+            <>New here?{' '}
+              <button onClick={() => setMode('signup')} className="text-[#C9A84C] bg-transparent border-0 cursor-pointer underline text-xs">Create account</button>
+            </>
+          )}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ── Landing Page ──────────────────────────────────────────────────────────────
 export default function LandingPage() {
   useReveal();
+  const [showAuth, setShowAuth] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#0D0D12] text-[#F0EDE6] overflow-x-hidden">
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
       <StarField />
 
       {/* Fonts & global animation styles */}
@@ -214,10 +318,11 @@ export default function LandingPage() {
             </li>
           ))}
         </ul>
-        <a href="#community"
-          className="nav-cta text-xs tracking-[0.12em] uppercase px-5 py-2 border border-[#C9A84C] text-[#E8C97A] rounded-sm no-underline">
+        <button
+          onClick={() => setShowAuth(true)}
+          className="nav-cta text-xs tracking-[0.12em] uppercase px-5 py-2 border border-[#C9A84C] text-[#E8C97A] rounded-sm bg-transparent cursor-pointer">
           Join Free
-        </a>
+        </button>
       </nav>
 
       {/* ── HERO ── */}
@@ -242,10 +347,11 @@ export default function LandingPage() {
           who have witnessed the extraordinary in ordinary life.
         </p>
         <div className="hero-actions flex gap-4 mt-10 flex-wrap justify-center">
-          <a href="#community"
-            className="btn-primary px-9 py-3 bg-[#C9A84C] text-[#0D0D12] text-xs font-medium tracking-[0.15em] uppercase rounded-sm no-underline">
+          <button
+            onClick={() => setShowAuth(true)}
+            className="btn-primary px-9 py-3 bg-[#C9A84C] text-[#0D0D12] text-xs font-medium tracking-[0.15em] uppercase rounded-sm border-0 cursor-pointer">
             Share Your Story
-          </a>
+          </button>
           <a href="#stories-section"
             className="btn-ghost px-9 py-3 border border-[rgba(240,237,230,0.25)] text-[rgba(240,237,230,0.55)] text-xs tracking-[0.15em] uppercase rounded-sm no-underline">
             Read Testimonies
@@ -370,20 +476,10 @@ export default function LandingPage() {
             be exactly what someone needs to hear.
           </p>
 
-          {/*
-            REPLIT AUTH: Replace the onClick below with your auth trigger.
-            Most Replit Auth setups use: window.location.href = "/api/login"
-          */}
           <div className="flex gap-3 max-w-sm mx-auto flex-wrap justify-center mb-5">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="flex-1 min-w-[180px] px-4 py-3 bg-[#1A1A28] border border-[rgba(201,168,76,0.25)] rounded-sm text-[#F0EDE6] text-sm outline-none focus:border-[#C9A84C]"
-              style={{ fontFamily:BODY }}
-            />
             <button
-              className="btn-primary px-6 py-3 bg-[#C9A84C] text-[#0D0D12] text-xs font-medium tracking-[0.15em] uppercase rounded-sm whitespace-nowrap border-0 cursor-pointer"
-              onClick={() => { window.location.href = "/api/login"; }}
+              className="btn-primary px-9 py-3 bg-[#C9A84C] text-[#0D0D12] text-xs font-medium tracking-[0.15em] uppercase rounded-sm border-0 cursor-pointer"
+              onClick={() => setShowAuth(true)}
             >
               Join Free
             </button>
