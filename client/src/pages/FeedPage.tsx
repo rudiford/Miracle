@@ -130,8 +130,8 @@ function PrayerButton({ count, prayed, onPray }: { count: number; prayed: boolea
       style={{
         fontFamily: BODY,
         background: prayed ? "rgba(201,168,76,0.15)" : "transparent",
-        borderColor: prayed ? "#C9A84C" : "rgba(240,237,230,0.1)",
-        color: prayed ? "#E8C97A" : "rgba(240,237,230,0.45)",
+        borderColor: prayed ? "#C9A84C" : "#E5E1D8",
+        color: prayed ? "#E8C97A" : "#6B7280",
       }}
     >
       <span style={{ fontSize: "1rem" }}>🙏</span>
@@ -163,8 +163,8 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
     <article
       className="rounded-sm border overflow-hidden"
       style={{
-        background: "#1A1A28",
-        borderColor: "rgba(201,168,76,0.1)",
+        background: "#FFFFFF",
+        borderColor: "rgba(201,168,76,0.25)",
         fontFamily: BODY,
       }}
     >
@@ -183,14 +183,14 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-medium text-[#F0EDE6]">{post.author}</span>
-                <span className="text-[0.65rem] text-[rgba(240,237,230,0.35)]">·</span>
-                <span className="text-[0.7rem] text-[rgba(240,237,230,0.4)]">{post.denomination}</span>
+                <span className="text-sm font-medium" style={{ color: "#1A1A1A" }}>{post.author}</span>
+                <span className="text-[0.65rem]" style={{ color: "#9CA3AF" }}>·</span>
+                <span className="text-[0.7rem]" style={{ color: "#6B7280" }}>{post.denomination}</span>
               </div>
               <div className="flex items-center gap-1 mt-0.5">
                 <span style={{ fontSize: "0.75rem" }}>{post.country}</span>
-                <span className="text-[0.7rem] text-[rgba(240,237,230,0.45)]">{post.location}</span>
-                <span className="text-[0.65rem] text-[rgba(240,237,230,0.25)]">· {post.timeAgo}</span>
+                <span className="text-[0.7rem]" style={{ color: "#6B7280" }}>{post.location}</span>
+                <span className="text-[0.65rem]" style={{ color: "#D1D5DB" }}>· {post.timeAgo}</span>
               </div>
             </div>
           </div>
@@ -205,14 +205,14 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
 
         {/* Post title */}
         <h2
-          className="text-xl font-light text-[#F7F2E8] mb-3 leading-snug"
-          style={{ fontFamily: DISPLAY }}
+          className="text-xl font-light mb-3 leading-snug"
+          style={{ fontFamily: DISPLAY, color: "#111111" }}
         >
           {post.title}
         </h2>
 
         {/* Post body */}
-        <p className="text-sm leading-relaxed text-[rgba(240,237,230,0.65)] mb-2">
+        <p className="text-sm leading-relaxed mb-2" style={{ color: "#4B4B4B" }}>
           {displayBody}
         </p>
         {shouldTruncate && (
@@ -227,21 +227,21 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
 
         {/* Action bar */}
         <div className="flex items-center gap-2 mt-5 pt-4 flex-wrap"
-          style={{ borderTop: "1px solid rgba(240,237,230,0.06)" }}>
+          style={{ borderTop: "1px solid #F0EDE6" }}>
           <PrayerButton count={post.prayerCount} prayed={post.prayed} onPray={() => onPray(post.id)} />
 
           <button
             onClick={() => setShowComments(!showComments)}
-            className="flex items-center gap-2 px-4 py-2 rounded-sm text-xs tracking-wide border transition-all duration-200 hover:border-[rgba(240,237,230,0.25)] hover:text-[rgba(240,237,230,0.7)]"
-            style={{ borderColor: "rgba(240,237,230,0.1)", color: "rgba(240,237,230,0.45)", fontFamily: BODY, background: "transparent" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-sm text-xs tracking-wide border transition-all duration-200 hover:border-[#D1D5DB]"
+            style={{ borderColor: "#E5E1D8", color: "#6B7280", fontFamily: BODY, background: "transparent" }}
           >
             <span>💬</span>
             <span>{post.commentCount} Comments</span>
           </button>
 
           <button
-            className="flex items-center gap-2 px-4 py-2 rounded-sm text-xs tracking-wide border transition-all duration-200 hover:border-[rgba(240,237,230,0.25)] hover:text-[rgba(240,237,230,0.7)]"
-            style={{ borderColor: "rgba(240,237,230,0.1)", color: "rgba(240,237,230,0.45)", fontFamily: BODY, background: "transparent" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-sm text-xs tracking-wide border transition-all duration-200 hover:border-[#D1D5DB]"
+            style={{ borderColor: "#E5E1D8", color: "#6B7280", fontFamily: BODY, background: "transparent" }}
           >
             <span>↗</span>
             <span>Share</span>
@@ -251,22 +251,22 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
 
       {/* Comments section */}
       {showComments && (
-        <div className="px-6 pb-6" style={{ borderTop: "1px solid rgba(240,237,230,0.06)" }}>
+        <div className="px-6 pb-6" style={{ borderTop: "1px solid #F0EDE6" }}>
           <div className="pt-4 space-y-4">
             {SAMPLE_COMMENTS.map((c) => (
               <div key={c.id} className="flex gap-3">
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5"
-                  style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.15)", color: "#C9A84C", fontFamily: DISPLAY }}
+                  style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.35)", color: "#C9A84C", fontFamily: DISPLAY }}
                 >
                   {c.initials}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-[#F0EDE6]">{c.author}</span>
-                    <span className="text-[0.65rem] text-[rgba(240,237,230,0.3)]">{c.timeAgo}</span>
+                    <span className="text-xs font-medium" style={{ color: "#1A1A1A" }}>{c.author}</span>
+                    <span className="text-[0.65rem]" style={{ color: "#9CA3AF" }}>{c.timeAgo}</span>
                   </div>
-                  <p className="text-xs leading-relaxed text-[rgba(240,237,230,0.6)]">{c.text}</p>
+                  <p className="text-xs leading-relaxed" style={{ color: "#4B5563" }}>{c.text}</p>
                 </div>
               </div>
             ))}
@@ -281,9 +281,9 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
               onChange={(e) => setCommentText(e.target.value)}
               className="flex-1 px-3 py-2 text-xs rounded-sm outline-none"
               style={{
-                background: "#21213A",
-                border: "1px solid rgba(201,168,76,0.15)",
-                color: "#F0EDE6",
+                background: "#F5F3EF",
+                border: "1px solid rgba(201,168,76,0.35)",
+                color: "#1A1A1A",
                 fontFamily: BODY,
               }}
             />
@@ -309,19 +309,19 @@ function SuggestedMembers() {
     { initials: "TM", name: "Thomas Mueller", location: "🇩🇪 Munich", denomination: "Lutheran" },
   ];
   return (
-    <div className="rounded-sm border p-5" style={{ background: "#1A1A28", borderColor: "rgba(201,168,76,0.1)", fontFamily: BODY }}>
+    <div className="rounded-sm border p-5" style={{ background: "#FFFFFF", borderColor: "rgba(201,168,76,0.25)", fontFamily: BODY }}>
       <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-4">Believers to Follow</p>
       <div className="space-y-4">
         {members.map((m) => (
           <div key={m.name} className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
-                style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.2)", color: "#E8C97A", fontFamily: DISPLAY }}>
+                style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.25)", color: "#E8C97A", fontFamily: DISPLAY }}>
                 {m.initials}
               </div>
               <div>
-                <div className="text-xs text-[#F0EDE6]">{m.name}</div>
-                <div className="text-[0.65rem] text-[rgba(240,237,230,0.4)]">{m.location}</div>
+                <div className="text-xs" style={{ color: "#1A1A1A" }}>{m.name}</div>
+                <div className="text-[0.65rem]" style={{ color: "#6B7280" }}>{m.location}</div>
               </div>
             </div>
             <button className="text-[0.65rem] tracking-wide px-3 py-1 rounded-sm border transition-all duration-200 hover:bg-[rgba(201,168,76,0.1)]"
@@ -346,17 +346,17 @@ function GlobalSnapshot() {
     { label: "Oceania",       count: 198,  pct: 9 },
   ];
   return (
-    <div className="rounded-sm border p-5" style={{ background: "#1A1A28", borderColor: "rgba(201,168,76,0.1)", fontFamily: BODY }}>
+    <div className="rounded-sm border p-5" style={{ background: "#FFFFFF", borderColor: "rgba(201,168,76,0.25)", fontFamily: BODY }}>
       <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-1">Stories Worldwide</p>
-      <p className="text-[0.7rem] text-[rgba(240,237,230,0.35)] mb-4">6,742 testimonies from 94 countries</p>
+      <p className="text-[0.7rem] mb-4" style={{ color: "#9CA3AF" }}>6,742 testimonies from 94 countries</p>
       <div className="space-y-3">
         {regions.map((r) => (
           <div key={r.label}>
             <div className="flex justify-between mb-1">
-              <span className="text-[0.7rem] text-[rgba(240,237,230,0.6)]">{r.label}</span>
-              <span className="text-[0.7rem] text-[rgba(240,237,230,0.35)]">{r.count.toLocaleString()}</span>
+              <span className="text-[0.7rem]" style={{ color: "#4B5563" }}>{r.label}</span>
+              <span className="text-[0.7rem]" style={{ color: "#9CA3AF" }}>{r.count.toLocaleString()}</span>
             </div>
-            <div className="h-1 rounded-full" style={{ background: "rgba(240,237,230,0.06)" }}>
+            <div className="h-1 rounded-full" style={{ background: "#F0EDE6" }}>
               <div className="h-1 rounded-full transition-all duration-700"
                 style={{ width: `${r.pct}%`, background: "linear-gradient(to right, #C9A84C, #E8C97A)" }} />
             </div>
@@ -375,12 +375,12 @@ function ComposeBox() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-sm border p-5" style={{ background: "#1A1A28", borderColor: "rgba(201,168,76,0.15)", fontFamily: BODY }}>
+    <div className="rounded-sm border p-5" style={{ background: "#FFFFFF", borderColor: "rgba(201,168,76,0.35)", fontFamily: BODY }}>
       {!open ? (
         <button
           onClick={() => setOpen(true)}
           className="w-full text-left px-4 py-3 rounded-sm text-sm transition-all duration-200"
-          style={{ background: "#21213A", color: "rgba(240,237,230,0.35)", border: "1px solid rgba(201,168,76,0.1)" }}
+          style={{ background: "#F5F3EF", color: "#9CA3AF", border: "1px solid rgba(201,168,76,0.25)" }}
         >
           Share a miracle or testimony…
         </button>
@@ -391,7 +391,7 @@ function ComposeBox() {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full px-3 py-2 text-xs rounded-sm outline-none"
-            style={{ background: "#21213A", border: "1px solid rgba(201,168,76,0.15)", color: "#F0EDE6", fontFamily: BODY }}
+            style={{ background: "#F5F3EF", border: "1px solid rgba(201,168,76,0.35)", color: "#1A1A1A", fontFamily: BODY }}
           >
             {CATEGORIES.filter(c => c !== "All").map(c => <option key={c}>{c}</option>)}
           </select>
@@ -401,7 +401,7 @@ function ComposeBox() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-3 py-2 text-sm rounded-sm outline-none"
-            style={{ background: "#21213A", border: "1px solid rgba(201,168,76,0.15)", color: "#F0EDE6", fontFamily: BODY }}
+            style={{ background: "#F5F3EF", border: "1px solid rgba(201,168,76,0.35)", color: "#1A1A1A", fontFamily: BODY }}
           />
           <textarea
             placeholder="Tell your story. What happened? What did God do?"
@@ -409,12 +409,12 @@ function ComposeBox() {
             onChange={(e) => setText(e.target.value)}
             rows={5}
             className="w-full px-3 py-2 text-sm rounded-sm outline-none resize-none"
-            style={{ background: "#21213A", border: "1px solid rgba(201,168,76,0.15)", color: "#F0EDE6", fontFamily: BODY }}
+            style={{ background: "#F5F3EF", border: "1px solid rgba(201,168,76,0.35)", color: "#1A1A1A", fontFamily: BODY }}
           />
           <div className="flex gap-2 justify-end">
             <button onClick={() => setOpen(false)}
               className="px-4 py-2 text-xs rounded-sm border transition-colors"
-              style={{ borderColor: "rgba(240,237,230,0.1)", color: "rgba(240,237,230,0.45)" }}>
+              style={{ borderColor: "#E5E1D8", color: "#6B7280" }}>
               Cancel
             </button>
             <button
@@ -448,30 +448,30 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0D12] text-[#F0EDE6]" style={{ fontFamily: BODY }}>
+    <div className="min-h-screen bg-[#F9F7F4] text-[#1A1A1A]" style={{ fontFamily: BODY }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
         body { margin: 0; }
         .feed-scroll::-webkit-scrollbar { width: 4px; }
         .feed-scroll::-webkit-scrollbar-track { background: transparent; }
-        .feed-scroll::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 2px; }
+        .feed-scroll::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.4); border-radius: 2px; }
         input:focus, textarea:focus, select:focus { border-color: rgba(201,168,76,0.5) !important; }
       `}</style>
 
       {/* ── TOP NAV ── */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 py-3"
-        style={{ background: "rgba(13,13,18,0.97)", borderBottom: "1px solid rgba(201,168,76,0.1)", backdropFilter: "blur(8px)" }}>
+        style={{ background: "rgba(255,255,255,0.97)", borderBottom: "1px solid rgba(201,168,76,0.25)", backdropFilter: "blur(8px)" }}>
         <a href="/" className="text-lg tracking-widest text-[#E8C97A] no-underline" style={{ fontFamily: DISPLAY }}>
           Proof of a Miracle
         </a>
 
         {/* Search */}
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-sm flex-1 max-w-xs mx-8"
-          style={{ background: "#1A1A28", border: "1px solid rgba(201,168,76,0.12)" }}>
-          <span className="text-[rgba(240,237,230,0.3)] text-sm">🔍</span>
-          <input type="text" placeholder="Search testimonies…" className="bg-transparent text-xs outline-none text-[#F0EDE6] w-full placeholder-[rgba(240,237,230,0.3)]"
-            style={{ fontFamily: BODY }} />
+          style={{ background: "#FFFFFF", border: "1px solid rgba(201,168,76,0.3)" }}>
+          <span className="text-sm" style={{ color: "#9CA3AF" }}>🔍</span>
+          <input type="text" placeholder="Search testimonies…" className="bg-transparent text-xs outline-none w-full"
+            style={{ fontFamily: BODY, color: "#1A1A1A" }} />
         </div>
 
         <div className="flex items-center gap-3">
@@ -505,7 +505,7 @@ export default function FeedPage() {
             ].map(({ icon, label }) => (
               <button key={label}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-left transition-all duration-200 hover:bg-[rgba(201,168,76,0.07)] hover:text-[#E8C97A]"
-                style={{ color: label === "My Feed" ? "#E8C97A" : "rgba(240,237,230,0.5)", background: label === "My Feed" ? "rgba(201,168,76,0.08)" : "transparent", fontFamily: BODY }}>
+                style={{ color: label === "My Feed" ? "#E8C97A" : "#4B5563", background: label === "My Feed" ? "rgba(201,168,76,0.08)" : "transparent", fontFamily: BODY }}>
                 <span>{icon}</span>
                 {label}
               </button>
@@ -513,14 +513,14 @@ export default function FeedPage() {
           </nav>
 
           <div className="mt-6 pt-5" style={{ borderTop: "1px solid rgba(201,168,76,0.08)" }}>
-            <p className="text-[0.6rem] tracking-[0.18em] uppercase text-[rgba(240,237,230,0.25)] mb-3 px-3">Categories</p>
+            <p className="text-[0.6rem] tracking-[0.18em] uppercase mb-3 px-3" style={{ color: "#D1D5DB" }}>Categories</p>
             <div className="space-y-1">
               {CATEGORIES.map((c) => (
                 <button key={c}
                   onClick={() => setActiveCategory(c)}
                   className="w-full text-left px-3 py-2 rounded-sm text-xs transition-all duration-200"
                   style={{
-                    color: activeCategory === c ? "#E8C97A" : "rgba(240,237,230,0.4)",
+                    color: activeCategory === c ? "#E8C97A" : "#6B7280",
                     background: activeCategory === c ? "rgba(201,168,76,0.1)" : "transparent",
                     fontFamily: BODY,
                   }}>
@@ -541,8 +541,8 @@ export default function FeedPage() {
                 className="flex-shrink-0 text-[0.7rem] tracking-wide px-3 py-1.5 rounded-full border transition-all duration-200"
                 style={{
                   background: activeCategory === c ? "rgba(201,168,76,0.15)" : "transparent",
-                  borderColor: activeCategory === c ? "#C9A84C" : "rgba(240,237,230,0.12)",
-                  color: activeCategory === c ? "#E8C97A" : "rgba(240,237,230,0.45)",
+                  borderColor: activeCategory === c ? "#C9A84C" : "#E5E1D8",
+                  color: activeCategory === c ? "#E8C97A" : "#6B7280",
                   fontFamily: BODY,
                 }}>
                 {c}
@@ -558,15 +558,15 @@ export default function FeedPage() {
           {/* Feed header */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-light text-[#F7F2E8]" style={{ fontFamily: DISPLAY }}>
+              <h1 className="text-2xl font-light" style={{ fontFamily: DISPLAY, color: "#111111" }}>
                 {activeCategory === "All" ? "Community Feed" : activeCategory}
               </h1>
-              <p className="text-xs text-[rgba(240,237,230,0.35)] mt-0.5">
+              <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>
                 {filteredPosts.length} testimonies · Updated just now
               </p>
             </div>
             <select className="text-xs px-3 py-1.5 rounded-sm outline-none"
-              style={{ background: "#1A1A28", border: "1px solid rgba(201,168,76,0.12)", color: "rgba(240,237,230,0.5)", fontFamily: BODY }}>
+              style={{ background: "#FFFFFF", border: "1px solid rgba(201,168,76,0.3)", color: "#4B5563", fontFamily: BODY }}>
               <option>Most Recent</option>
               <option>Most Prayed</option>
               <option>Most Discussed</option>
@@ -583,7 +583,7 @@ export default function FeedPage() {
           {/* Load more */}
           <div className="text-center mt-8">
             <button className="text-xs tracking-[0.14em] uppercase px-8 py-3 rounded-sm border transition-all duration-200 hover:border-[#C9A84C] hover:text-[#E8C97A]"
-              style={{ borderColor: "rgba(240,237,230,0.1)", color: "rgba(240,237,230,0.35)", fontFamily: BODY }}>
+              style={{ borderColor: "#E5E1D8", color: "#9CA3AF", fontFamily: BODY }}>
               Load More Testimonies
             </button>
           </div>
@@ -594,7 +594,7 @@ export default function FeedPage() {
           style={{ borderLeft: "1px solid rgba(201,168,76,0.07)" }}>
 
           {/* Live location ticker */}
-          <div className="rounded-sm border p-4" style={{ background: "#1A1A28", borderColor: "rgba(201,168,76,0.1)" }}>
+          <div className="rounded-sm border p-4" style={{ background: "#FFFFFF", borderColor: "rgba(201,168,76,0.25)" }}>
             <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-3">Live · Recent Stories</p>
             <div className="space-y-2.5">
               {[
@@ -608,10 +608,10 @@ export default function FeedPage() {
                   <span className="text-base">{r.flag}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-[rgba(240,237,230,0.7)] group-hover:text-[#E8C97A] transition-colors truncate">{r.city}</span>
-                      <span className="text-[0.6rem] text-[rgba(240,237,230,0.25)]">· {r.time}</span>
+                      <span className="text-xs group-hover:text-[#E8C97A] transition-colors truncate" style={{ color: "#4B5563" }}>{r.city}</span>
+                      <span className="text-[0.6rem]" style={{ color: "#D1D5DB" }}>· {r.time}</span>
                     </div>
-                    <span className="text-[0.6rem] text-[rgba(240,237,230,0.35)]">{r.cat}</span>
+                    <span className="text-[0.6rem]" style={{ color: "#9CA3AF" }}>{r.cat}</span>
                   </div>
                   <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                     style={{ background: "#C9A84C", boxShadow: "0 0 4px #C9A84C", animation: i === 0 ? "pulse 2s infinite" : "none" }} />
@@ -624,12 +624,12 @@ export default function FeedPage() {
           <SuggestedMembers />
 
           {/* Daily verse */}
-          <div className="rounded-sm border p-4" style={{ background: "rgba(201,168,76,0.04)", borderColor: "rgba(201,168,76,0.12)" }}>
+          <div className="rounded-sm border p-4" style={{ background: "rgba(201,168,76,0.04)", borderColor: "rgba(201,168,76,0.3)" }}>
             <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-2">Today's Verse</p>
-            <p className="text-sm italic font-light text-[rgba(240,237,230,0.7)] leading-relaxed" style={{ fontFamily: DISPLAY }}>
+            <p className="text-sm italic font-light leading-relaxed" style={{ fontFamily: DISPLAY, color: "#4B5563" }}>
               "With God all things are possible."
             </p>
-            <p className="text-[0.65rem] text-[rgba(240,237,230,0.3)] mt-2">Matthew 19:26</p>
+            <p className="text-[0.65rem] mt-2" style={{ color: "#9CA3AF" }}>Matthew 19:26</p>
           </div>
         </aside>
       </div>
