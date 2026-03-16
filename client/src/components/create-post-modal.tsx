@@ -34,8 +34,51 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
   const [isCapturingLocation, setIsCapturingLocation] = useState(false);
   const { user } = useAuth();
   const { t, language } = useLanguage();
-  
-  // Check if profile is complete
+
+  const form = useForm<CreatePostForm>({
+    resolver: zodResolver(createPostSchema),
+    defaultValues: {
+      content: "",
+      location: "",
+      latitude: "",
+      longitude: "",
+    },
+  });
+
+  const createPostMutation = useMutation({
+    mutationFn: async (data: CreatePostForm) => {
+      const formData = new FormData();
+      formData.append("content", data.content);
+      if (data.location) formData.append("location", data.location);
+      if (data.latitude) formData.append("latitude", data.latitude);
+      if (data.longitude) formData.append("longitude", data.longitude);
+      if (selectedImage) formData.append("image", selectedImage);
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        body: formData,
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to create post: ${response.status} - ${errorText}`);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      alert(t('createPost.success'));
+      onOpenChange(false);
+      resetForm();
+    },
+    onError: (error) => {
+      alert(`Failed to create post: ${error.message}`);
+    },
+  });
+
+  // Check if profile is complete (after all hooks)
   if (!isProfileComplete(user, language)) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,63 +111,6 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
       </Dialog>
     );
   }
-
-  const form = useForm<CreatePostForm>({
-    resolver: zodResolver(createPostSchema),
-    defaultValues: {
-      content: "",
-      location: "",
-      latitude: "",
-      longitude: "",
-    },
-  });
-
-  const createPostMutation = useMutation({
-    mutationFn: async (data: CreatePostForm) => {
-      console.log("Creating post with data:", data);
-      console.log("Selected image:", selectedImage);
-      
-      const formData = new FormData();
-      formData.append("content", data.content);
-      if (data.location) formData.append("location", data.location);
-      if (data.latitude) formData.append("latitude", data.latitude);
-      if (data.longitude) formData.append("longitude", data.longitude);
-      if (selectedImage) formData.append("image", selectedImage);
-
-      console.log("Sending FormData to /api/posts");
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch("/api/posts", {
-        method: "POST",
-        body: formData,
-        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
-      });
-
-      console.log("Response status:", response.status);
-      console.log("Response ok:", response.ok);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Create post error response:", errorText);
-        throw new Error(`Failed to create post: ${response.status} - ${errorText}`);
-      }
-
-      const result = await response.json();
-      console.log("Post created successfully:", result);
-      return result;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
-      alert(t('createPost.success'));
-      onOpenChange(false);
-      resetForm();
-    },
-    onError: (error) => {
-      console.error("Post creation error:", error);
-      console.error("Error details:", error.message);
-      alert(`Failed to create post: ${error.message}`);
-    },
-  });
 
   const resetForm = () => {
     form.reset();
