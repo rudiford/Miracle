@@ -95,13 +95,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/users/profile', isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req as any).user?.id;
+      const userEmail = (req as any).user?.email;
       const validatedData = insertUserSchema.parse(req.body);
+      // Ensure user row exists before updating (handles new users)
+      await storage.upsertUser({ id: userId, email: userEmail });
       const updatedUser = await storage.updateUserProfile(userId, validatedData);
-      
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
-      
       res.json(updatedUser);
     } catch (error) {
       console.error("Error updating profile:", error);
