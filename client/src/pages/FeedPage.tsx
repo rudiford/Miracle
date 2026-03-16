@@ -310,7 +310,7 @@ function SuggestedMembers() {
   ];
   return (
     <div className="rounded-sm border p-5" style={{ background: "#FFFFFF", borderColor: "rgba(201,168,76,0.25)", fontFamily: BODY }}>
-      <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-4">Believers to Follow</p>
+      <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#111111] font-semibold mb-4">Believers to Follow</p>
       <div className="space-y-4">
         {members.map((m) => (
           <div key={m.name} className="flex items-center justify-between">
@@ -347,7 +347,7 @@ function GlobalSnapshot() {
   ];
   return (
     <div className="rounded-sm border p-5" style={{ background: "#FFFFFF", borderColor: "rgba(201,168,76,0.25)", fontFamily: BODY }}>
-      <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-1">Stories Worldwide</p>
+      <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#111111] font-semibold mb-1">Stories Worldwide</p>
       <p className="text-[0.7rem] mb-4" style={{ color: "#9CA3AF" }}>6,742 testimonies from 94 countries</p>
       <div className="space-y-3">
         {regions.map((r) => (
@@ -386,7 +386,7 @@ function ComposeBox() {
         </button>
       ) : (
         <div className="space-y-3">
-          <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C]">Share Your Story</p>
+          <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#111111] font-semibold">Share Your Story</p>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -462,7 +462,7 @@ export default function FeedPage() {
       {/* ── TOP NAV ── */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 py-3"
         style={{ background: "rgba(255,255,255,0.97)", borderBottom: "1px solid rgba(201,168,76,0.25)", backdropFilter: "blur(8px)" }}>
-        <a href="/" className="text-lg tracking-widest text-[#E8C97A] no-underline" style={{ fontFamily: DISPLAY }}>
+        <a href="/" className="text-lg tracking-widest text-[#111111] font-semibold no-underline" style={{ fontFamily: DISPLAY }}>
           Proof of a Miracle
         </a>
 
@@ -505,7 +505,7 @@ export default function FeedPage() {
             ].map(({ icon, label }) => (
               <button key={label}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-left transition-all duration-200 hover:bg-[rgba(201,168,76,0.07)] hover:text-[#E8C97A]"
-                style={{ color: label === "My Feed" ? "#E8C97A" : "#4B5563", background: label === "My Feed" ? "rgba(201,168,76,0.08)" : "transparent", fontFamily: BODY }}>
+                style={{ color: label === "My Feed" ? "#111111" : "#4B5563", fontWeight: label === "My Feed" ? "600" : "400", background: label === "My Feed" ? "rgba(201,168,76,0.08)" : "transparent", fontFamily: BODY }}>
                 <span>{icon}</span>
                 {label}
               </button>
@@ -520,7 +520,8 @@ export default function FeedPage() {
                   onClick={() => setActiveCategory(c)}
                   className="w-full text-left px-3 py-2 rounded-sm text-xs transition-all duration-200"
                   style={{
-                    color: activeCategory === c ? "#E8C97A" : "#6B7280",
+                    color: activeCategory === c ? "#111111" : "#6B7280",
+                  fontWeight: activeCategory === c ? "600" : "400",
                     background: activeCategory === c ? "rgba(201,168,76,0.1)" : "transparent",
                     fontFamily: BODY,
                   }}>
@@ -542,7 +543,8 @@ export default function FeedPage() {
                 style={{
                   background: activeCategory === c ? "rgba(201,168,76,0.15)" : "transparent",
                   borderColor: activeCategory === c ? "#C9A84C" : "#E5E1D8",
-                  color: activeCategory === c ? "#E8C97A" : "#6B7280",
+                  color: activeCategory === c ? "#111111" : "#6B7280",
+                  fontWeight: activeCategory === c ? "600" : "400",
                   fontFamily: BODY,
                 }}>
                 {c}
@@ -595,7 +597,7 @@ export default function FeedPage() {
 
           {/* Live location ticker */}
           <div className="rounded-sm border p-4" style={{ background: "#FFFFFF", borderColor: "rgba(201,168,76,0.25)" }}>
-            <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-3">Live · Recent Stories</p>
+            <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#111111] font-semibold mb-3">Live · Recent Stories</p>
             <div className="space-y-2.5">
               {[
                 { flag: "🇵🇭", city: "Manila", time: "2m ago", cat: "Healing" },
@@ -625,7 +627,7 @@ export default function FeedPage() {
 
           {/* Daily verse */}
           <div className="rounded-sm border p-4" style={{ background: "rgba(201,168,76,0.04)", borderColor: "rgba(201,168,76,0.3)" }}>
-            <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#C9A84C] mb-2">Today's Verse</p>
+            <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#111111] font-semibold mb-2">Today's Verse</p>
             <p className="text-sm italic font-light leading-relaxed" style={{ fontFamily: DISPLAY, color: "#4B5563" }}>
               "With God all things are possible."
             </p>
