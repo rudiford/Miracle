@@ -41,8 +41,8 @@ const categoryColors: Record<string, string> = {
 };
 
 // ── Auth Modal ────────────────────────────────────────────────────────────────
-function AuthModal({ onClose }: { onClose: () => void }) {
-  const [mode, setMode] = useState<'login' | 'signup'>('signup');
+function AuthModal({ onClose, initialMode = 'signup' }: { onClose: () => void; initialMode?: 'login' | 'signup' }) {
+  const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -143,20 +143,34 @@ function AuthModal({ onClose }: { onClose: () => void }) {
 
 // ── Landing Page ──────────────────────────────────────────────────────────────
 export default function LandingPage() {
-  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup' | null>(null);
 
   return (
     <div style={{ minHeight: "100vh", background: "#F5F3EF", color: "#1A1A1A", fontFamily: BODY }}>
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+      {authMode && <AuthModal onClose={() => setAuthMode(null)} initialMode={authMode} />}
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
         body { margin: 0; }
+        .nav-links { display: flex; gap: 24px; align-items: center; }
+        .nav-links a { font-size: 12px; color: #6B7280; text-decoration: none; letter-spacing: 0.1em; }
+        .story-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+        @media (max-width: 640px) {
+          .nav-links { display: none; }
+          .hero-title { font-size: 2.8rem !important; }
+          .hero-buttons { flex-direction: column; align-items: stretch; }
+          .hero-buttons a, .hero-buttons button { text-align: center; }
+          .story-grid { grid-template-columns: 1fr; }
+          .steps-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+          .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+          .nav-inner { padding: 12px 16px !important; }
+        }
       `}</style>
 
       {/* ── NAV ── */}
-      <nav style={{
+      <nav className="nav-inner" style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
         background: "rgba(255,255,255,0.97)", borderBottom: "1px solid #D6D3D1",
         backdropFilter: "blur(8px)", padding: "12px 32px",
@@ -165,18 +179,26 @@ export default function LandingPage() {
         <span style={{ fontFamily: DISPLAY, fontSize: 20, color: "#111111", fontWeight: 300, letterSpacing: 2 }}>
           Proof of a Miracle
         </span>
-        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+        <div className="nav-links">
           {[
             { label: "Stories", href: "#stories" },
             { label: "How It Works", href: "#how" },
             { label: "Community", href: "#community" },
           ].map(({ label, href }) => (
-            <a key={label} href={href} style={{ fontSize: 12, color: "#6B7280", textDecoration: "none", letterSpacing: "0.1em", fontFamily: BODY }}>
+            <a key={label} href={href} style={{ fontFamily: BODY }}>
               {label}
             </a>
           ))}
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
-            onClick={() => setShowAuth(true)}
+            onClick={() => setAuthMode('login')}
+            style={{ fontSize: 12, color: "#374151", background: "transparent", border: "1px solid #D6D3D1", borderRadius: 4, padding: "8px 16px", cursor: "pointer", letterSpacing: "0.1em", fontFamily: BODY }}
+          >
+            SIGN IN
+          </button>
+          <button
+            onClick={() => setAuthMode('signup')}
             style={{ fontSize: 12, color: "#fff", background: "#1A1A1A", border: "none", borderRadius: 4, padding: "8px 18px", cursor: "pointer", letterSpacing: "0.1em", fontFamily: BODY }}
           >
             JOIN FREE
@@ -205,9 +227,9 @@ export default function LandingPage() {
         <p style={{ fontSize: 15, color: "#6B7280", maxWidth: 420, lineHeight: 1.7, marginBottom: 40 }}>
           Share the moments where faith met reality. Connect with believers across every tradition who have witnessed the extraordinary in ordinary life.
         </p>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+        <div className="hero-buttons" style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
           <button
-            onClick={() => setShowAuth(true)}
+            onClick={() => setAuthMode('signup')}
             style={{ padding: "12px 32px", background: "#1A1A1A", color: "#fff", border: "none", borderRadius: 4, fontSize: 12, letterSpacing: "0.12em", cursor: "pointer", fontFamily: BODY }}
           >
             SHARE YOUR STORY
@@ -228,7 +250,7 @@ export default function LandingPage() {
           <h2 style={{ fontFamily: DISPLAY, fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 300, color: "#111111", textAlign: "center", marginBottom: 48 }}>
             Stories of the Extraordinary
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+          <div className="story-grid">
             {stories.map((s) => {
               const color = categoryColors[s.category] || "#C9A84C";
               return (
@@ -266,7 +288,7 @@ export default function LandingPage() {
           <h2 style={{ fontFamily: DISPLAY, fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 300, color: "#111111", textAlign: "center", marginBottom: 56 }}>
             Your Voice Matters Here
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40 }}>
+          <div className="steps-grid">
             {steps.map((s) => (
               <div key={s.n} style={{ textAlign: "center" }}>
                 <div style={{ fontFamily: DISPLAY, fontSize: 56, fontWeight: 300, color: "rgba(201,168,76,0.3)", lineHeight: 1, marginBottom: 16 }}>
@@ -304,7 +326,7 @@ export default function LandingPage() {
             Your testimony could be exactly what someone needs to hear. Share it with believers around the world.
           </p>
           <button
-            onClick={() => setShowAuth(true)}
+            onClick={() => setAuthMode('signup')}
             style={{ padding: "14px 40px", background: "#1A1A1A", color: "#fff", border: "none", borderRadius: 4, fontSize: 12, letterSpacing: "0.12em", cursor: "pointer", fontFamily: BODY }}
           >
             JOIN FREE
@@ -316,7 +338,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{
+      <footer className="footer-inner" style={{
         padding: "24px 32px", borderTop: "1px solid #D6D3D1", background: "#fff",
         display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16,
       }}>
