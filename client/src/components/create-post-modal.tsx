@@ -69,6 +69,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${user?.id}/posts`] });
       alert(t('createPost.success'));
       onOpenChange(false);
       resetForm();
@@ -280,7 +281,7 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
               <Input
                 id="location"
                 {...form.register("location")}
-                placeholder="Enter location manually"
+                placeholder="e.g. Austin, Texas or Lagos, Nigeria"
                 className="flex-1"
               />
               <Button

@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useRef, useEffect } from "react";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 import CreatePostModal from "@/components/create-post-modal";
 import { supabase } from "@/lib/supabase";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Post {
   id: number;
+  userId: string;
   author: string;
   initials: string;
   denomination: string;
@@ -34,6 +37,7 @@ interface Comment {
 const SAMPLE_POSTS: Post[] = [
   {
     id: 1,
+    userId: "",
     author: "Margaret Thornton",
     initials: "MT",
     denomination: "Baptist",
@@ -50,6 +54,7 @@ const SAMPLE_POSTS: Post[] = [
   },
   {
     id: 2,
+    userId: "",
     author: "David Okonkwo",
     initials: "DO",
     denomination: "Pentecostal",
@@ -66,6 +71,7 @@ const SAMPLE_POSTS: Post[] = [
   },
   {
     id: 3,
+    userId: "",
     author: "Rosa Lima",
     initials: "RL",
     denomination: "Catholic",
@@ -82,6 +88,7 @@ const SAMPLE_POSTS: Post[] = [
   },
   {
     id: 4,
+    userId: "",
     author: "James Kimani",
     initials: "JK",
     denomination: "Anglican",
@@ -98,6 +105,7 @@ const SAMPLE_POSTS: Post[] = [
   },
   {
     id: 5,
+    userId: "",
     author: "Patricia Hughes",
     initials: "PH",
     denomination: "Methodist",
@@ -145,11 +153,101 @@ function PrayerButton({ count, prayed, onPray }: { count: number; prayed: boolea
 }
 
 // ── Post Card ─────────────────────────────────────────────────────────────────
-function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }) {
+interface ApiComment {
+  id: number;
+  content: string;
+  createdAt: string;
+  user: { id: string; firstName?: string; lastName?: string };
+}
+
+function PostCard({ post, onPray, currentUserId }: { post: Post; onPray: (id: number) => void; currentUserId?: string }) {
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const shouldTruncate = post.body.length > 280;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(post.body);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+  const shouldTruncate = !editing && post.body.length > 280;
+  const isOwner = !!currentUserId && currentUserId === post.userId;
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
+
+  const deletePost = useMutation({
+    mutationFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`/api/posts/${post.id}`, {
+        method: "DELETE",
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+      });
+      if (!res.ok) throw new Error("Failed to delete post");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+    },
+  });
+
+  const editPost = useMutation({
+    mutationFn: async (content: string) => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`/api/posts/${post.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ content }),
+      });
+      if (!res.ok) throw new Error("Failed to update post");
+      return res.json();
+    },
+    onSuccess: () => {
+      setEditing(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+    },
+  });
+
+  const { data: comments = [] } = useQuery<ApiComment[]>({
+    queryKey: [`/api/posts/${post.id}/comments`],
+    enabled: showComments,
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`/api/posts/${post.id}/comments`, {
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const submitComment = useMutation({
+    mutationFn: async (text: string) => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`/api/posts/${post.id}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ content: text }),
+      });
+      if (!res.ok) throw new Error("Failed to post comment");
+      return res.json();
+    },
+    onSuccess: () => {
+      setCommentText("");
+      queryClient.invalidateQueries({ queryKey: [`/api/posts/${post.id}/comments`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+    },
+  });
   const displayBody = shouldTruncate && !expanded ? post.body.slice(0, 280) + "…" : post.body;
 
   const categoryColors: Record<string, string> = {
@@ -198,13 +296,51 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
               </div>
             </div>
           </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
           {/* Category badge */}
           <span
-            className="text-[0.6rem] tracking-[0.18em] uppercase px-2.5 py-1 rounded-sm flex-shrink-0"
+            className="text-[0.6rem] tracking-[0.18em] uppercase px-2.5 py-1 rounded-sm"
             style={{ background: `${catColor}18`, color: catColor, border: `1px solid ${catColor}35` }}
           >
             {post.category}
           </span>
+          {/* Owner menu */}
+          {isOwner && (
+            <div style={{ position: "relative" }} ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen(o => !o)}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 6px", color: "#9CA3AF", fontSize: 18, lineHeight: 1, borderRadius: 4 }}
+                title="Options"
+              >
+                ⋯
+              </button>
+              {menuOpen && (
+                <div style={{
+                  position: "absolute", right: 0, top: "calc(100% + 4px)", zIndex: 100,
+                  background: "#fff", border: "1px solid #D6D3D1", borderRadius: 4,
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)", minWidth: 120, fontFamily: BODY,
+                }}>
+                  <button
+                    onClick={() => { setEditing(true); setEditText(post.body); setMenuOpen(false); }}
+                    style={{ display: "block", width: "100%", textAlign: "left", padding: "9px 14px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: "#374151" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#F5F3EF")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    onClick={() => { setMenuOpen(false); if (confirm("Delete this post?")) deletePost.mutate(); }}
+                    style={{ display: "block", width: "100%", textAlign: "left", padding: "9px 14px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: "#DC2626" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#FEF2F2")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                  >
+                    🗑️ Remove
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         </div>
 
         {/* Post title */}
@@ -218,24 +354,55 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
         {/* Post image */}
         {post.imageUrl && (
           <img
-            src={post.imageUrl.startsWith('data:') ? post.imageUrl : `data:image/jpeg;base64,${post.imageUrl}`}
+            src={post.imageUrl.startsWith('http') ? post.imageUrl : post.imageUrl.startsWith('data:') ? post.imageUrl : `data:image/jpeg;base64,${post.imageUrl}`}
             alt="Post"
             className="w-full rounded-sm mb-3 object-cover max-h-96"
           />
         )}
 
         {/* Post body */}
-        <p className="text-sm leading-relaxed mb-2" style={{ color: "#4B4B4B" }}>
-          {displayBody}
-        </p>
-        {shouldTruncate && (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-xs text-[#374151] hover:text-[#111111] font-medium transition-colors mb-4"
-            style={{ fontFamily: BODY }}
-          >
-            {expanded ? "Show less" : "Read full testimony"}
-          </button>
+        {editing ? (
+          <div className="mb-4">
+            <textarea
+              value={editText}
+              onChange={e => setEditText(e.target.value)}
+              rows={6}
+              className="w-full text-sm leading-relaxed p-3 rounded-sm outline-none resize-none"
+              style={{ border: "1px solid #C4C2BF", fontFamily: BODY, color: "#1A1A1A", background: "#FAFAF8" }}
+            />
+            <div className="flex gap-2 mt-2">
+              <button
+                onClick={() => editPost.mutate(editText)}
+                disabled={editPost.isPending}
+                className="px-4 py-1.5 rounded-sm text-xs font-medium"
+                style={{ background: "#1A1A1A", color: "#fff", border: "none", cursor: "pointer", fontFamily: BODY }}
+              >
+                {editPost.isPending ? "Saving…" : "Save"}
+              </button>
+              <button
+                onClick={() => setEditing(false)}
+                className="px-4 py-1.5 rounded-sm text-xs"
+                style={{ background: "none", border: "1px solid #D6D3D1", color: "#6B7280", cursor: "pointer", fontFamily: BODY }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className="text-sm leading-relaxed mb-2" style={{ color: "#4B4B4B" }}>
+              {displayBody}
+            </p>
+            {shouldTruncate && (
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="text-xs text-[#374151] hover:text-[#111111] font-medium transition-colors mb-4"
+                style={{ fontFamily: BODY }}
+              >
+                {expanded ? "Show less" : "Read full testimony"}
+              </button>
+            )}
+          </>
         )}
 
         {/* Action bar */}
@@ -266,23 +433,30 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
       {showComments && (
         <div className="px-6 pb-6" style={{ borderTop: "1px solid #F0EDE6" }}>
           <div className="pt-4 space-y-4">
-            {SAMPLE_COMMENTS.map((c) => (
-              <div key={c.id} className="flex gap-3">
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5"
-                  style={{ background: "rgba(201,168,76,0.08)", border: "1px solid #C4C2BF", color: "#111111", fontFamily: DISPLAY }}
-                >
-                  {c.initials}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium" style={{ color: "#1A1A1A" }}>{c.author}</span>
-                    <span className="text-[0.65rem]" style={{ color: "#9CA3AF" }}>{c.timeAgo}</span>
+            {comments.length === 0 && (
+              <p className="text-xs text-center py-2" style={{ color: "#9CA3AF" }}>No comments yet. Be the first to encourage!</p>
+            )}
+            {comments.map((c) => {
+              const name = [c.user.firstName, c.user.lastName].filter(Boolean).join(" ") || "Anonymous";
+              const initials = [c.user.firstName?.[0], c.user.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?";
+              return (
+                <div key={c.id} className="flex gap-3">
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5"
+                    style={{ background: "rgba(201,168,76,0.08)", border: "1px solid #C4C2BF", color: "#111111", fontFamily: DISPLAY }}
+                  >
+                    {initials}
                   </div>
-                  <p className="text-xs leading-relaxed" style={{ color: "#4B5563" }}>{c.text}</p>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-medium" style={{ color: "#1A1A1A" }}>{name}</span>
+                      <span className="text-[0.65rem]" style={{ color: "#9CA3AF" }}>{new Date(c.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <p className="text-xs leading-relaxed" style={{ color: "#4B5563" }}>{c.content}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Comment input */}
@@ -292,6 +466,11 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
               placeholder="Share a word of encouragement…"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && commentText.trim()) {
+                  submitComment.mutate(commentText.trim());
+                }
+              }}
               className="flex-1 px-3 py-2 text-xs rounded-sm outline-none"
               style={{
                 background: "#F5F3EF",
@@ -301,10 +480,12 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
               }}
             />
             <button
-              className="px-4 py-2 text-xs rounded-sm transition-colors"
+              onClick={() => { if (commentText.trim()) submitComment.mutate(commentText.trim()); }}
+              disabled={submitComment.isPending || !commentText.trim()}
+              className="px-4 py-2 text-xs rounded-sm transition-colors disabled:opacity-50"
               style={{ background: "#C9A84C", color: "#0D0D12", fontFamily: BODY }}
             >
-              Post
+              {submitComment.isPending ? "…" : "Post"}
             </button>
           </div>
         </div>
@@ -461,6 +642,8 @@ export default function FeedPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
+  const { user } = useAuth();
 
   const { data: apiPosts = [], isLoading } = useQuery<ApiPost[]>({
     queryKey: ["/api/posts"],
@@ -477,6 +660,7 @@ export default function FeedPage() {
   // Convert API posts to display format
   const posts: Post[] = apiPosts.map(p => ({
     id: p.id,
+    userId: p.user.id,
     author: [p.user.firstName, p.user.lastName].filter(Boolean).join(" ") || "Anonymous",
     initials: [p.user.firstName?.[0], p.user.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?",
     denomination: "",
@@ -537,9 +721,13 @@ export default function FeedPage() {
             <span>＋</span> Share Story
           </button>
           {/* Avatar */}
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer"
-            style={{ background: "rgba(201,168,76,0.15)", border: "1px solid #D6D3D1", color: "#111111", fontFamily: DISPLAY }}>
-            Y
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer"
+            style={{ background: "rgba(201,168,76,0.15)", border: "1px solid #D6D3D1", color: "#111111", fontFamily: DISPLAY }}
+            onClick={() => setLocation("/profile")}
+            title="My Profile"
+          >
+            👤
           </div>
         </div>
       </header>
@@ -552,38 +740,20 @@ export default function FeedPage() {
           style={{ borderRight: "1px solid #EEECEB" }}>
           <nav className="space-y-1">
             {[
-              { icon: "🏠", label: "My Feed" },
-              { icon: "✨", label: "Discover" },
-              { icon: "🌍", label: "Global Map" },
-              { icon: "👤", label: "My Profile" },
-            ].map(({ icon, label }) => (
+              { icon: "🏠", label: "My Feed", path: "/" },
+              { icon: "🌍", label: "Global Map", path: "/map" },
+              { icon: "👤", label: "My Profile", path: "/profile" },
+            ].map(({ icon, label, path }) => (
               <button key={label}
+                onClick={() => path && setLocation(path)}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-left transition-all duration-200 hover:bg-[rgba(201,168,76,0.07)] hover:text-[#111111]"
-                style={{ color: label === "My Feed" ? "#111111" : "#4B5563", fontWeight: label === "My Feed" ? "600" : "400", background: label === "My Feed" ? "rgba(201,168,76,0.08)" : "transparent", fontFamily: BODY }}>
+                style={{ color: "#4B5563", fontWeight: "400", background: "transparent", fontFamily: BODY, cursor: path ? "pointer" : "default", opacity: path ? 1 : 0.5 }}>
                 <span>{icon}</span>
                 {label}
               </button>
             ))}
           </nav>
 
-          <div className="mt-6 pt-5" style={{ borderTop: "1px solid #EEECEB" }}>
-            <p className="text-[0.6rem] tracking-[0.18em] uppercase mb-3 px-3" style={{ color: "#D1D5DB" }}>Categories</p>
-            <div className="space-y-1">
-              {CATEGORIES.map((c) => (
-                <button key={c}
-                  onClick={() => setActiveCategory(c)}
-                  className="w-full text-left px-3 py-2 rounded-sm text-xs transition-all duration-200"
-                  style={{
-                    color: activeCategory === c ? "#111111" : "#6B7280",
-                  fontWeight: activeCategory === c ? "600" : "400",
-                    background: activeCategory === c ? "rgba(201,168,76,0.1)" : "transparent",
-                    fontFamily: BODY,
-                  }}>
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
         </aside>
 
         {/* ── FEED ── */}
@@ -632,7 +802,7 @@ export default function FeedPage() {
           {/* Posts */}
           <div className="space-y-4">
             {filteredPosts.map((post) => (
-              <PostCard key={post.id} post={post} onPray={handlePray} />
+              <PostCard key={post.id} post={post} onPray={handlePray} currentUserId={user?.id} />
             ))}
           </div>
 

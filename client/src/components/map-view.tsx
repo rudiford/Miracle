@@ -1,9 +1,43 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { Plus, Minus, Navigation, Cross, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import ChristianCross from "./christian-cross";
+import { useLocation } from "wouter";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import L from "leaflet";
+
+const esc = (str: string) => str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+import "leaflet.markercluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import { supabase } from "@/lib/supabase";
+import "leaflet/dist/leaflet.css";
+
+// Fix Leaflet default marker icons broken by bundlers
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
+// Custom cross marker icon
+const crossIcon = L.divIcon({
+  html: `<div style="
+    background: white;
+    border: 2px solid #C9A84C;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    font-size: 16px;
+  ">✝</div>`,
+  className: "",
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -20],
+});
 
 interface Post {
   id: number;
@@ -12,270 +46,267 @@ interface Post {
   location?: string;
   latitude?: string;
   longitude?: string;
+  prayerCount: number;
+  createdAt: string;
   user: {
     id: string;
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
     profileImageUrl?: string;
   };
 }
 
-// Simple geocoding function for major cities and zip codes
-const getCityCoordinates = (location: string) => {
-  const cityMap: { [key: string]: [number, number] } = {
-    'dallas, texas': [32.7767, -96.7970],
-    'dallas': [32.7767, -96.7970],
-    'new york': [40.7128, -74.0060],
-    'los angeles': [34.0522, -118.2437],
-    'chicago': [41.8781, -87.6298],
-    'houston': [29.7604, -95.3698],
-    'phoenix': [33.4484, -112.0740],
-    'philadelphia': [39.9526, -75.1652],
-    'san antonio': [29.4241, -98.4936],
-    'san diego': [32.7157, -117.1611],
-    'austin': [30.2672, -97.7431],
-    'miami': [25.7617, -80.1918],
-    'atlanta': [33.7490, -84.3880],
-    'boston': [42.3601, -71.0589],
-    'seattle': [47.6062, -122.3321],
-    'denver': [39.7392, -104.9903],
-    'orlando': [28.5383, -81.3792],
-    'las vegas': [36.1699, -115.1398],
-    'london': [51.5074, -0.1278],
-    'paris': [48.8566, 2.3522],
-    'tokyo': [35.6762, 139.6503],
-    'sydney': [-33.8688, 151.2093],
-    'toronto': [43.6532, -79.3832],
-    'rome': [41.9028, 12.4964],
-    'berlin': [52.5200, 13.4050],
-    'madrid': [40.4168, -3.7038],
-    'beijing': [39.9042, 116.4074],
-    'moscow': [55.7558, 37.6176],
-    'mumbai': [19.0760, 72.8777],
-    'cairo': [30.0444, 31.2357],
-    'mexico city': [19.4326, -99.1332],
-    'buenos aires': [-34.6118, -58.3960],
-    'rio de janeiro': [-22.9068, -43.1729],
-    'cape town': [-33.9249, 18.4241],
-    'jerusalem': [31.7683, 35.2137]
-  };
+// Marker cluster layer using vanilla Leaflet plugin
+function ClusterMarkers({ posts, onView }: { posts: FullPost[], onView: (p: FullPost) => void }) {
+  const map = useMap();
 
-  // Common zip codes (Dallas area)
-  const zipCodeMap: { [key: string]: [number, number] } = {
-    '75214': [32.8153, -96.7614], // White Rock, Dallas
-    '75201': [32.7767, -96.7970], // Downtown Dallas
-    '75202': [32.7767, -96.7970], // Downtown Dallas
-    '75203': [32.7400, -96.7600], // South Dallas
-    '75204': [32.8000, -96.7800], // Uptown Dallas
-    '75205': [32.8400, -96.7700], // Highland Park
-    '75206': [32.8200, -96.7500], // East Dallas
-    '75207': [32.7600, -96.8200], // Oak Cliff
-    '75208': [32.7300, -96.8500], // Oak Cliff
-    '75209': [32.8500, -96.8000], // Turtle Creek
-    '75210': [32.7000, -96.7800], // South Dallas
-    '75211': [32.7200, -96.8800], // West Dallas
-    '75212': [32.7800, -96.8500], // Love Field
-    '75218': [32.8600, -96.7200], // Lake Highlands
-    '75219': [32.7900, -96.8000], // Deep Ellum
-    '75220': [32.8700, -96.7600], // North Dallas
-    '75225': [32.8200, -96.7800], // University Park
-    '75230': [32.9200, -96.7700], // North Dallas
-    '75231': [32.8800, -96.7300], // Lake Highlands
-    '75240': [32.9500, -96.7500], // Addison
-    '75243': [32.9000, -96.7000], // Richardson border
-    '75244': [32.9200, -96.7200], // North Dallas
-    '75248': [32.9300, -96.8200], // Addison
-    '75252': [32.9600, -96.8200], // North Dallas
-    '75254': [32.9400, -96.7800], // North Dallas
-  };
-  
-  const key = location.toLowerCase().trim();
-  
-  // Check if it's a zip code first
-  if (zipCodeMap[key]) {
-    return zipCodeMap[key];
-  }
-  
-  // Then check city names
-  return cityMap[key] || null;
-};
+  useEffect(() => {
+    const cluster = (L as any).markerClusterGroup({ maxClusterRadius: 40 });
 
-export default function MapView() {
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const { data: posts = [] } = useQuery<Post[]>({
-    queryKey: ["/api/posts"],
-  });
-
-  // Debug logging
-  console.log('All posts:', posts);
-  
-  // Filter posts that have location data and add coordinates
-  const postsWithLocation = posts.filter(post => 
-    (post.latitude && post.longitude) || post.location
-  ).map(post => {
-    let lat, lng;
-    
-    console.log('Processing post:', post.id, 'location:', post.location, 'lat:', post.latitude, 'lng:', post.longitude);
-    
-    if (post.latitude && post.longitude) {
-      lat = parseFloat(post.latitude);
-      lng = parseFloat(post.longitude);
-    } else if (post.location) {
-      const coords = getCityCoordinates(post.location);
-      console.log('Coordinates for', post.location, ':', coords);
-      if (coords) {
-        [lat, lng] = coords;
-      }
-    }
-    
-    const result = { ...post, mappedLat: lat, mappedLng: lng };
-    console.log('Mapped result:', result);
-    return result;
-  }).filter(post => post.mappedLat && post.mappedLng);
-  
-  console.log('Posts with location:', postsWithLocation);
-
-  return (
-    <div className="h-screen relative bg-blue-50">
-      {/* World Map Background */}
-      <div className="w-full h-full relative overflow-hidden">
-        {/* Simple world map representation */}
-        <svg viewBox="0 0 800 400" className="w-full h-full">
-          {/* Background */}
-          <rect width="800" height="400" fill="#e6f3ff" />
-          
-          {/* Simple continent shapes */}
-          {/* North America */}
-          <path d="M50 80 L200 70 L220 120 L180 160 L120 150 L80 120 Z" fill="#d4d4aa" stroke="#999" strokeWidth="1"/>
-          
-          {/* South America */}
-          <path d="M150 200 L180 180 L200 220 L190 280 L170 290 L160 260 Z" fill="#d4d4aa" stroke="#999" strokeWidth="1"/>
-          
-          {/* Europe */}
-          <path d="M320 60 L380 55 L390 90 L370 100 L340 95 Z" fill="#d4d4aa" stroke="#999" strokeWidth="1"/>
-          
-          {/* Africa */}
-          <path d="M330 120 L380 110 L390 180 L370 220 L350 210 L340 160 Z" fill="#d4d4aa" stroke="#999" strokeWidth="1"/>
-          
-          {/* Asia */}
-          <path d="M400 50 L600 45 L620 100 L580 120 L520 110 L450 90 Z" fill="#d4d4aa" stroke="#999" strokeWidth="1"/>
-          
-          {/* Australia */}
-          <path d="M550 250 L620 245 L630 270 L600 280 L570 275 Z" fill="#d4d4aa" stroke="#999" strokeWidth="1"/>
-        </svg>
-        
-        {/* Post markers on map */}
-        {postsWithLocation.map((post) => {
-          // Convert lat/lng to map coordinates (simplified projection)
-          const x = ((post.mappedLng! + 180) / 360) * 800;
-          const y = ((90 - post.mappedLat!) / 180) * 400;
-          
-          console.log(`Marker for post ${post.id}: x=${x}, y=${y}, lat=${post.mappedLat}, lng=${post.mappedLng}`);
-          
-          return (
-            <div
-              key={post.id}
-              className="absolute cursor-pointer group z-10"
-              style={{
-                left: `${(x / 800) * 100}%`,
-                top: `${(y / 400) * 100}%`,
-                transform: 'translate(-50%, -50%)'
-              }}
-              onClick={() => setSelectedPost(post)}
-            >
-              <div className="relative">
-                <img 
-                  src="/cross.png" 
-                  alt="Cross" 
-                  className="w-[60px] h-auto hover:scale-125 transition-transform drop-shadow-lg border-2 border-white rounded-lg bg-white/80 p-1"
-                />
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-xs text-faith-text opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
-                  {post.location || `${post.mappedLat!.toFixed(2)}, ${post.mappedLng!.toFixed(2)}`}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* No posts message */}
-      {postsWithLocation.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center bg-white/90 p-6 rounded-lg shadow-lg">
-            <img 
-              src="/cross.png" 
-              alt="Cross" 
-              className="w-24 h-auto mb-4 mx-auto"
-            />
-            <p className="text-faith-text font-semibold">No miracle locations to display</p>
-            <p className="text-sm text-gray-600 mt-2">Share your faith experiences with location to see them on the map</p>
+    posts.forEach((post) => {
+      const marker = L.marker([post.lat, post.lng], { icon: crossIcon });
+      const container = document.createElement("div");
+      container.style.fontFamily = "'Jost', sans-serif";
+      container.style.padding = "16px";
+      container.style.minWidth = "220px";
+      const initials = esc(([post.user.firstName?.[0], post.user.lastName?.[0]].filter(Boolean).join("").toUpperCase()) || "?");
+      const name = esc([post.user.firstName, post.user.lastName].filter(Boolean).join(" ") || "Anonymous");
+      const location = post.location ? `<div style="font-size:11px;color:#9CA3AF">📍 ${esc(post.location)}</div>` : "";
+      const preview = esc(post.content.length > 120 ? post.content.slice(0, 120) + "…" : post.content);
+      container.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.15);border:1px solid #D6D3D1;display:flex;align-items:center;justify-content:center;font-size:14px;color:#111;font-family:'Cormorant Garamond',serif">
+            ${initials}
+          </div>
+          <div>
+            <div style="font-weight:500;font-size:13px;color:#111">${name}</div>
+            ${location}
           </div>
         </div>
-      )}
-      
-      {/* Map Controls */}
-      <div className="absolute top-4 right-4 space-y-2">
-        <Button variant="secondary" size="icon" className="bg-white shadow-lg hover:shadow-xl">
-          <Plus className="w-4 h-4 text-faith-blue" />
-        </Button>
-        <Button variant="secondary" size="icon" className="bg-white shadow-lg hover:shadow-xl">
-          <Minus className="w-4 h-4 text-faith-blue" />
-        </Button>
-        <Button variant="secondary" size="icon" className="bg-white shadow-lg hover:shadow-xl">
-          <Navigation className="w-4 h-4 text-faith-blue" />
-        </Button>
+        <p style="font-size:13px;color:#4B4B4B;line-height:1.5;margin:0 0 10px">${preview}</p>
+        <button class="view-post-btn" style="width:100%;padding:7px 0;background:#1A1A1A;color:white;border:none;border-radius:4px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif;letter-spacing:1px">
+          View Full Post
+        </button>
+      `;
+      container.querySelector(".view-post-btn")?.addEventListener("click", () => onView(post));
+      marker.bindPopup(container, { maxWidth: 280 });
+      cluster.addLayer(marker);
+    });
+
+    map.addLayer(cluster);
+    return () => { map.removeLayer(cluster); };
+  }, [posts, map]);
+
+  return null;
+}
+
+function RecenterButton() {
+  const map = useMap();
+  return (
+    <button
+      onClick={() => map.setView([20, 10], 2)}
+      style={{
+        position: "absolute",
+        bottom: 24,
+        right: 12,
+        zIndex: 1000,
+        background: "white",
+        border: "2px solid #D6D3D1",
+        borderRadius: 4,
+        padding: "6px 12px",
+        fontSize: 12,
+        cursor: "pointer",
+        fontFamily: "'Jost', sans-serif",
+        color: "#374151",
+      }}
+    >
+      Reset View
+    </button>
+  );
+}
+
+interface FullPost extends Post {
+  lat: number;
+  lng: number;
+}
+
+export default function MapView() {
+  const [, setLocation] = useLocation();
+  const [viewingPost, setViewingPost] = useState<FullPost | null>(null);
+  const { data: posts = [] } = useQuery<Post[]>({
+    queryKey: ["/api/posts"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/posts", {
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    staleTime: 0,
+  });
+
+  // Geocode text locations using OpenStreetMap Nominatim
+  const [geocoded, setGeocoded] = useState<Record<number, [number, number]>>({});
+
+  useEffect(() => {
+    const postsNeedingGeocode = posts.filter(
+      (p) => !(p.latitude && p.longitude) && p.location
+    );
+    postsNeedingGeocode.forEach(async (p) => {
+      if (geocoded[p.id]) return;
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(p.location!)}&format=json&limit=1`,
+          { headers: { "Accept-Language": "en" } }
+        );
+        const data = await res.json();
+        if (data[0]) {
+          setGeocoded((prev) => ({
+            ...prev,
+            [p.id]: [parseFloat(data[0].lat), parseFloat(data[0].lon)],
+          }));
+        }
+      } catch {}
+    });
+  }, [posts]);
+
+  const postsWithLocation = posts.flatMap((p) => {
+    if (p.latitude && p.longitude) {
+      return [{ ...p, lat: parseFloat(p.latitude), lng: parseFloat(p.longitude) }];
+    }
+    if (geocoded[p.id]) {
+      return [{ ...p, lat: geocoded[p.id][0], lng: geocoded[p.id][1] }];
+    }
+    return [];
+  });
+
+  const postCount = postsWithLocation.length;
+
+  return (
+    <div style={{ height: "100%", width: "100%", position: "relative" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap');
+        .leaflet-popup-content-wrapper {
+          border-radius: 4px;
+          border: 1px solid #D6D3D1;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+          padding: 0;
+        }
+        .leaflet-popup-content { margin: 0; }
+        .leaflet-popup-tip { background: white; }
+        .leaflet-top.leaflet-left { top: 56px; }
+      `}</style>
+
+      {/* Header bar */}
+      <div style={{
+        position: "absolute",
+        top: 0, left: 0, right: 0,
+        zIndex: 1000,
+        background: "rgba(255,255,255,0.97)",
+        borderBottom: "1px solid #D6D3D1",
+        backdropFilter: "blur(8px)",
+        padding: "12px 20px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        fontFamily: "'Jost', sans-serif",
+      }}>
+        <button
+          onClick={() => setLocation("/")}
+          style={{ fontSize: 13, color: "#6B7280", background: "none", border: "none", cursor: "pointer", fontFamily: "'Jost', sans-serif", display: "flex", alignItems: "center", gap: 4 }}
+        >
+          ← Feed
+        </button>
+        <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, color: "#111111", fontWeight: 300, letterSpacing: 2 }}>
+          Global Miracle Map
+        </span>
+        <span style={{ fontSize: 12, color: "#9CA3AF" }}>
+          {postCount === 0
+            ? "No locations yet — share a testimony with location"
+            : `${postCount} miracle${postCount !== 1 ? "s" : ""} on the map`}
+        </span>
       </div>
-      
-      {/* Selected Post Card */}
-      {selectedPost && (
-        <div className="absolute bottom-4 left-4 right-4">
-          <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex items-start space-x-3">
-                  {selectedPost.user.profileImageUrl ? (
-                    <img 
-                      src={selectedPost.user.profileImageUrl} 
-                      alt="Profile" 
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 bg-faith-gold rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-white" />
-                    </div>
-                  )}
-                  <div>
-                    <h3 className="font-semibold text-faith-text">
-                      {selectedPost.user.firstName} {selectedPost.user.lastName}
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      {selectedPost.location || 'GPS Location'}
-                    </p>
+
+      <MapContainer
+        center={[20, 10]}
+        zoom={2}
+        style={{ height: "100%", width: "100%" }}
+        zoomControl={true}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        <ClusterMarkers posts={postsWithLocation} onView={setViewingPost} />
+
+        <RecenterButton />
+      </MapContainer>
+
+      {/* Full post overlay */}
+      {viewingPost && (
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 2000,
+            background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: 16,
+          }}
+          onClick={() => setViewingPost(null)}
+        >
+          <div
+            style={{
+              background: "white", borderRadius: 4, border: "1px solid #D6D3D1",
+              maxWidth: 520, width: "100%", maxHeight: "85vh", overflowY: "auto",
+              fontFamily: "'Jost', sans-serif",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div style={{ padding: "16px 20px", borderBottom: "1px solid #F0EDE6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                {viewingPost.user.profileImageUrl ? (
+                  <img src={viewingPost.user.profileImageUrl} alt="" style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", border: "1px solid #D6D3D1" }} />
+                ) : (
+                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(201,168,76,0.15)", border: "1px solid #D6D3D1", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Cormorant Garamond', serif", fontSize: 16, color: "#111" }}>
+                    {[viewingPost.user.firstName?.[0], viewingPost.user.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?"}
+                  </div>
+                )}
+                <div>
+                  <div style={{ fontWeight: 500, fontSize: 14, color: "#111" }}>
+                    {[viewingPost.user.firstName, viewingPost.user.lastName].filter(Boolean).join(" ") || "Anonymous"}
+                  </div>
+                  {viewingPost.location && <div style={{ fontSize: 12, color: "#9CA3AF" }}>📍 {viewingPost.location}</div>}
+                  <div style={{ fontSize: 11, color: "#C4C2BF" }}>
+                    {new Date(viewingPost.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setSelectedPost(null)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ×
-                </Button>
               </div>
-              
-              <p className="text-sm text-gray-700 mb-3">
-                {selectedPost.content}
+              <button onClick={() => setViewingPost(null)} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "#9CA3AF", lineHeight: 1 }}>×</button>
+            </div>
+
+            {/* Image */}
+            {viewingPost.imageUrl && (
+              <img
+                src={viewingPost.imageUrl.startsWith("http") ? viewingPost.imageUrl : viewingPost.imageUrl.startsWith("data:") ? viewingPost.imageUrl : `data:image/jpeg;base64,${viewingPost.imageUrl}`}
+                alt=""
+                style={{ width: "100%", maxHeight: 280, objectFit: "cover" }}
+              />
+            )}
+
+            {/* Content */}
+            <div style={{ padding: 20 }}>
+              <p style={{ fontSize: 15, color: "#1A1A1A", lineHeight: 1.7, margin: 0 }}>
+                {viewingPost.content}
               </p>
-              
-              {selectedPost.imageUrl && (
-                <img 
-                  src={selectedPost.imageUrl} 
-                  alt="Post content" 
-                  className="w-full h-40 object-cover rounded-lg"
-                />
-              )}
-            </CardContent>
-          </Card>
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding: "12px 20px", borderTop: "1px solid #F0EDE6", display: "flex", gap: 16, fontSize: 13, color: "#9CA3AF" }}>
+              <span>🙏 {viewingPost.prayerCount ?? 0} prayers</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./supabaseAuth";
+import { setupAuth, isAuthenticated, supabase } from "./supabaseAuth";
 import { insertUserSchema, insertPostSchema, insertConnectionSchema, insertMessageSchema, insertCommentSchema, insertReportSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
@@ -55,18 +55,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      console.log('Auth user request:', { user: req.user, claims: req.user?.claims });
       const userId = (req as any).user?.id;
       if (!userId) {
-        console.error('No user ID found in session');
         return res.status(401).json({ message: "No user session" });
       }
       const user = await storage.getUser(userId);
       if (!user) {
-        console.error('User not found in database:', userId);
         return res.status(404).json({ message: "User not found" });
       }
-      console.log('Returning user:', user);
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -78,30 +74,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete('/api/users/delete-account', isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req as any).user?.id;
-      const { reason, feedback } = req.body;
 
-      // Log deletion request for compliance
-      console.log(`Account deletion requested by user ${userId}`, {
-        reason,
-        feedback,
-        timestamp: new Date().toISOString()
-      });
-
-      // Delete all user data
       const deleted = await storage.deleteUserCompletely(userId);
-      
+
       if (!deleted) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Destroy the session
-      req.logout(() => {
-        req.session.destroy(() => {
-          res.json({ 
-            message: "Account and all associated data have been permanently deleted",
-            deletedAt: new Date().toISOString()
-          });
-        });
+      res.json({
+        message: "Account and all associated data have been permanently deleted",
+        deletedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error("Error deleting user account:", error);
@@ -230,27 +212,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/posts', isAuthenticated, upload.single('image'), async (req: any, res) => {
     try {
-      console.log("POST /api/posts - Request body:", req.body);
-      console.log("POST /api/posts - Request file:", req.file);
-      
       const userId = (req as any).user?.id;
-      console.log("POST /api/posts - User ID:", userId);
       
       let imageUrl = null;
       
       if (req.file) {
-        // Convert image to base64 and store in database instead of file system
-        const imageBuffer = fs.readFileSync(req.file.path);
-        const base64Image = imageBuffer.toString('base64');
-        const mimeType = req.file.mimetype;
-        
-        // Store as data URL
-        imageUrl = `data:${mimeType};base64,${base64Image}`;
-        
-        // Clean up temp file
+        const fileBuffer = fs.readFileSync(req.file.path);
+        const ext = path.extname(req.file.originalname) || '.jpg';
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('post-images')
+          .upload(fileName, fileBuffer, { contentType: req.file.mimetype });
+
         fs.unlinkSync(req.file.path);
-        
-        console.log("POST /api/posts - Image converted to base64, size:", Math.round(base64Image.length / 1024), "KB");
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('post-images')
+          .getPublicUrl(fileName);
+
+        imageUrl = publicUrl;
       }
       
       const postData = {
@@ -258,19 +241,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         imageUrl,
       };
       
-      console.log("POST /api/posts - Post data before validation:", postData);
-      
       const validatedData = insertPostSchema.parse(postData);
-      console.log("POST /api/posts - Validated data:", validatedData);
-      
       const post = await storage.createPost(userId, validatedData);
-      console.log("POST /api/posts - Created post:", post);
       
       res.json(post);
     } catch (error) {
       console.error("Error creating post:", error);
       console.error("Error stack:", (error as Error).stack);
-      res.status(500).json({ message: "Failed to create post", error: (error as Error).message });
+      res.status(500).json({ message: "Failed to create post" });
     }
   });
 
@@ -378,6 +356,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User posts route
+  app.get('/api/users/:id/posts', isAuthenticated, async (req: any, res) => {
+    try {
+      const posts = await storage.getPostsByUser(req.params.id);
+      res.json(posts);
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+      res.status(500).json({ message: "Failed to fetch user posts" });
+    }
+  });
+
   // Comment routes
   app.get('/api/posts/:id/comments', isAuthenticated, async (req: any, res) => {
     try {
@@ -436,16 +425,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put('/api/connections/:id', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = (req as any).user?.id;
       const connectionId = parseInt(req.params.id);
       const { status } = req.body;
-      
-      const connection = await storage.updateConnectionStatus(connectionId, status);
-      
+
+      const connections = await storage.getConnectionsByUser(userId);
+      const connection = connections.find(c => c.id === connectionId);
       if (!connection) {
         return res.status(404).json({ message: "Connection not found" });
       }
-      
-      res.json(connection);
+      if (connection.addresseeId !== userId) {
+        return res.status(403).json({ message: "Not authorized to update this connection" });
+      }
+
+      const updated = await storage.updateConnectionStatus(connectionId, status);
+      res.json(updated);
     } catch (error) {
       console.error("Error updating connection:", error);
       res.status(500).json({ message: "Failed to update connection" });
@@ -517,42 +511,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
                (user.email && user.email.toLowerCase().includes(query.toLowerCase()));
       });
       
-      res.json(filteredUsers);
+      const safeUsers = filteredUsers.map(({ email, ...rest }) => rest);
+      res.json(safeUsers);
     } catch (error) {
       console.error("Error searching users:", error);
       res.status(500).json({ message: "Failed to search users" });
-    }
-  });
-
-  // Comment routes
-  app.get('/api/posts/:id/comments', isAuthenticated, async (req: any, res) => {
-    try {
-      const postId = parseInt(req.params.id);
-      const comments = await storage.getCommentsByPost(postId);
-      res.json(comments);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-      res.status(500).json({ message: "Failed to fetch comments" });
-    }
-  });
-
-  app.post('/api/posts/:id/comments', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = (req as any).user?.id;
-      const postId = parseInt(req.params.id);
-      
-      const commentData = {
-        ...req.body,
-        postId,
-      };
-      
-      const validatedData = insertCommentSchema.parse(commentData);
-      const comment = await storage.createComment(userId, validatedData);
-      
-      res.json(comment);
-    } catch (error) {
-      console.error("Error creating comment:", error);
-      res.status(500).json({ message: "Failed to create comment", error: (error as Error).message });
     }
   });
 
@@ -666,78 +629,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating report:", error);
       res.status(500).json({ message: "Failed to update report" });
-    }
-  });
-
-  // Admin stats endpoint
-  app.get("/api/admin/stats", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req as any).user?.id;
-      const currentUser = await storage.getUser(userId);
-      
-      if (!currentUser?.isAdmin) {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const users = await storage.getAllUsers();
-      const posts = await storage.getAllPosts();
-      const reports = await storage.getReportsByStatus('pending');
-
-      const stats = {
-        totalUsers: users.length,
-        totalPosts: posts.length,
-        reportedContent: reports.length,
-        activeMiracles: posts.length // Using posts as active miracles for now
-      };
-
-      res.json(stats);
-    } catch (error) {
-      console.error("Error fetching admin stats:", error);
-      res.status(500).json({ message: "Failed to fetch admin stats" });
-    }
-  });
-
-  // Admin routes for user management
-  app.get("/api/admin/users", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req as any).user?.id;
-      const currentUser = await storage.getUser(userId);
-      
-      if (!currentUser?.isAdmin) {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const users = await storage.getAllUsers();
-      res.json(users);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({ message: "Failed to fetch users" });
-    }
-  });
-
-  app.delete("/api/admin/users/:id", isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req as any).user?.id;
-      const currentUser = await storage.getUser(userId);
-      
-      if (!currentUser?.isAdmin) {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const targetUserId = req.params.id;
-      if (targetUserId === userId) {
-        return res.status(400).json({ message: "Cannot delete your own account" });
-      }
-
-      const success = await storage.deleteUserCompletely(targetUserId);
-      if (success) {
-        res.json({ message: "User deleted successfully" });
-      } else {
-        res.status(404).json({ message: "User not found" });
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      res.status(500).json({ message: "Failed to delete user" });
     }
   });
 
