@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import CreatePostModal from "@/components/create-post-modal";
+import { supabase } from "@/lib/supabase";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Post {
@@ -430,22 +433,63 @@ function ComposeBox() {
 }
 
 // ── Main Feed Page ────────────────────────────────────────────────────────────
+// ── API Post type (from database) ─────────────────────────────────────────────
+interface ApiPost {
+  id: number;
+  content: string;
+  imageUrl?: string;
+  location?: string;
+  prayerCount: number;
+  commentCount: number;
+  loveCount: number;
+  createdAt: string;
+  user: { id: string; firstName?: string; lastName?: string; profileImageUrl?: string };
+}
+
 export default function FeedPage() {
-  const [posts, setPosts] = useState<Post[]>(SAMPLE_POSTS);
   const [activeCategory, setActiveCategory] = useState("All");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [createPostOpen, setCreatePostOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: apiPosts = [], isLoading } = useQuery<ApiPost[]>({
+    queryKey: ["/api/posts"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch("/api/posts", {
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  // Convert API posts to display format
+  const posts: Post[] = apiPosts.map(p => ({
+    id: p.id,
+    author: [p.user.firstName, p.user.lastName].filter(Boolean).join(" ") || "Anonymous",
+    initials: [p.user.firstName?.[0], p.user.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?",
+    denomination: "",
+    location: p.location || "",
+    country: "",
+    timeAgo: new Date(p.createdAt).toLocaleDateString(),
+    category: "Testimony",
+    title: p.content.slice(0, 80) + (p.content.length > 80 ? "…" : ""),
+    body: p.content,
+    prayerCount: p.prayerCount,
+    commentCount: p.commentCount,
+    shareCount: 0,
+    prayed: false,
+  }));
+
+  // Fall back to sample posts if no real posts yet
+  const displayPosts = posts.length > 0 ? posts : SAMPLE_POSTS;
 
   const filteredPosts = activeCategory === "All"
-    ? posts
-    : posts.filter(p => p.category === activeCategory);
+    ? displayPosts
+    : displayPosts.filter(p => p.category === activeCategory);
 
-  const handlePray = (id: number) => {
-    setPosts(prev => prev.map(p =>
-      p.id === id
-        ? { ...p, prayed: !p.prayed, prayerCount: p.prayed ? p.prayerCount - 1 : p.prayerCount + 1 }
-        : p
-    ));
-  };
+  const handlePray = (id: number) => {};
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] text-[#1A1A1A]" style={{ fontFamily: BODY }}>
@@ -475,7 +519,9 @@ export default function FeedPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="hidden md:flex items-center gap-2 text-xs tracking-wide px-4 py-2 rounded-sm font-semibold"
+          <button
+            onClick={() => setCreatePostOpen(true)}
+            className="hidden md:flex items-center gap-2 text-xs tracking-wide px-4 py-2 rounded-sm font-semibold"
             style={{ background: "#1A1A1A", border: "1px solid #1A1A1A", color: "#FFFFFF" }}>
             <span>＋</span> Share Story
           </button>
@@ -632,6 +678,8 @@ export default function FeedPage() {
           </div>
         </aside>
       </div>
+
+      <CreatePostModal open={createPostOpen} onOpenChange={setCreatePostOpen} />
     </div>
   );
 }

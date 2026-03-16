@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -92,10 +93,11 @@ export default function CreatePostModal({ open, onOpenChange }: CreatePostModalP
 
       console.log("Sending FormData to /api/posts");
       
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch("/api/posts", {
         method: "POST",
         body: formData,
-        credentials: "include",
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
       });
 
       console.log("Response status:", response.status);
