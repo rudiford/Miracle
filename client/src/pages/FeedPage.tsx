@@ -530,95 +530,37 @@ function SuggestedMembers() {
 }
 
 // ── Sidebar: Global Map Snapshot ──────────────────────────────────────────────
-function GlobalSnapshot() {
-  const regions = [
-    { label: "North America", count: 1842, pct: 88 },
-    { label: "Africa",        count: 1430, pct: 68 },
-    { label: "Europe",        count: 987,  pct: 47 },
-    { label: "South America", count: 764,  pct: 36 },
-    { label: "Asia",          count: 521,  pct: 25 },
-    { label: "Oceania",       count: 198,  pct: 9 },
-  ];
+function GlobalSnapshot({ postCount }: { postCount: number }) {
   return (
     <div className="rounded-sm border p-5" style={{ background: "#FFFFFF", borderColor: "#D6D3D1", fontFamily: BODY }}>
       <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#111111] font-semibold mb-1">Stories Worldwide</p>
-      <p className="text-[0.7rem] mb-4" style={{ color: "#9CA3AF" }}>6,742 testimonies from 94 countries</p>
-      <div className="space-y-3">
-        {regions.map((r) => (
-          <div key={r.label}>
-            <div className="flex justify-between mb-1">
-              <span className="text-[0.7rem]" style={{ color: "#4B5563" }}>{r.label}</span>
-              <span className="text-[0.7rem]" style={{ color: "#9CA3AF" }}>{r.count.toLocaleString()}</span>
-            </div>
-            <div className="h-1 rounded-full" style={{ background: "#F0EDE6" }}>
-              <div className="h-1 rounded-full transition-all duration-700"
-                style={{ width: `${r.pct}%`, background: "linear-gradient(to right, #A8A29E, #D6D3D1)" }} />
-            </div>
-          </div>
-        ))}
-      </div>
+      <p className="text-[0.7rem] mb-2" style={{ color: "#9CA3AF" }}>
+        {postCount === 0
+          ? "Be the first to share a testimony"
+          : `${postCount.toLocaleString()} ${postCount === 1 ? "testimony" : "testimonies"} shared`}
+      </p>
+      <a
+        href="/map"
+        className="text-[0.7rem] underline"
+        style={{ color: "#C9A84C" }}
+      >
+        View on Global Map →
+      </a>
     </div>
   );
 }
 
 // ── Compose Box ───────────────────────────────────────────────────────────────
-function ComposeBox() {
-  const [text, setText] = useState("");
-  const [category, setCategory] = useState("Healing");
-  const [title, setTitle] = useState("");
-  const [open, setOpen] = useState(false);
-
+function ComposeBox({ onOpen }: { onOpen: () => void }) {
   return (
     <div className="rounded-sm border p-5" style={{ background: "#FFFFFF", borderColor: "#C4C2BF", fontFamily: BODY }}>
-      {!open ? (
-        <button
-          onClick={() => setOpen(true)}
-          className="w-full text-left px-4 py-3 rounded-sm text-sm transition-all duration-200"
-          style={{ background: "#F5F3EF", color: "#9CA3AF", border: "1px solid #D6D3D1" }}
-        >
-          Share a miracle or testimony…
-        </button>
-      ) : (
-        <div className="space-y-3">
-          <p className="text-[0.62rem] tracking-[0.2em] uppercase text-[#111111] font-semibold">Share Your Story</p>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3 py-2 text-xs rounded-sm outline-none"
-            style={{ background: "#F5F3EF", border: "1px solid #C4C2BF", color: "#1A1A1A", fontFamily: BODY }}
-          >
-            {CATEGORIES.filter(c => c !== "All").map(c => <option key={c}>{c}</option>)}
-          </select>
-          <input
-            type="text"
-            placeholder="Give your testimony a title…"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 text-sm rounded-sm outline-none"
-            style={{ background: "#F5F3EF", border: "1px solid #C4C2BF", color: "#1A1A1A", fontFamily: BODY }}
-          />
-          <textarea
-            placeholder="Tell your story. What happened? What did God do?"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={5}
-            className="w-full px-3 py-2 text-sm rounded-sm outline-none resize-none"
-            style={{ background: "#F5F3EF", border: "1px solid #C4C2BF", color: "#1A1A1A", fontFamily: BODY }}
-          />
-          <div className="flex gap-2 justify-end">
-            <button onClick={() => setOpen(false)}
-              className="px-4 py-2 text-xs rounded-sm border transition-colors"
-              style={{ borderColor: "#E5E1D8", color: "#6B7280" }}>
-              Cancel
-            </button>
-            <button
-              className="px-5 py-2 text-xs rounded-sm font-medium tracking-wide"
-              style={{ background: "#C9A84C", color: "#0D0D12" }}>
-              Post Testimony
-            </button>
-          </div>
-        </div>
-      )}
+      <button
+        onClick={onOpen}
+        className="w-full text-left px-4 py-3 rounded-sm text-sm transition-all duration-200"
+        style={{ background: "#F5F3EF", color: "#9CA3AF", border: "1px solid #D6D3D1" }}
+      >
+        Share a miracle or testimony…
+      </button>
     </div>
   );
 }
@@ -684,7 +626,14 @@ export default function FeedPage() {
     ? displayPosts
     : displayPosts.filter(p => p.category === activeCategory);
 
-  const handlePray = (id: number) => {};
+  const handlePray = async (id: number) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    await fetch(`/api/posts/${id}/prayers`, {
+      method: "POST",
+      headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+    });
+    queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+  };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] text-[#1A1A1A]" style={{ fontFamily: BODY }}>
@@ -778,7 +727,7 @@ export default function FeedPage() {
 
           {/* Compose box */}
           <div className="mb-5">
-            <ComposeBox />
+            <ComposeBox onOpen={() => setCreatePostOpen(true)} />
           </div>
 
           {/* Feed header */}
@@ -846,7 +795,7 @@ export default function FeedPage() {
             </div>
           </div>
 
-          <GlobalSnapshot />
+          <GlobalSnapshot postCount={posts.length} />
           <SuggestedMembers />
 
           {/* Daily verse */}
