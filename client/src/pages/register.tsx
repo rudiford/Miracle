@@ -105,7 +105,7 @@ export default function Register() {
   };
 
   // Error boundary for registration form
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-faith-light flex items-center justify-center">
         <div className="text-center">
