@@ -131,7 +131,7 @@ function PrayerButton({ count, prayed, onPray }: { count: number; prayed: boolea
         fontFamily: BODY,
         background: prayed ? "rgba(201,168,76,0.15)" : "transparent",
         borderColor: prayed ? "#C9A84C" : "#E5E1D8",
-        color: prayed ? "#E8C97A" : "#6B7280",
+        color: prayed ? "#111111" : "#6B7280",
       }}
     >
       <span style={{ fontSize: "1rem" }}>🙏</span>
@@ -177,7 +177,7 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0"
-              style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "#E8C97A", fontFamily: DISPLAY }}
+              style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "#111111", fontFamily: DISPLAY }}
             >
               {post.initials}
             </div>
@@ -218,7 +218,7 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
         {shouldTruncate && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="text-xs text-[#C9A84C] hover:text-[#E8C97A] transition-colors mb-4"
+            className="text-xs text-[#374151] hover:text-[#111111] font-medium transition-colors mb-4"
             style={{ fontFamily: BODY }}
           >
             {expanded ? "Show less" : "Read full testimony"}
@@ -257,7 +257,7 @@ function PostCard({ post, onPray }: { post: Post; onPray: (id: number) => void }
               <div key={c.id} className="flex gap-3">
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5"
-                  style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.35)", color: "#C9A84C", fontFamily: DISPLAY }}
+                  style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.35)", color: "#111111", fontFamily: DISPLAY }}
                 >
                   {c.initials}
                 </div>
@@ -316,7 +316,7 @@ function SuggestedMembers() {
           <div key={m.name} className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
-                style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.25)", color: "#E8C97A", fontFamily: DISPLAY }}>
+                style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.25)", color: "#111111", fontFamily: DISPLAY }}>
                 {m.initials}
               </div>
               <div>
@@ -325,7 +325,7 @@ function SuggestedMembers() {
               </div>
             </div>
             <button className="text-[0.65rem] tracking-wide px-3 py-1 rounded-sm border transition-all duration-200 hover:bg-[rgba(201,168,76,0.1)]"
-              style={{ borderColor: "rgba(201,168,76,0.25)", color: "#C9A84C" }}>
+              style={{ borderColor: "rgba(201,168,76,0.4)", color: "#374151" }}>
               Follow
             </button>
           </div>
@@ -481,7 +481,7 @@ export default function FeedPage() {
           </button>
           {/* Avatar */}
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer"
-            style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)", color: "#E8C97A", fontFamily: DISPLAY }}>
+            style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)", color: "#111111", fontFamily: DISPLAY }}>
             Y
           </div>
         </div>
@@ -504,7 +504,7 @@ export default function FeedPage() {
               { icon: "🔖", label: "Saved" },
             ].map(({ icon, label }) => (
               <button key={label}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-left transition-all duration-200 hover:bg-[rgba(201,168,76,0.07)] hover:text-[#E8C97A]"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-left transition-all duration-200 hover:bg-[rgba(201,168,76,0.07)] hover:text-[#111111]"
                 style={{ color: label === "My Feed" ? "#111111" : "#4B5563", fontWeight: label === "My Feed" ? "600" : "400", background: label === "My Feed" ? "rgba(201,168,76,0.08)" : "transparent", fontFamily: BODY }}>
                 <span>{icon}</span>
                 {label}
@@ -584,7 +584,7 @@ export default function FeedPage() {
 
           {/* Load more */}
           <div className="text-center mt-8">
-            <button className="text-xs tracking-[0.14em] uppercase px-8 py-3 rounded-sm border transition-all duration-200 hover:border-[#C9A84C] hover:text-[#E8C97A]"
+            <button className="text-xs tracking-[0.14em] uppercase px-8 py-3 rounded-sm border transition-all duration-200 hover:border-[#374151] hover:text-[#111111]"
               style={{ borderColor: "#E5E1D8", color: "#9CA3AF", fontFamily: BODY }}>
               Load More Testimonies
             </button>
@@ -610,7 +610,7 @@ export default function FeedPage() {
                   <span className="text-base">{r.flag}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
-                      <span className="text-xs group-hover:text-[#E8C97A] transition-colors truncate" style={{ color: "#4B5563" }}>{r.city}</span>
+                      <span className="text-xs group-hover:text-[#111111] transition-colors truncate" style={{ color: "#4B5563" }}>{r.city}</span>
                       <span className="text-[0.6rem]" style={{ color: "#D1D5DB" }}>· {r.time}</span>
                     </div>
                     <span className="text-[0.6rem]" style={{ color: "#9CA3AF" }}>{r.cat}</span>
