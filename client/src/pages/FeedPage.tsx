@@ -475,8 +475,8 @@ export default function FeedPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="hidden md:flex items-center gap-2 text-xs tracking-wide px-4 py-2 rounded-sm"
-            style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "#E8C97A" }}>
+          <button className="hidden md:flex items-center gap-2 text-xs tracking-wide px-4 py-2 rounded-sm font-semibold"
+            style={{ background: "#1A1A1A", border: "1px solid #1A1A1A", color: "#FFFFFF" }}>
             <span>＋</span> Share Story
           </button>
           {/* Avatar */}
