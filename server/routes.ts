@@ -96,10 +96,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = (req as any).user?.id;
       const userEmail = (req as any).user?.email;
-      const validatedData = insertUserSchema.parse(req.body);
+      const { firstName, lastName, email, age, gender, city, state, country, profileImageUrl } = req.body;
+      const profileData = {
+        ...(firstName !== undefined && { firstName }),
+        ...(lastName !== undefined && { lastName }),
+        ...(email !== undefined && { email }),
+        ...(age !== undefined && { age: parseInt(age, 10) || null }),
+        ...(gender !== undefined && { gender }),
+        ...(city !== undefined && { city }),
+        ...(state !== undefined && { state }),
+        ...(country !== undefined && { country }),
+        ...(profileImageUrl !== undefined && { profileImageUrl }),
+      };
       // Ensure user row exists before updating (handles new users)
       await storage.upsertUser({ id: userId, email: userEmail });
-      const updatedUser = await storage.updateUserProfile(userId, validatedData);
+      const updatedUser = await storage.updateUserProfile(userId, profileData);
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
