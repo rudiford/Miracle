@@ -117,7 +117,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedUser);
     } catch (error) {
       console.error("Error updating profile:", error);
-      res.status(500).json({ message: "Failed to update profile" });
+      console.error("Profile error details:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
+      res.status(500).json({ message: (error as any)?.message || "Failed to update profile" });
     }
   });
 
