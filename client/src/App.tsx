@@ -85,37 +85,41 @@ function Router() {
     );
   }
 
+  if (!isAuthenticated) {
+    return (
+      <Switch>
+        <Route path="/" component={LandingPage} />
+        <Route path="/register" component={Register} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/delete-account" component={DeleteAccount} />
+        <Route component={LandingPage} />
+      </Switch>
+    );
+  }
+
+  if (!profileComplete) {
+    return (
+      <Switch>
+        <Route path="/register" component={Register} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/delete-account" component={DeleteAccount} />
+        <Route component={() => <Register />} />
+      </Switch>
+    );
+  }
+
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <>
-          <Route path="/" component={LandingPage} />
-          <Route path="/register" component={Register} />
-          <Route path="/privacy" component={Privacy} />
-          <Route path="/delete-account" component={DeleteAccount} />
-        </>
-      ) : !profileComplete ? (
-        <>
-          {/* Force profile completion for authenticated users */}
-          <Route path="/register" component={Register} />
-          <Route path="/privacy" component={Privacy} />
-          <Route path="/delete-account" component={DeleteAccount} />
-          <Route component={() => <Register />} />
-        </>
-      ) : (
-        <>
-          <Route path="/" component={FeedPage} />
-          <Route path="/feed" component={FeedPage} />
-          <Route path="/profile" component={ProfilePage} />
-          <Route path="/map" component={() => <div style={{ height: "100vh" }}><MapView /></div>} />
-          <Route path="/messages" component={Messages} />
-          <Route path="/register" component={Register} />
-          <Route path="/privacy" component={Privacy} />
-          <Route path="/delete-account" component={DeleteAccount} />
-          {user?.isAdmin && <Route path="/admin" component={Admin} />}
-          {user?.isAdmin && <Route path="/admin/users" component={AdminUsers} />}
-        </>
-      )}
+      <Route path="/" component={FeedPage} />
+      <Route path="/feed" component={FeedPage} />
+      <Route path="/profile" component={ProfilePage} />
+      <Route path="/map" component={() => <div style={{ height: "100vh" }}><MapView /></div>} />
+      <Route path="/messages" component={Messages} />
+      <Route path="/register" component={Register} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/delete-account" component={DeleteAccount} />
+      {user?.isAdmin && <Route path="/admin" component={Admin} />}
+      {user?.isAdmin && <Route path="/admin/users" component={AdminUsers} />}
       <Route component={NotFound} />
     </Switch>
   );

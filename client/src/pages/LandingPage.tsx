@@ -190,19 +190,24 @@ export default function LandingPage() {
             </a>
           ))}
         </div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <button
-            onClick={() => setAuthMode('login')}
-            style={{ fontSize: 12, color: "#374151", background: "transparent", border: "1px solid #D6D3D1", borderRadius: 4, padding: "8px 16px", cursor: "pointer", letterSpacing: "0.1em", fontFamily: BODY }}
-          >
-            SIGN IN
-          </button>
-          <button
-            onClick={() => setAuthMode('signup')}
-            style={{ fontSize: 12, color: "#fff", background: "#1A1A1A", border: "none", borderRadius: 4, padding: "8px 18px", cursor: "pointer", letterSpacing: "0.1em", fontFamily: BODY }}
-          >
-            JOIN FREE
-          </button>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <button
+              onClick={() => setAuthMode('login')}
+              style={{ fontSize: 12, color: "#374151", background: "transparent", border: "1px solid #D6D3D1", borderRadius: 4, padding: "8px 16px", cursor: "pointer", letterSpacing: "0.1em", fontFamily: BODY }}
+            >
+              SIGN IN
+            </button>
+            <button
+              onClick={() => setAuthMode('signup')}
+              style={{ fontSize: 12, color: "#fff", background: "#1A1A1A", border: "none", borderRadius: 4, padding: "8px 18px", cursor: "pointer", letterSpacing: "0.1em", fontFamily: BODY }}
+            >
+              JOIN FREE
+            </button>
+          </div>
+          <span style={{ fontSize: 12, color: "#4CAF50", letterSpacing: "0.05em", fontFamily: BODY }}>
+            coincidentally created by a non-religious webcreator
+          </span>
         </div>
       </nav>
 
